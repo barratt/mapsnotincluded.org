@@ -37,6 +37,38 @@ export const VanillaWorlds = [
     }
 ];
 
+export const SpacedOutWorlds = [
+    ...VanillaWorlds,
+    {
+        name: 'Squelchy'
+    }, 
+    {
+        name: 'Folia',
+    },
+    {
+        name: 'Quagmiris',
+    },
+    {
+        name: 'Metallic Swampy Moonlet',
+    },
+    {
+        name: 'The Desolands Moonlet', 
+    },
+    {
+        name: 'Frozen Forest Moonlet'
+    },
+    {
+        name: 'Flipped Moonlet'
+    },
+    {
+        name: 'Radioactive Ocean Moonlet'
+    }
+];
+
+export const FrostyPlanetWorlds = [
+
+]
+
 export const DLCs = [
     {
         name: 'Vanilla',
@@ -48,6 +80,6 @@ export const DLCs = [
     },
     {
         name: 'Frosty Planet',
-        img: '/images/oni/frostyplanet.webp',
+        img: '/images/oni/FrostyPlanetPack.webp',
     }
 ];

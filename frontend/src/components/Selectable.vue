@@ -3,7 +3,7 @@
         'selected': selected && selected.name && selected.name == item.name ? true : false,
      }">
         <img :src="item.img" :alt="item.name" />
-        <div>{{ item.text }}</div>
+        <div class="text-center">{{ item.name }}</div>
     </div>
 </template>
 
@@ -19,17 +19,23 @@ export default {
             default: null,
         },
     },
-    setup() {
+    emits: ['update:modelValue'],
+    data() {
+        let first = null;
+        // debugger;
+        if (this.$props.items && this.$props.items.length > 0) {
+            first = this.$props.items[0];
+        }
+
         return {
-            selected: null,
+            selected: first,
         }
     },
-    emits: ['update:modelValue'],
     methods: {
         select(item) {
             console.log('setSelected', item);
             this.selected = item;
-            this.$emit('update:modelValue', item);
+            this.$emit('update:modelValue', item.name);
             this.$forceUpdate();
         }
     },
