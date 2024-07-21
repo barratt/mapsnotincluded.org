@@ -10,6 +10,7 @@ const router = createRouter({
       component: HomeView
     },
     { path: '/about', component: () => import('../views/AboutView.vue') },
+    { path: '/map-explorer', component: () => import('../views/MapExplorerView.vue') },
 
     { path: '/:pathMatch(.*)*', component: () => import('../views/Errors/404.vue') },
   ]
