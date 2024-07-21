@@ -16,6 +16,9 @@
                         <router-link to="/trait-finder" class="nav-link">World Trait Finder</router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link to="/trait-finder" class="nav-link">StarMap Generator</router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/contribute" class="nav-link">Contribute</router-link>
                     </li>
                 </ul>

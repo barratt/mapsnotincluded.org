@@ -1,49 +1,49 @@
 @font-face {
     font-family: 'Liberation Sans';
-    src: url(./liberation_sans/LiberationSans-Regular.ttf) format('truetype');
+    src: url(/liberation_sans/LiberationSans-Regular.ttf) format('truetype');
 }
 
 @font-face {
     font-family: 'Liberation Sans';
     font-weight: bold;
-    src: url(./liberation_sans/LiberationSans-Bold.ttf) format('truetype');
+    src: url(/liberation_sans/LiberationSans-Bold.ttf) format('truetype');
 }
 
 @font-face {
     font-family: 'Liberation Sans';
     font-style: italic;
-    src: url(./liberation_sans/LiberationSans-Italic.ttf) format('truetype');
+    src: url(/liberation_sans/LiberationSans-Italic.ttf) format('truetype');
 }
 
 @font-face {
     font-family: 'Liberation Sans';
     font-weight: bold;
     font-style: italic;
-    src: url(./liberation_sans/LiberationSans-BoldItalic.ttf) format('truetype');
+    src: url(/liberation_sans/LiberationSans-BoldItalic.ttf) format('truetype');
 }
 
 @font-face {
     font-family: 'Economica';
-    src: url(./economica/Economica-Regular.ttf) format('truetype');
-}
-
-@font-face {
-    font-family: 'Economica';
-    font-weight: bold;
-    src: url(./economica/Economica-Bold.ttf) format('truetype');
-}
-
-@font-face {
-    font-family: 'Economica';
-    font-style: italic;
-    src: url(./economica/Economica-Italic.ttf) format('truetype');
+    src: url(/economica/Economica-Regular.ttf) format('truetype');
 }
 
 @font-face {
     font-family: 'Economica';
     font-weight: bold;
+    src: url(/economica/Economica-Bold.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Economica';
     font-style: italic;
-    src: url(./economica/Economica-BoldItalic.ttf) format('truetype');
+    src: url(/economica/Economica-Italic.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Economica';
+    font-weight: bold;
+    font-style: italic;
+    src: url(/economica/Economica-BoldItalic.ttf) format('truetype');
 }
 
 $font-family-base: 'Economica', sans-serif;
