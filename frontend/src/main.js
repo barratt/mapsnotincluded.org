@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import './assets/variables.scss'
+import './assets/custom.css'
 import 'bootstrap/scss/bootstrap.scss'
 import 'bootstrap/dist/js/bootstrap.min.js'
 

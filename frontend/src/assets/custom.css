@@ -1,5 +1,7 @@
 
 body { 
-    --bs-body-font-family: 'Liberation Sans';
+    --bs-body-font-family: 'Economica';
+    
+    --bs-body-font-size: 1.4rem;
 }
 

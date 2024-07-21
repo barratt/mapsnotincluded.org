@@ -4,6 +4,19 @@
 
 <template>
   <main>
-    Welcome
+    <h1>Welcome</h1>
+    <p>
+      Welcome to MapsNotIncluded! This website is a work in progress, and will eventually contain a variety of map / world generation tools and resources for Oxygen Not Included.
+    </p>
+    <p>
+      If you would like to send us world-saves to index, head over to <router-link to="/contribute">contribute</router-link>, otherwise please consider joining our <a href="https://discord.gg/3vhCpp6PNq" target="mni_disc">Discord</a>, or submit an issue / PR on <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_gh">Github</a>!
+      
+    </p>
+
+    <div class="d-flex gap-3 mt-5">
+      <router-link to="/map-explorer" class="btn btn-lg btn-outline-primary flex-grow-1">Map Explorer</router-link>
+      <router-link to="/trait-finder" class="btn btn-lg btn-outline-success flex-grow-1">World Trait Finder</router-link>
+      <router-link to="/contribute" class="btn btn-lg btn-outline-secondary flex-grow-1">Contribute</router-link>
+    </div>
   </main>
 </template>

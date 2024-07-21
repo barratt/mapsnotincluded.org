@@ -22,4 +22,29 @@
     src: url(./liberation_sans/LiberationSans-BoldItalic.ttf) format('truetype');
 }
 
-$font-family-base: 'Liberation Sans', sans-serif;
+@font-face {
+    font-family: 'Economica';
+    src: url(./economica/Economica-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Economica';
+    font-weight: bold;
+    src: url(./economica/Economica-Bold.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Economica';
+    font-style: italic;
+    src: url(./economica/Economica-Italic.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Economica';
+    font-weight: bold;
+    font-style: italic;
+    src: url(./economica/Economica-BoldItalic.ttf) format('truetype');
+}
+
+$font-family-base: 'Economica', sans-serif;
+// $font-size-base: 2em;
