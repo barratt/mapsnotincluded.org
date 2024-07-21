@@ -6,7 +6,8 @@ A fully opensource alternative to [ToolsNotIncluded.net](ToolsNotIncluded.net) b
 ## Special thanks to: 
  - [RoboPhred](https://github.com/RoboPhred/oni-save-parser#readme) - Thank you for your  contributions to parsing and understanding ONI saves
  - [Stefan Oltmann](https://stefan-oltmann.de) - Thank you for the web interface to parse ONI saves that was made fully open source
- - [Cairath](https://github.com/Cairath) - Thank you for giving the community such a wonderful tool for years and years with no expectation of payment. We hope one day to collaborate directly together!
+ - [Cairath](https://github.com/Cairath) - Thank you for giving the community such a wonderful tool for years and years with no expectation of payment. We hope one day to collaborate directly together! Also thank you for your administration of the Discord server and for the guides written for modding ONI!
+ - To [@pardeike](https://github.com/pardeike), creator of [Harmony](https://github.com/pardeike/Harmony), the library that made modding ONI possible. 
 
 # Getting Started
 
