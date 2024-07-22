@@ -13,6 +13,7 @@ namespace AutomaticWorldGeneration
 {
     public class Patches
     {
+
         [HarmonyPatch(typeof(Db), "Initialize")]
         public class Db_Initialize_Patch
         {
@@ -125,13 +126,19 @@ namespace AutomaticWorldGeneration
             public static void Postfix(ColonyDestinationSelectScreen __instance)
             {
 
+                var clusters = SettingsCache.GetClusterNames();
+                var randomCluster = clusters[UnityEngine.Random.Range(0, clusters.Count)];
+
+
+
                 var newGameSettingsPanel = Traverse.Create(__instance).Field<NewGameSettingsPanel>("newGameSettingsPanel").Value;
                 MethodInfo setGameSettings = typeof(NewGameSettingsPanel).GetMethod("SetSetting", BindingFlags.NonPublic | BindingFlags.Instance);
 
                 //newGameSettingsPanel.SetSetting(CustomGameSettingConfigs.WorldgenSeed, "SNDST-A-650071158-0-D3-0");
                 CustomGameSettings.Instance.SetQualitySetting(CustomGameSettingConfigs.SaveToCloud, "Disabled");
                 //CustomGameSettings.Instance.SetQualitySetting(CustomGameSettingConfigs.WorldgenSeed, "SNDST-A-650071158-0-D3-0"); // A future worker mod perhaps?
-                CustomGameSettings.Instance.SetQualitySetting(CustomGameSettingConfigs.ClusterLayout, "clusters/Badlands"); // TODO: Select at random
+                CustomGameSettings.Instance.SetQualitySetting(CustomGameSettingConfigs.ClusterLayout, randomCluster); // TODO: Select at random
+               
 
                 MethodInfo methodInfo = typeof(ColonyDestinationSelectScreen).GetMethod("ShuffleClicked", BindingFlags.NonPublic | BindingFlags.Instance);
                 var parameters = new object[] { };
@@ -149,74 +156,92 @@ namespace AutomaticWorldGeneration
         }
 
         // Click away the starter message
-        //[HarmonyPatch(typeof(WattsonMessage), "OnActivate")]
-        //public static class ClickAwayWattsonMessage
-        //{
-        //    public static void Postfix(WattsonMessage __instance)
-        //    {
-        //        //private KButton button;
-        //        //__instance.button.SignalClick(KKeyCode.Mouse2);
+        [HarmonyPatch(typeof(WattsonMessage), "OnActivate")]
+        public static class ClickAwayWattsonMessage
+        {
+            public static void Postfix(WattsonMessage __instance)
+            {
+                //private KButton button;
+                //__instance.button.SignalClick(KKeyCode.Mouse2);
 
-        //        var button = Traverse.Create(__instance).Field<KButton>("button").Value;
-        //        button.SignalClick(KKeyCode.Mouse2);
-        //    }
-        //}
-
-
-        // Here we quit the game after forcing spawnables to spawn, not sure if this is actually needed thanks to the save-parser? Will have to generate the same seed twice to see if it contains the same data.
-        //[HarmonyPatch(typeof(WattsonMessage), "OnDeactivate")]
-        //public static class QuitGamePt2
-        //{
-        //    public static void Postfix()
-        //    {
-
-        //        foreach (var world in ClusterManager.Instance.m_worldContainers)
-        //        {
-        //            world.isDiscovered = true;
-        //        }
+                var button = Traverse.Create(__instance).Field<KButton>("button").Value;
+                button.SignalClick(KKeyCode.Mouse2);
+            }
+        }
 
 
-        //        for (int i = 0; i < SaveGame.Instance.worldGenSpawner.spawnables.Count; i++)
-        //        {
-        //            SaveGame.Instance.worldGenSpawner.spawnables[i].TrySpawn();
-        //        }
+        //Here we quit the game after forcing spawnables to spawn, not sure if this is actually needed thanks to the save-parser? Will have to generate the same seed twice to see if it contains the same data.
+
+       [HarmonyPatch(typeof(WattsonMessage), "OnDeactivate")]
+        public static class QuitGamePt2
+        {
+            public static void Postfix()
+            {
+                foreach (var world in ClusterManager.Instance.WorldContainers)
+                {
+                    world.SetDiscovered(true);
+                }
+
+                var spawnables = SaveGame.Instance.worldGenSpawner.GetSpawnables();
+                foreach (var spawnable in spawnables)
+                {
+                    spawnable.TrySpawn();
+                }
 
 
-        //        GameScheduler.Instance.ScheduleNextFrame("collect data", (_) =>
-        //        {
-        //            ModAssets.AccumulateSeedData();
+                GameScheduler.Instance.ScheduleNextFrame("Collect Seed Data", (_) =>
+                {
+                    // TODO: Send data to server.
 
-        //            GameScheduler.Instance.ScheduleNextFrame("restart game", (_) =>
-        //            App.instance.Restart());
-        //        });
-        //    }
+                    GameScheduler.Instance.ScheduleNextFrame("Restart", (__) =>
+                    {
+                        App.instance.Restart();
 
-        //}
+                        // instead of restarting, lets get back to the main menu
+                        //PauseScreen.TriggerQuitGame();
+                        // Not sure how to do this yet, bring up pause menu by sending escape key?
+                    });
+                });
+            }
+        }
 
         //Skip duplicant selection, probably a better way to skip even loading the prefabs, but this works for now.
 
-       //[HarmonyPatch(typeof(CharacterSelectionController), "InitializeContainers")]
-       // public static class SkipMinionScreen
-       // {
-       //     public static void Postfix(CharacterSelectionController __instance)
-       //     {
-       //         // Before we click start, lets check all 3 dupe containers are loaded
-       //         //Debug.Log("Checking if all 3 dupe containers are loaded"); 
-       //         ////__instance.containers; 
-       //         //var containers = Traverse.Create(__instance).Field<List<ITelepadDeliverableContainer>>("containers").Value;
-       //         //Debug.Log("Containers: " + containers.Count); // 3
+        [HarmonyPatch(typeof(MinionSelectScreen), "OnSpawn")]
+        public static class SkipMinionScreen
+        {
+            public static void Postfix(MinionSelectScreen __instance)
+            {
+                // Before we click start, lets check all 3 dupe containers are loaded
+                //Debug.Log("Checking if all 3 dupe containers are loaded"); 
+                ////__instance.containers; 
+                //var containers = Traverse.Create(__instance).Field<List<ITelepadDeliverableContainer>>("containers").Value;
+                //Debug.Log("Containers: " + containers.Count); // 3
 
-       //         //Debug.Log("Container 1: " + containers[0].GetType()); // ColonyDestinationSelectScreen
-       //         //Debug.Log("Container 2: " + containers[1].GetType()); // ColonyDestinationSelectScreen
-       //         //Debug.Log("Container 3: " + containers[2].GetType()); // ColonyDestinationSelectScreen
+                //Debug.Log("Container 1: " + containers[0].GetType()); // ColonyDestinationSelectScreen
+                //Debug.Log("Container 2: " + containers[1].GetType()); // ColonyDestinationSelectScreen
+                //Debug.Log("Container 3: " + containers[2].GetType()); // ColonyDestinationSelectScreen
 
 
 
-       //         // Lets click start.
-       //         MethodInfo methodInfo = typeof(CharacterSelectionController).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
-       //         var parameters = new object[] { };
-       //         methodInfo.Invoke(__instance, parameters);
-       //     }
-       // }
+
+                GameScheduler.Instance.ScheduleNextFrame("Click Embark", (_) =>
+                {
+
+                    // On this screen is where we can set the world name, I'd like to set it to the seed.
+                    
+                    //var worldNameInput = Traverse.Create(__instance).Field<KInputField>("worldNameInput").Value;
+                    //worldNameInput.SetDisplayValue(CustomGameSettings.Instance.GetSettingsCoordinate());
+                    //CustomGameSettg
+
+                    // Lets click start.
+                    MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
+                    var parameters = new object[] { };
+                    methodInfo.Invoke(__instance, parameters);
+                });
+            }
+        }
+
+
     }
 }
