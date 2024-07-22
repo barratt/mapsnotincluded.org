@@ -44,3 +44,4 @@ Please ensure all code remains cross-platform for as long as possible.
 
 ### Useful tools
 - https://stefan-oltmann.de/oni-save-parser/
+- https://stefan-oltmann.de/oni-seed-browser/
