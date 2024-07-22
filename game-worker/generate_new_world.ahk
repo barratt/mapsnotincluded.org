@@ -16,7 +16,21 @@ Loop {
     {
         ; Make the window active
         WinActivate
+    
+        ; Wait for new game button
+        Loop 
+        {
+            PixelGetColor, foundColor, 950, 275, RGB
+
+            if (foundColor = 0x3e4357)
+            {
+                break
+            }
         
+            Sleep, 100
+        }
+
+        Sleep 100
         MouseMove, 950, 275, 0  ; The last parameter is the speed (0 means instant)
         Click 
 
@@ -74,7 +88,7 @@ Loop {
         MouseMove 550, 510
         Click
 
-        Sleep 3000
+        Sleep 4000
 
         Send {Escape}
 
@@ -86,21 +100,9 @@ Loop {
         MouseMove 525, 430
         Click
 
+        Sleep 200
         
-        ; Wait for new game button
-        Loop 
-        {
-            PixelGetColor, foundColor, 950, 275, RGB
 
-            if (foundColor = 0x3e4357)
-            {
-                break
-            }
-        
-            Sleep, 100
-        }
-
-        Sleep 100
 
     }
     else
