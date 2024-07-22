@@ -41,3 +41,6 @@ It might! My plan is to be fully open and transparent, all of the services will 
 This is a hubby project, so anything goes at this stage. Please just ensure your code is somewhat readable, please go for more lines over single lines for readability. Please use widely accepted libraries where possible to maximise those who can contribute, please try to avoid complex logic flows. This is not enterprise. 
 
 Please ensure all code remains cross-platform for as long as possible. 
+
+### Useful tools
+- https://stefan-oltmann.de/oni-save-parser/

@@ -1,16 +1,18 @@
 using HarmonyLib;
+using ProcGenGame;
 
 namespace AutomaticWorldGeneration
 {
     public class Patches
     {
-        [HarmonyPatch(typeof(Db))]
-        [HarmonyPatch("Initialize")]
+        [HarmonyPatch(typeof(Cluster))]
+        [HarmonyPatch("Generate")]
         public class Db_Initialize_Patch
         {
             public static void Prefix()
             {
-                Debug.Log("I execute before Db.Initialize!");
+                Debug.Log("Automatic World Generation - Starting generation of new World!");
+
             }
 
             public static void Postfix()
