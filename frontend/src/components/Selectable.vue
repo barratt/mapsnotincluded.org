@@ -17,7 +17,7 @@ export default {
         modelValue: {
             type: Object,
             default: null,
-        },
+        },  
     },
     emits: ['update:modelValue'],
     data() {

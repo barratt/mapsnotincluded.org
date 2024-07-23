@@ -8,6 +8,7 @@ using STRINGS;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using YamlDotNet.Core;
 using static ProcGen.ClusterLayout;
 
 namespace AutomaticWorldGeneration
@@ -181,8 +182,13 @@ namespace AutomaticWorldGeneration
                 Debug.Log("AutomaticWorldGeneration - WorldGen Error: " + errorMessage);
                 Debug.Log("AutomaticWorldGeneration - WorldGen Exception: " + e.Message);
                 // Lets click the ok button.
-                var okButton = Traverse.Create(__instance).Field<KButton>("okButton").Value;
-                okButton.SignalClick(KKeyCode.Mouse0);
+                //var okButton = Traverse.Create(__instance).Field<KButton>("okButton").Value;
+                //okButton.SignalClick(KKeyCode.Mouse0);
+
+                // TODO: Report the seed as bad
+
+                // Lets restart the game.
+                App.instance.Restart();
             }
         }
 
@@ -230,14 +236,37 @@ namespace AutomaticWorldGeneration
                     {
                         Debug.Log("AutomaticWorldGeneration - Restarting Game");
 
-                        //App.instance.Restart();
-                        App.LoadScene("frontend");
+                        App.instance.Restart();
+                        //LoadScreen.ForceStopGame();
+                        //Debug.Log("AutomaticWorldGeneration - LoadScreen ");
+                        //LoadScreen.ForceStopGame();
+                        //Debug.Log("AutomaticWorldGeneration - AppLoadScene");
+                        //App.LoadScene("frontend");
+                        //Debug.Log("AutomaticWorldGeneration - AppLoadScene Done");
+                        // Not sure if the loadscene causes this but now we're getting the following after about 5 word gens - seems to be random.
+                        //AutomaticWorldGeneration - Clicking Embark
+                        //[ERROR] NewBaseScreen ~~~!System.NullReferenceException: Object reference not set to an instance of an object
+                        //at NewBaseScreen.SpawnMinions(System.Int32 headquartersCell)[0x000c7] in < 043309e6f0914d9f9e207a782760f195 >:0
+                        //at NewBaseScreen.Final()[0x0002f] in < 043309e6f0914d9f9e207a782760f195 >:0
+                        //at NewBaseScreen.OnActivate()[0x0004e] in < 043309e6f0914d9f9e207a782760f195 >:0
 
                         // instead of restarting, lets get back to the main menu
                         //PauseScreen.TriggerQuitGame();
                         // Not sure how to do this yet, bring up pause menu by sending escape key?
                     });
                 });
+            }
+        }
+
+        [HarmonyPatch(typeof(BaseNaming), "GenerateBaseNameString")]
+        public static class SkipBaseNaming
+        {
+            public static bool Prefix(ref string __result)
+            {
+                Debug.Log("AutomaticWorldGeneration - BaseNaming GenerateBaseNameString");
+                var seed = CustomGameSettings.Instance.GetSettingsCoordinate();
+                __result = seed;
+                return false;
             }
         }
 
@@ -261,13 +290,14 @@ namespace AutomaticWorldGeneration
                 //Debug.Log("Container 3: " + containers[2].GetType()); // ColonyDestinationSelectScreen
 
 
-
-
+                // we use a time here, but really we need to figure out the correct way to wait for all the minions to initialize.
+                // Schedule doesnt seem to work actually
+                GameScheduler.Instance.ScheduleNextFrame("__", (__) =>
                 GameScheduler.Instance.ScheduleNextFrame("Click Embark", (_) =>
                 {
                     Debug.Log("AutomaticWorldGeneration - Clicking Embark");
                     // On this screen is where we can set the world name, I'd like to set it to the seed.
-                    
+
                     //var worldNameInput = Traverse.Create(__instance).Field<KInputField>("worldNameInput").Value;
                     //worldNameInput.SetDisplayValue(CustomGameSettings.Instance.GetSettingsCoordinate());
                     //CustomGameSettg
@@ -276,22 +306,20 @@ namespace AutomaticWorldGeneration
                     MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
                     var parameters = new object[] { };
                     methodInfo.Invoke(__instance, parameters);
-
-
-                });
+                }));
             }
         }
 
-        [HarmonyPatch(typeof(GameUtil), "GenerateRandomWorldName")]
-        public static class GenerateRandomWorldName
-        {
-            public static bool Prefix(ref string __result, String[] nameTables)
-            {
-                Debug.Log("AutomaticWorldGeneration - GenerateRandomWorldName");
-                __result = CustomGameSettings.Instance.GetSettingsCoordinate();
+        //[HarmonyPatch(typeof(GameUtil), "GenerateRandomWorldName")]
+        //public static class GenerateRandomWorldName
+        //{
+        //    public static bool Prefix(ref string __result, String[] nameTables)
+        //    {
+        //        Debug.Log("AutomaticWorldGeneration - GenerateRandomWorldName");
+        //        __result = CustomGameSettings.Instance.GetSettingsCoordinate();
 
-                return true;
-            }
-        }
+        //        return true;
+        //    }
+        //}
     }
 }
