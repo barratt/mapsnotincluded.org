@@ -5,6 +5,7 @@ using KMod;
 using ProcGen;
 using ProcGenGame;
 using STRINGS;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using static ProcGen.ClusterLayout;
@@ -19,7 +20,7 @@ namespace AutomaticWorldGeneration
         {
             public static void Prefix()
             {
-                Debug.Log("Init Mod!");
+                Debug.Log("AutomaticWorldGeneration - Init Mod!");
                 // Lets see if we can generate a new world by clicking new game?
                 //SaveManager.
                 //var mainMenu = MainMenu.Instance;
@@ -43,7 +44,7 @@ namespace AutomaticWorldGeneration
 
             public static void Postfix()
             {
-                Debug.Log("I execute after Db.Initialize!");
+                Debug.Log("AutomaticWorldGeneration - I execute after Db.Initialize!");
             }
         }
 
@@ -54,13 +55,13 @@ namespace AutomaticWorldGeneration
         {
             public static void Prefix()
             {
-                Debug.Log("Automatic World Generation - Starting generation of new World!");
+                Debug.Log("AutomaticWorldGenerationn - Starting generation of new World!");
 
             }
 
             public static void Postfix()
             {
-                Debug.Log("I execute after Db.Initialize!");
+                Debug.Log("AutomaticWorldGeneration - I execute after Db.Initialize!");
             }
         }
 
@@ -70,12 +71,12 @@ namespace AutomaticWorldGeneration
         {
             public static void Prefix()
             {
-                Debug.Log("MainMenu - OnSpawn!");
+                Debug.Log("AutomaticWorldGeneration - MainMenu - OnSpawn!");
             }
 
             public static void Postfix(MainMenu __instance)
             {
-                Debug.Log("MainMenu - OnSpawn! Ran");
+                Debug.Log("AutomaticWorldGeneration - MainMenu - OnSpawn! Ran");
                 var mainMenu = MainMenu.Instance;
 
                 WorldGen.WaitForPendingLoadSettings(); // World gen has a lot of what we need, but we need to find the instance of it.
@@ -84,9 +85,9 @@ namespace AutomaticWorldGeneration
                 // Lets dump all the clusters and their targetPath
                 SettingsCache.GetClusterNames().ForEach((cluster) =>
                 {
-                    Debug.Log("Cluster: " + cluster);
+                    Debug.Log("AutomaticWorldGeneration - Cluster: " + cluster);
                     var data = SettingsCache.clusterLayouts.GetClusterData(cluster);
-                    Debug.Log("TargetPath: " + data.filePath);
+                    Debug.Log("AutomaticWorldGeneration - TargetPath: " + data.filePath);
                 });
 
                 var flow = mainMenu.GetComponent<NewGameFlow>();
@@ -100,6 +101,7 @@ namespace AutomaticWorldGeneration
         {
             public static void Postfix(ClusterCategorySelectionScreen __instance)
             {
+                Debug.Log("AutomaticWorldGeneration - Selecting Cluster Type");
                 MethodInfo methodInfo = typeof(ClusterCategorySelectionScreen).GetMethod("OnClickOption", BindingFlags.NonPublic | BindingFlags.Instance);
                 var parameters = new object[] { ClusterCategory.Vanilla };
                 methodInfo.Invoke(__instance, parameters);
@@ -111,6 +113,7 @@ namespace AutomaticWorldGeneration
         {
             public static void Postfix(ModeSelectScreen __instance)
             {
+                Debug.Log("AutomaticWorldGeneration - Selecting Survival Settings");
                 //OnClickSurvival
                 MethodInfo methodInfo = typeof(ModeSelectScreen).GetMethod("OnClickSurvival", BindingFlags.NonPublic | BindingFlags.Instance);
                 var parameters = new object[] { };
@@ -125,6 +128,7 @@ namespace AutomaticWorldGeneration
         {
             public static void Postfix(ColonyDestinationSelectScreen __instance)
             {
+                Debug.Log("AutomaticWorldGeneration - Selecting Colony Destination");
 
                 var clusters = SettingsCache.GetClusterNames();
                 var randomCluster = clusters[UnityEngine.Random.Range(0, clusters.Count)];
@@ -146,12 +150,39 @@ namespace AutomaticWorldGeneration
 
                 // see if we can read the full 'seed'
                 CustomGameSettings.Instance.GetSettingsCoordinate();
-                Debug.Log("Got the seed: " + CustomGameSettings.Instance.GetSettingsCoordinate()); // Confirmed SNDST-A-650071158-0-D3-0
+                Debug.Log("AutomaticWorldGeneration - Got the seed: " + CustomGameSettings.Instance.GetSettingsCoordinate()); // Confirmed SNDST-A-650071158-0-D3-0
 
                 // Lets click start.
                 MethodInfo LaunchClicked = typeof(ColonyDestinationSelectScreen).GetMethod("LaunchClicked", BindingFlags.NonPublic | BindingFlags.Instance);
                 LaunchClicked.Invoke(__instance, new object[] { });
 
+                Debug.Log("AutomaticWorldGeneration - Colony Destination Selected");
+            }
+        }
+
+        // KCrashReporter - ReportError
+        //[HarmonyPatch(typeof(KCrashReporter), "ReportError")]
+        //public static class KCrashReporter_ReportError
+        //{
+        //    public static void Postfix(KCrashReporter __instance, string error)
+        //    {
+        //        Debug.Log("AutomaticWorldGeneration - KCrashReporter Error: " + error);
+        //        App.instance.Restart();
+        //    }
+        //}
+
+        //OfflineWorldGen DisplayErrors - This is a bit of a hack, but it works for now.
+        //WorldGen ReportWorldGenError
+        [HarmonyPatch(typeof(WorldGen), "ReportWorldGenError")]
+        public static class DisplayErrors
+        {
+            public static void Postfix(WorldGen __instance, Exception e, string errorMessage = null)
+            {
+                Debug.Log("AutomaticWorldGeneration - WorldGen Error: " + errorMessage);
+                Debug.Log("AutomaticWorldGeneration - WorldGen Exception: " + e.Message);
+                // Lets click the ok button.
+                var okButton = Traverse.Create(__instance).Field<KButton>("okButton").Value;
+                okButton.SignalClick(KKeyCode.Mouse0);
             }
         }
 
@@ -163,7 +194,7 @@ namespace AutomaticWorldGeneration
             {
                 //private KButton button;
                 //__instance.button.SignalClick(KKeyCode.Mouse2);
-
+                Debug.Log("AutomaticWorldGeneration - WattsonMessage OnActivate");
                 var button = Traverse.Create(__instance).Field<KButton>("button").Value;
                 button.SignalClick(KKeyCode.Mouse2);
             }
@@ -177,6 +208,8 @@ namespace AutomaticWorldGeneration
         {
             public static void Postfix()
             {
+                Debug.Log("AutomaticWorldGeneration - WattsonMessage OnDeactivate");
+
                 foreach (var world in ClusterManager.Instance.WorldContainers)
                 {
                     world.SetDiscovered(true);
@@ -195,7 +228,10 @@ namespace AutomaticWorldGeneration
 
                     GameScheduler.Instance.ScheduleNextFrame("Restart", (__) =>
                     {
-                        App.instance.Restart();
+                        Debug.Log("AutomaticWorldGeneration - Restarting Game");
+
+                        //App.instance.Restart();
+                        App.LoadScene("frontend");
 
                         // instead of restarting, lets get back to the main menu
                         //PauseScreen.TriggerQuitGame();
@@ -212,6 +248,8 @@ namespace AutomaticWorldGeneration
         {
             public static void Postfix(MinionSelectScreen __instance)
             {
+                Debug.Log("AutomaticWorldGeneration - MinionSelectScreen OnSpawn");
+
                 // Before we click start, lets check all 3 dupe containers are loaded
                 //Debug.Log("Checking if all 3 dupe containers are loaded"); 
                 ////__instance.containers; 
@@ -227,21 +265,33 @@ namespace AutomaticWorldGeneration
 
                 GameScheduler.Instance.ScheduleNextFrame("Click Embark", (_) =>
                 {
-
+                    Debug.Log("AutomaticWorldGeneration - Clicking Embark");
                     // On this screen is where we can set the world name, I'd like to set it to the seed.
                     
                     //var worldNameInput = Traverse.Create(__instance).Field<KInputField>("worldNameInput").Value;
                     //worldNameInput.SetDisplayValue(CustomGameSettings.Instance.GetSettingsCoordinate());
                     //CustomGameSettg
 
-                    // Lets click start.
+                    // Lets click embark - this is now erroring?
                     MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
                     var parameters = new object[] { };
                     methodInfo.Invoke(__instance, parameters);
+
+
                 });
             }
         }
 
+        [HarmonyPatch(typeof(GameUtil), "GenerateRandomWorldName")]
+        public static class GenerateRandomWorldName
+        {
+            public static bool Prefix(ref string __result, String[] nameTables)
+            {
+                Debug.Log("AutomaticWorldGeneration - GenerateRandomWorldName");
+                __result = CustomGameSettings.Instance.GetSettingsCoordinate();
 
+                return true;
+            }
+        }
     }
 }
