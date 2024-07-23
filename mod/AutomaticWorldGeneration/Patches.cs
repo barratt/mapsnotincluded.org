@@ -8,6 +8,8 @@ using STRINGS;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using YamlDotNet.Core;
 using static ProcGen.ClusterLayout;
 
@@ -16,9 +18,13 @@ namespace AutomaticWorldGeneration
     public class Patches
     {
 
+        public static MinionSelectScreen minionSelectScreen;
+        
         [HarmonyPatch(typeof(Db), "Initialize")]
         public class Db_Initialize_Patch
         {
+
+
             public static void Prefix()
             {
                 Debug.Log("AutomaticWorldGeneration - Init Mod!");
@@ -209,7 +215,8 @@ namespace AutomaticWorldGeneration
 
         //Here we quit the game after forcing spawnables to spawn, not sure if this is actually needed thanks to the save-parser? Will have to generate the same seed twice to see if it contains the same data.
 
-       [HarmonyPatch(typeof(WattsonMessage), "OnDeactivate")]
+        // Wonder if there is a better thing to attach to that represents the end of the world gen process and minions spawned.
+        [HarmonyPatch(typeof(WattsonMessage), "OnDeactivate")]
         public static class QuitGamePt2
         {
             public static void Postfix()
@@ -236,19 +243,24 @@ namespace AutomaticWorldGeneration
                     {
                         Debug.Log("AutomaticWorldGeneration - Restarting Game");
 
-                        App.instance.Restart();
+                        //App.instance.Restart();
                         //LoadScreen.ForceStopGame();
-                        //Debug.Log("AutomaticWorldGeneration - LoadScreen ");
-                        //LoadScreen.ForceStopGame();
-                        //Debug.Log("AutomaticWorldGeneration - AppLoadScene");
-                        //App.LoadScene("frontend");
-                        //Debug.Log("AutomaticWorldGeneration - AppLoadScene Done");
+                        Debug.Log("AutomaticWorldGeneration - LoadScreen ");
+                        LoadScreen.ForceStopGame();
+                        Debug.Log("AutomaticWorldGeneration - AppLoadScene");
+                        App.LoadScene("frontend");
+                        Debug.Log("AutomaticWorldGeneration - AppLoadScene Done");
+
+
                         // Not sure if the loadscene causes this but now we're getting the following after about 5 word gens - seems to be random.
                         //AutomaticWorldGeneration - Clicking Embark
                         //[ERROR] NewBaseScreen ~~~!System.NullReferenceException: Object reference not set to an instance of an object
                         //at NewBaseScreen.SpawnMinions(System.Int32 headquartersCell)[0x000c7] in < 043309e6f0914d9f9e207a782760f195 >:0
                         //at NewBaseScreen.Final()[0x0002f] in < 043309e6f0914d9f9e207a782760f195 >:0
                         //at NewBaseScreen.OnActivate()[0x0004e] in < 043309e6f0914d9f9e207a782760f195 >:0
+
+                        // I think this is due to the minions not 'initializing' properly, so we need to wait for them to be ready.
+                        // However, this doesn't happen when fully restarting the game, so maybe not?
 
                         // instead of restarting, lets get back to the main menu
                         //PauseScreen.TriggerQuitGame();
@@ -271,13 +283,21 @@ namespace AutomaticWorldGeneration
         }
 
         //Skip duplicant selection, probably a better way to skip even loading the prefabs, but this works for now.
-
         [HarmonyPatch(typeof(MinionSelectScreen), "OnSpawn")]
         public static class SkipMinionScreen
         {
+
+            static async Task DoWithDelay(System.Action task, int ms)
+            {
+                await Task.Delay(ms);
+                task.Invoke();
+            }
+
             public static void Postfix(MinionSelectScreen __instance)
             {
                 Debug.Log("AutomaticWorldGeneration - MinionSelectScreen OnSpawn");
+
+                minionSelectScreen = __instance; // This lets us capture an instance of the screen to click the embark button later.
 
                 // Before we click start, lets check all 3 dupe containers are loaded
                 //Debug.Log("Checking if all 3 dupe containers are loaded"); 
@@ -292,23 +312,49 @@ namespace AutomaticWorldGeneration
 
                 // we use a time here, but really we need to figure out the correct way to wait for all the minions to initialize.
                 // Schedule doesnt seem to work actually
-                GameScheduler.Instance.ScheduleNextFrame("__", (__) =>
-                GameScheduler.Instance.ScheduleNextFrame("Click Embark", (_) =>
+
+                //GameScheduler.Instance.ScheduleNextFrame("__", (__) =>
+                //GameScheduler.Instance.ScheduleNextFrame("Click Embark", (_) =>
+                //{
+                //    Debug.Log("AutomaticWorldGeneration - Clicking Embark");
+                //    // On this screen is where we can set the world name, I'd like to set it to the seed.
+
+                //    //var worldNameInput = Traverse.Create(__instance).Field<KInputField>("worldNameInput").Value;
+                //    //worldNameInput.SetDisplayValue(CustomGameSettings.Instance.GetSettingsCoordinate());
+                //    //CustomGameSettg
+
+                //    // Lets click embark - this is now erroring?
+                //    MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
+                //    var parameters = new object[] { };
+                //    methodInfo.Invoke(__instance, parameters);
+                //}));
+
+                DoWithDelay(() =>
                 {
                     Debug.Log("AutomaticWorldGeneration - Clicking Embark");
-                    // On this screen is where we can set the world name, I'd like to set it to the seed.
-
-                    //var worldNameInput = Traverse.Create(__instance).Field<KInputField>("worldNameInput").Value;
-                    //worldNameInput.SetDisplayValue(CustomGameSettings.Instance.GetSettingsCoordinate());
-                    //CustomGameSettg
-
-                    // Lets click embark - this is now erroring?
                     MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
                     var parameters = new object[] { };
                     methodInfo.Invoke(__instance, parameters);
-                }));
+                }, 1000);
             }
         }
+
+        [HarmonyPatch(typeof(CharacterSelectionController), "EnableProceedButton")]
+        public static class SkipCharacterSelection
+        {
+            public static void Postfix(CharacterSelectionController __instance)
+            {
+                Debug.Log("AutomaticWorldGeneration - CharacterSelectionController EnableProceedButton");
+
+                // minonSelectScreen is null here? would have expected enable to be called after.
+
+                //MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
+                //var parameters = new object[] { };
+                //methodInfo.Invoke(minionSelectScreen, parameters);
+
+            }
+        }
+
 
         //[HarmonyPatch(typeof(GameUtil), "GenerateRandomWorldName")]
         //public static class GenerateRandomWorldName

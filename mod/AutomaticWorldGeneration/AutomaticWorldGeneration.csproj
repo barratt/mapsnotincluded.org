@@ -72,4 +72,8 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)$(OutDir)\AutomaticWorldGeneration.dll %25USERPROFILE%25\OneDrive\Documents\Klei\OxygenNotIncluded\mods\Dev\AutomaticWorldGeneration
+start steam://launch/457140</PostBuildEvent>
+  </PropertyGroup>
 </Project>
