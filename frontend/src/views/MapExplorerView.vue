@@ -9,7 +9,7 @@
     </div>
 
     <!-- Lets add the option to select between different DLCs -->
-    <div class="d-flex gap-5 justify-content-center">
+    <div class="d-flex gap-5 justify-content-center flex-wrap">
       <Selectable :items="DLCs" v-model="form.selectedDLC" />
     </div>
 

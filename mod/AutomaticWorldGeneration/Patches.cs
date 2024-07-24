@@ -17,6 +17,11 @@ namespace AutomaticWorldGeneration
 {
     public class Patches
     {
+        static async Task DoWithDelay(System.Action task, int ms)
+        {
+            await Task.Delay(ms);
+            task.Invoke();
+        }
 
         public static MinionSelectScreen minionSelectScreen;
         
@@ -97,8 +102,12 @@ namespace AutomaticWorldGeneration
                     Debug.Log("AutomaticWorldGeneration - TargetPath: " + data.filePath);
                 });
 
-                var flow = mainMenu.GetComponent<NewGameFlow>();
-                flow.BeginFlow();
+                // This is getting silly, give the mainmeu some time to load
+                DoWithDelay(() =>
+                {
+                    var flow = mainMenu.GetComponent<NewGameFlow>();
+                    flow.BeginFlow();
+                }, 1000);
             }
         }
 
@@ -213,12 +222,13 @@ namespace AutomaticWorldGeneration
         }
 
 
-        //Here we quit the game after forcing spawnables to spawn, not sure if this is actually needed thanks to the save-parser? Will have to generate the same seed twice to see if it contains the same data.
+        //Here we quit the game after forcing spawnables to spawn, noDoWithDelayt sure if this is actually needed thanks to the save-parser? Will have to generate the same seed twice to see if it contains the same data.
 
         // Wonder if there is a better thing to attach to that represents the end of the world gen process and minions spawned.
         [HarmonyPatch(typeof(WattsonMessage), "OnDeactivate")]
         public static class QuitGamePt2
         {
+
             public static void Postfix()
             {
                 Debug.Log("AutomaticWorldGeneration - WattsonMessage OnDeactivate");
@@ -245,12 +255,6 @@ namespace AutomaticWorldGeneration
 
                         //App.instance.Restart();
                         //LoadScreen.ForceStopGame();
-                        Debug.Log("AutomaticWorldGeneration - LoadScreen ");
-                        LoadScreen.ForceStopGame();
-                        Debug.Log("AutomaticWorldGeneration - AppLoadScene");
-                        App.LoadScene("frontend");
-                        Debug.Log("AutomaticWorldGeneration - AppLoadScene Done");
-
 
                         // Not sure if the loadscene causes this but now we're getting the following after about 5 word gens - seems to be random.
                         //AutomaticWorldGeneration - Clicking Embark
@@ -265,6 +269,17 @@ namespace AutomaticWorldGeneration
                         // instead of restarting, lets get back to the main menu
                         //PauseScreen.TriggerQuitGame();
                         // Not sure how to do this yet, bring up pause menu by sending escape key?
+                           
+
+                        // Wait for a little bit of initiization time.
+                        DoWithDelay(() =>
+                        {
+                            Debug.Log("AutomaticWorldGeneration - LoadScreen ");
+                            LoadScreen.ForceStopGame();
+                            Debug.Log("AutomaticWorldGeneration - AppLoadScene");
+                            App.LoadScene("frontend");
+                            Debug.Log("AutomaticWorldGeneration - AppLoadScene Done");
+                        }, 1000);
                     });
                 });
             }
@@ -287,11 +302,6 @@ namespace AutomaticWorldGeneration
         public static class SkipMinionScreen
         {
 
-            static async Task DoWithDelay(System.Action task, int ms)
-            {
-                await Task.Delay(ms);
-                task.Invoke();
-            }
 
             public static void Postfix(MinionSelectScreen __instance)
             {

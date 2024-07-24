@@ -2,7 +2,7 @@
     <div v-for="(item, i) in items" :key="item.name" class="selectable" @click="select(item)" :class="{ 
         'selected': selected && selected.name && selected.name == item.name ? true : false,
      }">
-        <img :src="item.img" :alt="item.name" />
+        <img :src="item.img" :alt="item.name" class="img-responsive" />
         <div class="text-center">{{ item.name }}</div>
     </div>
 </template>
@@ -50,7 +50,7 @@ export default {
 }
 
 .selectable img {
-  height: 100px;
+  max-height: 80px;
 }
 
 .selectable:hover {
