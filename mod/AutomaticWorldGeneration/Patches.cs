@@ -103,11 +103,11 @@ namespace AutomaticWorldGeneration
                 });
 
                 // This is getting silly, give the mainmeu some time to load
-                DoWithDelay(() =>
-                {
+                //DoWithDelay(() =>
+                //{
                     var flow = mainMenu.GetComponent<NewGameFlow>();
                     flow.BeginFlow();
-                }, 1000);
+                //}, 1000);
             }
         }
 
@@ -176,7 +176,8 @@ namespace AutomaticWorldGeneration
             }
         }
 
-        // KCrashReporter - ReportError
+         //KCrashReporter - ReportError
+         // TODO: Hook into the crash reporter class, so if there is a major crash, we can restart the game.
         //[HarmonyPatch(typeof(KCrashReporter), "ReportError")]
         //public static class KCrashReporter_ReportError
         //{
