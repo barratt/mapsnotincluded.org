@@ -18,22 +18,16 @@
                     <li class="nav-item">
                         <router-link to="/trait-finder" class="nav-link">StarMap Generator</router-link>
                     </li>
-                    <li class="nav-item">
-                        <router-link to="/contribute" class="nav-link">Contribute</router-link>
-                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <router-link to="/" class="nav-link">Home</router-link>
+                        <router-link to="/contribute" class="nav-link">Contribute</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/about" class="nav-link">About</router-link>
+                        <a href="https://discord.gg/3vhCpp6PNq" target="mni_gh" class="nav-link">Discord</a>
                     </li>
                     <li class="nav-item">
-                        <a href="https://discord.gg/3vhCpp6PNq" target="mni_gh" class="nav-link">GitHub</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">Discord</a>
+                        <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">GitHub</a>
                     </li>
                 </ul>
             </div>

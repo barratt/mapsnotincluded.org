@@ -11,6 +11,7 @@ const router = createRouter({
     },
     { path: '/about', component: () => import('../views/AboutView.vue') },
     { path: '/map-explorer', component: () => import('../views/MapExplorerView.vue') },
+    { path: '/contribute', component: () => import('../views/ContributeView.vue') },
 
     { path: '/:pathMatch(.*)*', component: () => import('../views/Errors/404.vue') },
   ]
