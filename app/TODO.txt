@@ -1,0 +1,1 @@
+We give the end user a presigned s3 token, however this is rife for abuse. We need to implement checks that the user is abiding by the rules here. Perhaps a ip/steam authentication process with a ban system? We can't really open up uploads without some safety.
