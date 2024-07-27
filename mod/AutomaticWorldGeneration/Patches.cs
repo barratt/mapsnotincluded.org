@@ -245,6 +245,16 @@ namespace AutomaticWorldGeneration
                     spawnable.TrySpawn();
                 }
 
+                // Lets get all Geyesers and print them out. (They are a gameObject)
+                var geysers = UnityEngine.Object.FindObjectsOfType<Geyser>();
+                //foreach (var geyser in geysers)
+                //{
+                //    Debug.Log("AutomaticWorldGeneration - Geyser: " + geyser.name);
+                //    // Lets study it 
+                //    geyser.GetComponent<Studyable>().StartStudy();
+
+                //}
+
 
                 GameScheduler.Instance.ScheduleNextFrame("Collect Seed Data", (_) =>
                 {
