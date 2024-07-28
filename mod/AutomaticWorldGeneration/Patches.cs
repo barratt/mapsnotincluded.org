@@ -7,56 +7,45 @@ using ProcGenGame;
 using STRINGS;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using YamlDotNet.Core;
 using static ProcGen.ClusterLayout;
+using static STRINGS.UI;
 
+// Please, experienced ONI mod makers, help me!
 namespace AutomaticWorldGeneration
 {
     public class Patches
     {
-        static async Task DoWithDelay(System.Action task, int ms)
-        {
-            await Task.Delay(ms);
-            task.Invoke();
-        }
-
         public static MinionSelectScreen minionSelectScreen;
+
+        public static WorldGen.OfflineCallbackFunction offlineCB;
+        public static bool OfflineCB(StringKey stringKeyRoot, float completePercent, WorldGenProgressStages.Stages stage)
+        {
+            Debug.Log("AutomaticWorldGeneration - OfflineCB");
+            return true;
+        }
         
         [HarmonyPatch(typeof(Db), "Initialize")]
         public class Db_Initialize_Patch
         {
-
-
             public static void Prefix()
             {
                 Debug.Log("AutomaticWorldGeneration - Init Mod!");
-                // Lets see if we can generate a new world by clicking new game?
-                //SaveManager.
-                //var mainMenu = MainMenu.Instance;
 
-                //var children = mainMenu.GetComponentsInChildren<KButton>();
+                // This was a bit of a test to see if we could generate a world without messing with the UI.
+                //List<string> storyTraits = new List<string>();
+                //int seed = 1;
 
-                //foreach (var child in children)
+                //var cluster = new Cluster("Test", seed, storyTraits, false, false, false);
+
+                //cluster.Generate(new WorldGen.OfflineCallbackFunction(offlineCB, (err) =>
                 //{
-                //    if (child.name == "NewGameButton")
-                //    {
-                //        Debug.Log("Found NewGameButton!");
-                //        child.onClick += () =>
-                //        {
-                //            Debug.Log("NewGameButton Clicked!");
-                //            //ClusterManager.Instance.GenerateWorld();
-                //        };
-                //    }
-                //}
-
-            }
-
-            public static void Postfix()
-            {
-                Debug.Log("AutomaticWorldGeneration - I execute after Db.Initialize!");
+                //    Debug.Log("AutomaticWorldGeneration - Error: " + err);
+                //}, seed, seed, seed, seed);
             }
         }
 
@@ -69,11 +58,6 @@ namespace AutomaticWorldGeneration
             {
                 Debug.Log("AutomaticWorldGenerationn - Starting generation of new World!");
 
-            }
-
-            public static void Postfix()
-            {
-                Debug.Log("AutomaticWorldGeneration - I execute after Db.Initialize!");
             }
         }
 
@@ -91,6 +75,8 @@ namespace AutomaticWorldGeneration
                 Debug.Log("AutomaticWorldGeneration - MainMenu - OnSpawn! Ran");
                 var mainMenu = MainMenu.Instance;
 
+                // TODO: If this is a mod distributed to users, we should wait to let them turn the mod off for maybe 30 seconds? Or let them do x worlds then stop
+
                 WorldGen.WaitForPendingLoadSettings(); // World gen has a lot of what we need, but we need to find the instance of it.
                 CustomGameSettings.Instance.LoadClusters();
 
@@ -102,12 +88,8 @@ namespace AutomaticWorldGeneration
                     Debug.Log("AutomaticWorldGeneration - TargetPath: " + data.filePath);
                 });
 
-                // This is getting silly, give the mainmeu some time to load
-                //DoWithDelay(() =>
-                //{
-                    var flow = mainMenu.GetComponent<NewGameFlow>();
-                    flow.BeginFlow();
-                //}, 1000);
+                var flow = mainMenu.GetComponent<NewGameFlow>();
+                flow.BeginFlow();
             }
         }
 
@@ -138,7 +120,7 @@ namespace AutomaticWorldGeneration
         }
 
 
-        //ColonyDestinationSelectScreen
+        // This gives me an idea, what if we can use customgamesettings and just immediately gen a world :)
         [HarmonyPatch(typeof(ColonyDestinationSelectScreen), "OnSpawn")]
         public static class SelectColonyDestination
         {
@@ -148,7 +130,6 @@ namespace AutomaticWorldGeneration
 
                 var clusters = SettingsCache.GetClusterNames();
                 var randomCluster = clusters[UnityEngine.Random.Range(0, clusters.Count)];
-
 
 
                 var newGameSettingsPanel = Traverse.Create(__instance).Field<NewGameSettingsPanel>("newGameSettingsPanel").Value;
@@ -197,11 +178,12 @@ namespace AutomaticWorldGeneration
             {
                 Debug.Log("AutomaticWorldGeneration - WorldGen Error: " + errorMessage);
                 Debug.Log("AutomaticWorldGeneration - WorldGen Exception: " + e.Message);
-                // Lets click the ok button.
-                //var okButton = Traverse.Create(__instance).Field<KButton>("okButton").Value;
-                //okButton.SignalClick(KKeyCode.Mouse0);
+
+                // This generally happens when a seed is bad and can never be used, (we get a popup that says not all seeds germinate...)
 
                 // TODO: Report the seed as bad
+                string seed = CustomGameSettings.Instance.GetSettingsCoordinate();
+                MapsNotIncluded.ReportBadSeed(seed);
 
                 // Lets restart the game.
                 App.instance.Restart();
@@ -214,8 +196,6 @@ namespace AutomaticWorldGeneration
         {
             public static void Postfix(WattsonMessage __instance)
             {
-                //private KButton button;
-                //__instance.button.SignalClick(KKeyCode.Mouse2);
                 Debug.Log("AutomaticWorldGeneration - WattsonMessage OnActivate");
                 var button = Traverse.Create(__instance).Field<KButton>("button").Value;
                 button.SignalClick(KKeyCode.Mouse2);
@@ -223,13 +203,10 @@ namespace AutomaticWorldGeneration
         }
 
 
-        //Here we quit the game after forcing spawnables to spawn, noDoWithDelayt sure if this is actually needed thanks to the save-parser? Will have to generate the same seed twice to see if it contains the same data.
-
         // Wonder if there is a better thing to attach to that represents the end of the world gen process and minions spawned.
         [HarmonyPatch(typeof(WattsonMessage), "OnDeactivate")]
         public static class QuitGamePt2
         {
-
             public static void Postfix()
             {
                 Debug.Log("AutomaticWorldGeneration - WattsonMessage OnDeactivate");
@@ -245,24 +222,40 @@ namespace AutomaticWorldGeneration
                     spawnable.TrySpawn();
                 }
 
-                // Lets get all Geyesers and print them out. (They are a gameObject)
-                var geysers = UnityEngine.Object.FindObjectsOfType<Geyser>();
-                //foreach (var geyser in geysers)
-                //{
-                //    Debug.Log("AutomaticWorldGeneration - Geyser: " + geyser.name);
-                //    // Lets study it 
-                //    geyser.GetComponent<Studyable>().StartStudy();
+                // Remove all fog
+                foreach (var world in ClusterManager.Instance.WorldContainers)
+                {
+                    world.SetDiscovered(true);
+                }
 
-                //}
+                var cells = Grid.CellCount;
+                for (int i = 0; i < cells; i++)
+                {
+                    Grid.Reveal(i);
+                }
 
+                SaveLoader.Instance.InitialSave(); // Without this, the world gets saved later on. By using this the save exists immeiately.
+                string filename = SaveLoader.GetActiveSaveFilePath(); // is full path
+                bool exists = File.Exists(filename);
+                Debug.Log("AutomaticWorldGeneration - Save file " + filename + " exists: " + exists);
+
+                var saveData = File.ReadAllBytes(filename);
 
                 GameScheduler.Instance.ScheduleNextFrame("Collect Seed Data", (_) =>
                 {
-                    // TODO: Send data to server.
+                    string seed = CustomGameSettings.Instance.GetSettingsCoordinate();
+                    List<string> worldTraits = GameCapture.GetWorldTraits();
+                    List<Models.Geyser> geysers = GameCapture.GetGeyserTraits();
+         
+                    Debug.Log("Found " + geysers.Count + " geysers");
+
+
+                    MapsNotIncluded.SendData(CustomGameSettings.Instance.GetSettingsCoordinate(), worldTraits, geysers, saveData);
 
                     GameScheduler.Instance.ScheduleNextFrame("Restart", (__) =>
                     {
                         Debug.Log("AutomaticWorldGeneration - Restarting Game");
+                        //App.Quit();
 
                         //App.instance.Restart();
                         //LoadScreen.ForceStopGame();
@@ -280,10 +273,10 @@ namespace AutomaticWorldGeneration
                         // instead of restarting, lets get back to the main menu
                         //PauseScreen.TriggerQuitGame();
                         // Not sure how to do this yet, bring up pause menu by sending escape key?
-                           
+
 
                         // Wait for a little bit of initiization time.
-                        DoWithDelay(() =>
+                        Utils.DoWithDelay(() =>
                         {
                             Debug.Log("AutomaticWorldGeneration - LoadScreen ");
                             LoadScreen.ForceStopGame();
@@ -312,45 +305,12 @@ namespace AutomaticWorldGeneration
         [HarmonyPatch(typeof(MinionSelectScreen), "OnSpawn")]
         public static class SkipMinionScreen
         {
-
-
             public static void Postfix(MinionSelectScreen __instance)
             {
                 Debug.Log("AutomaticWorldGeneration - MinionSelectScreen OnSpawn");
 
                 minionSelectScreen = __instance; // This lets us capture an instance of the screen to click the embark button later.
-
-                // Before we click start, lets check all 3 dupe containers are loaded
-                //Debug.Log("Checking if all 3 dupe containers are loaded"); 
-                ////__instance.containers; 
-                //var containers = Traverse.Create(__instance).Field<List<ITelepadDeliverableContainer>>("containers").Value;
-                //Debug.Log("Containers: " + containers.Count); // 3
-
-                //Debug.Log("Container 1: " + containers[0].GetType()); // ColonyDestinationSelectScreen
-                //Debug.Log("Container 2: " + containers[1].GetType()); // ColonyDestinationSelectScreen
-                //Debug.Log("Container 3: " + containers[2].GetType()); // ColonyDestinationSelectScreen
-
-
-                // we use a time here, but really we need to figure out the correct way to wait for all the minions to initialize.
-                // Schedule doesnt seem to work actually
-
-                //GameScheduler.Instance.ScheduleNextFrame("__", (__) =>
-                //GameScheduler.Instance.ScheduleNextFrame("Click Embark", (_) =>
-                //{
-                //    Debug.Log("AutomaticWorldGeneration - Clicking Embark");
-                //    // On this screen is where we can set the world name, I'd like to set it to the seed.
-
-                //    //var worldNameInput = Traverse.Create(__instance).Field<KInputField>("worldNameInput").Value;
-                //    //worldNameInput.SetDisplayValue(CustomGameSettings.Instance.GetSettingsCoordinate());
-                //    //CustomGameSettg
-
-                //    // Lets click embark - this is now erroring?
-                //    MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
-                //    var parameters = new object[] { };
-                //    methodInfo.Invoke(__instance, parameters);
-                //}));
-
-                DoWithDelay(() =>
+                Utils.DoWithDelay(() =>
                 {
                     Debug.Log("AutomaticWorldGeneration - Clicking Embark");
                     MethodInfo methodInfo = typeof(MinionSelectScreen).GetMethod("OnProceed", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -360,6 +320,8 @@ namespace AutomaticWorldGeneration
             }
         }
 
+
+        // Here we attempted to skip some scenes
         [HarmonyPatch(typeof(CharacterSelectionController), "EnableProceedButton")]
         public static class SkipCharacterSelection
         {
