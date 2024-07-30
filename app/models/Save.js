@@ -3,6 +3,11 @@ const sequelize     = require('../lib/database');
 
 const Save = sequelize.define('Save', {
     seed: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    coordinates: {
+        primaryKey: true,
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -10,7 +15,10 @@ const Save = sequelize.define('Save', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    // We can store these as an array, but this lets us query them easily (with more speed?)
+    worldId: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     vanilla: {
         type: DataTypes.BOOLEAN,
         allowNull: false
@@ -23,8 +31,36 @@ const Save = sequelize.define('Save', {
         type: DataTypes.BOOLEAN,
         allowNull: false
     },
-    
+    wordTraits: { // Array of enums
+        type: DataTypes.ARRAY(DataTypes.ENUM({
+            values: [
+                'BouldersMedium',
+                'DeepOil',
+                'MetalRich',
+                'BouldersMixed',
+                'MagmaVents',
+                'Volcanoes',
+                'MetalPoor',
+                'SlimeSplats',
+                'BouldersLarge',
+                'IrregularOil',
+                'Geodes',
+                'SlimeSplats',
+                'FrozenCore',
+                'BouldersLarge',
+                'SubsurfaceOcean',
+                'MisalignedStart',
+                'GeoActive',
+                'BouldersSmall',
+                'GlaciersLarge',
+                'GeoDormant',
+            ]
+        })),
+        allowNull: false,
+        
+    },
     // This is the save file itself
 });
 
 module.exports = Save;
+

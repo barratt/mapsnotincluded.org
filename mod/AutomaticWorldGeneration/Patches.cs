@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using UnityEngine;
 using YamlDotNet.Core;
 using static ProcGen.ClusterLayout;
 using static STRINGS.UI;
@@ -35,6 +36,7 @@ namespace AutomaticWorldGeneration
             public static void Prefix()
             {
                 Debug.Log("AutomaticWorldGeneration - Init Mod!");
+                //PlayerSettings.forceSingleInstance = false;
 
                 // This was a bit of a test to see if we could generate a world without messing with the UI.
                 //List<string> storyTraits = new List<string>();
@@ -157,17 +159,18 @@ namespace AutomaticWorldGeneration
             }
         }
 
-         //KCrashReporter - ReportError
-         // TODO: Hook into the crash reporter class, so if there is a major crash, we can restart the game.
-        //[HarmonyPatch(typeof(KCrashReporter), "ReportError")]
-        //public static class KCrashReporter_ReportError
-        //{
-        //    public static void Postfix(KCrashReporter __instance, string error)
-        //    {
-        //        Debug.Log("AutomaticWorldGeneration - KCrashReporter Error: " + error);
-        //        App.instance.Restart();
-        //    }
-        //}
+        //KCrashReporter - ReportError
+        // TODO: Hook into the crash reporter class, so if there is a major crash, we can restart the game.
+        [HarmonyPatch(typeof(KCrashReporter), "ReportError")]
+        public static class KCrashReporter_ReportError
+        {
+            public static void Postfix(KCrashReporter __instance, string msg, string stack_trace, ConfirmDialogScreen confirm_prefab, GameObject confirm_parent, string userMessage = "", bool includeSaveFile = true, string[] extraCategories = null, string[] extraFiles = null)
+            {
+                
+                Debug.Log("AutomaticWorldGeneration - KCrashReporter Error: " + msg);
+                App.Quit();
+            }
+        }
 
         //OfflineWorldGen DisplayErrors - This is a bit of a hack, but it works for now.
         //WorldGen ReportWorldGenError
@@ -186,7 +189,7 @@ namespace AutomaticWorldGeneration
                 MapsNotIncluded.ReportBadSeed(seed);
 
                 // Lets restart the game.
-                App.instance.Restart();
+                App.Quit();
             }
         }
 
@@ -338,17 +341,14 @@ namespace AutomaticWorldGeneration
             }
         }
 
-
-        //[HarmonyPatch(typeof(GameUtil), "GenerateRandomWorldName")]
-        //public static class GenerateRandomWorldName
-        //{
-        //    public static bool Prefix(ref string __result, String[] nameTables)
-        //    {
-        //        Debug.Log("AutomaticWorldGeneration - GenerateRandomWorldName");
-        //        __result = CustomGameSettings.Instance.GetSettingsCoordinate();
-
-        //        return true;
-        //    }
-        //}
+        // Sometimes the game crashes when spawning duplicants, whether this is due to where the HQ is or the 'ANewHope' delay, I'm not sure, but maybe if we skip the duplicants spawning it will go away? It's not like we need them...
+        [HarmonyPatch(typeof(NewBaseScreen), "SpawnMinions")]
+        public static class SpawnMinionsSkip
+        {
+            public static bool Prefix(int headquartersCell)
+            {
+                return true;
+            }
+        }
     }
 }

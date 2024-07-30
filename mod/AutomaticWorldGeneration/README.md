@@ -8,3 +8,5 @@ There are currently two methods:
  - Get back to the main menu somehow.
 
 For now I am using the second approach as it is much, much faster (skips the game loading part) however it is prone to crashing. I'm not sure I'll ever be able to get it to work 100% of the time, at present I am using ignorecrashreporter.txt and an external auto-restart script, as its just me. If we do distribute this on the steam workshop, we will either need to fix this or use the restart method.
+
+This works if on Vanilla however there is a bug when enabling DLCs

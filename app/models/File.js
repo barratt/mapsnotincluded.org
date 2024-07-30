@@ -1,9 +1,13 @@
 // models/File.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
+const sequelize = require('../lib/database');
 
 const File = sequelize.define('File', {
   filename: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  bucket: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -13,11 +17,11 @@ const File = sequelize.define('File', {
   },
   mimeType: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   size: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 

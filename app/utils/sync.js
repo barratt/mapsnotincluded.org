@@ -1,8 +1,7 @@
 require('dotenv').config();
 
-const sequelize = require('./database');
-const File      = require('./models/File');
-const Save      = require('./models/Save');
+const sequelize = require('../lib/database');
+const { File, Geyser, Save } = require('../models');
 
 const syncDatabase = async () => {
   try {
