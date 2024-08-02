@@ -1,19 +1,39 @@
 version: '3.7'
 services:
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - .:/app
-  #   environment:
-  #     - NODE_ENV=development
-  #     - PORT=3000
-  #   depends_on:
-  #     - db
+  app:
+    image: ghcr.io/barratt/mni:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      
+      - DB_NAME=mni
+      - DB_USER=mni
+      - DB_PASS=mni
+      - DB_HOST=db
 
+      - S3_ACCESS_KEY_ID=
+      - S3_SECRET_ACCESS_KEY=
+      - S3_REGION=eu-west-1
+      - S3_ENDPOINT=
+      - S3_BUCKET=mapsnotincluded
+
+      - API_URL=https://api.mapsnotincluded.org
+      - INTERFACE=0.0.0.0
+      - API_PREFIX=/v1
+    depends_on:
+      - db
+    networks:
+      - internal_network
+    deploy:
+      resources:
+        limits:
+          cpus: '11'
+          memory: 512M
+    mem_limit: 512m
+    cpus: '1'
+  
   db:
     image: postgres:16
     environment:
@@ -21,18 +41,20 @@ services:
       POSTGRES_PASSWORD: mni
       POSTGRES_DB: mni
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-
-  #   environment:
-  #     - RABBITMQ_DEFAULT_USER=mni
-  #     - RABBITMQ_DEFAULT_PASS=mni
+    networks:
+      - internal_network
+  debian_shell: # Used to check networking, development only
+    image: debian
+    command: bash
+    networks:
+      - internal_network
 volumes:
   db_data:
+
+networks:
+  internal_network:
+    internal: true
+# TODO: Consider removing all caps and only adding essentials.

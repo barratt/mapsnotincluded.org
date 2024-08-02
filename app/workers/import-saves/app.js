@@ -2,7 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const { Queue } = require('async-await-queue');
 
-const Q = new Queue(10, 100);
+const Q = new Queue(3, 100);
 
 let worldTraits = [];
 let geysers = [];
@@ -55,7 +55,7 @@ async function main(savesDir) {
     for (const save of saves) {
         if (save == 'auto_save') continue;
 
-        toProcess.push(Q.run(() => uploadSave(savesDir, save).catch(console.error)));
+        toProcess.push(Q.run(() => uploadSave(savesDir, save).catch(e => console.error(`E: ${e.message}`))));
     }
 
     await Promise.all(toProcess);

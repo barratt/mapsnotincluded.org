@@ -13,7 +13,7 @@ app.use('/', express.static('public')); // TODO: Host UI from here perhaps?
 
 const port = process.env.PORT || 3000;
 const interface = process.env.INTERFACE || 'localhost';
-const apiPrefix = process.env.API_PREFIX || '/api';
+const apiPrefix = process.env.API_PREFIX;
 
 app.use((req, res, next) => { // TODO: Proper logging
   console.log(`${req.method} ${req.url}`);
@@ -31,5 +31,5 @@ app.use(`${apiPrefix}/files`, require('./controllers/File'));
 app.use(`${apiPrefix}/ingest`, require('./controllers/Ingest'));
 
 app.listen(port, interface, () => {
-    console.log(`Server is running on port http://${interface}:${port}`);
+    console.log(`Server is running on port http://${interface}:${port} with prefix ${apiPrefix}`);
 });
