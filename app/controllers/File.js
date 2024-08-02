@@ -7,7 +7,7 @@ const File = require('../models/File');
 
 const authentication = require('../middleware/authentication');
 
-router.use(authentication);
+router.use(authentication.authenticate);
 
 router.get('/', (req, res) => {
     return res.status(501);

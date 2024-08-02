@@ -9,9 +9,15 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/', express.static('public'));
+app.use('/', express.static('public')); // TODO: Host UI from here perhaps?
 
 const port = process.env.PORT || 3000;
+const interface = process.env.INTERFACE || 'localhost';
+
+app.use((req, res, next) => { // TODO: Proper logging
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 app.get('/api', (req, res) => {
   res.json({
@@ -21,7 +27,8 @@ app.get('/api', (req, res) => {
 
 app.use('/api/saves', require('./controllers/Save'));
 app.use('/api/files', require('./controllers/File'));
+app.use('/api/ingest', require('./controllers/Ingest'));
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(port, interface, () => {
+    console.log(`Server is running on port http://${interface}:${port}`);
 });

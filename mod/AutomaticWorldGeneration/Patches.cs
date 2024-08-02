@@ -172,6 +172,19 @@ namespace AutomaticWorldGeneration
             }
         }
 
+        [HarmonyPatch(typeof(KCrashReporter), "OnEnable")]   
+        public static class KCrashReporter_OnEnable
+        {
+            public static void Postfix(KCrashReporter __instance)
+            {
+                Debug.Log("AutomaticWorldGeneration - KCrashReporter OnEnable");
+                KCrashReporter.ignoreAll = true;
+                KCrashReporter.terminateOnError = false;
+                //__instance.gameObject.SetActive(false);
+            }
+        }
+
+
         //OfflineWorldGen DisplayErrors - This is a bit of a hack, but it works for now.
         //WorldGen ReportWorldGenError
         [HarmonyPatch(typeof(WorldGen), "ReportWorldGenError")]
@@ -300,7 +313,7 @@ namespace AutomaticWorldGeneration
                 Debug.Log("AutomaticWorldGeneration - BaseNaming GenerateBaseNameString");
                 var seed = CustomGameSettings.Instance.GetSettingsCoordinate();
                 __result = seed;
-                return false;
+                return false; 
             }
         }
 
@@ -347,7 +360,8 @@ namespace AutomaticWorldGeneration
         {
             public static bool Prefix(int headquartersCell)
             {
-                return true;
+                Debug.Log("Attempting to skip spawn minions");
+                return false;
             }
         }
     }

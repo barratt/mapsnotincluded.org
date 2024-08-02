@@ -17,7 +17,7 @@ const Save = sequelize.define('Save', {
     },
     worldId: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     vanilla: {
         type: DataTypes.BOOLEAN,
