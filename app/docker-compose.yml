@@ -1,9 +1,20 @@
 version: '3.7'
 services:
+  balancer:
+    image: nginx:alpine
+    ports:
+      - "3050:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+    # networks:
+    #   - internal_network
+
   app:
     image: ghcr.io/barratt/mni:latest
-    ports:
-      - "3000:3000"
+    # ports:
+      # - "3000-3001:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -24,9 +35,10 @@ services:
       - API_PREFIX=/v1
     depends_on:
       - db
-    networks:
-      - internal_network
+    # networks:
+    #   - internal_network
     deploy:
+      replicas: 2
       resources:
         limits:
           cpus: '11'
@@ -44,17 +56,17 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-    networks:
-      - internal_network
-  debian_shell: # Used to check networking, development only
-    image: debian
-    command: bash
-    networks:
-      - internal_network
+    # networks:
+    #   - internal_network
+  # debian_shell: # Used to check networking, development only
+  #   image: debian
+  #   command: bash
+  #   networks:
+  #     - internal_network
 volumes:
   db_data:
 
-networks:
-  internal_network:
-    internal: true
+# networks:
+#   internal_network:
+#     internal: true
 # TODO: Consider removing all caps and only adding essentials.

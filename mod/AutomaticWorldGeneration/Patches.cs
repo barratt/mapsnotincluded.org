@@ -33,7 +33,7 @@ namespace AutomaticWorldGeneration
         [HarmonyPatch(typeof(Db), "Initialize")]
         public class Db_Initialize_Patch
         {
-            public static void Prefix()
+            public static void Prefix1()
             {
                 Debug.Log("AutomaticWorldGeneration - Init Mod!");
                 //PlayerSettings.forceSingleInstance = false;
