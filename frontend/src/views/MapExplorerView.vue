@@ -24,6 +24,11 @@
 
     <hr class="mt-5"/>
 
+    <div class="d-flex justify-content-center mb-3">
+      <button class="btn btn-success"><i class="bi-plus" @click="addCriteria"></i></button>
+    </div>
+
+
     <div v-for="(criteria, i) in form.criteria" :key="i">
       <div class="input-group mb-3">
         <select class="form-select " id="" v-model="criteria.type">
@@ -74,11 +79,17 @@
           <option value="=">exactly</option>
         </select>
 
+        <input type="number" class="form-control" placeholder="Value" v-model="criteria.value">
 
+        <button v-if="i > 0" class="btn btn-danger" @click="removeCriteria(i)"><i class="bi-x"></i></button>
 
       </div>
-
+      
     </div>
+
+    <!-- <div class="d-flex justify-content-center">
+      <button class="btn btn-success"><i class="bi-plus" @click="addCriteria"></i></button>
+    </div> -->
 
   </main>
 </template>
