@@ -2,12 +2,17 @@ require('dotenv').config();
 const fs = require('fs');
 const { Queue } = require('async-await-queue');
 
-const Q = new Queue(3, 100);
+const Q = new Queue(5, 100);
 
 let worldTraits = [];
 let geysers = [];
 
 const url = `${process.env.API_URL || 'https://api.mapsnotincluded.org'}/ingest`;
+
+if (!fs.existsSync('verified.txt')) {
+    fs.writeFileSync('verified.txt', '');
+}
+const alreadyVerified = fs.readFileSync('verified.txt').toString().split('\n');
 
 // TODO: Queue the promises, so we can do concurrent uploads
 async function uploadSave(saveDir, saveName) {
@@ -35,6 +40,9 @@ async function uploadSave(saveDir, saveName) {
     let response = await fetch(url, {
         method: 'POST',
         body: form,
+        headers: {
+            'Authorization': process.env.AUTH_SECRET,
+        }
     });
 
     if (response.status != 200) {
@@ -42,6 +50,7 @@ async function uploadSave(saveDir, saveName) {
     } else {
         console.log(`Ingested ${saveName}`);
         console.log(await response.json());
+        fs.appendFileSync('verified.txt', `${saveName}\n`);
     }
 }
 
@@ -55,7 +64,13 @@ async function main(savesDir) {
     for (const save of saves) {
         if (save == 'auto_save') continue;
 
+        if (alreadyVerified.includes(save)) {
+            console.log(`Save ${save} has already been verified, skipping`);
+            continue;
+        }
+
         toProcess.push(Q.run(() => uploadSave(savesDir, save).catch(e => console.error(`E: ${e.message}`))));
+        // break;
     }
 
     await Promise.all(toProcess);

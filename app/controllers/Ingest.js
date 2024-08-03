@@ -116,7 +116,7 @@ router.post('/', upload.single('save'), asyncHandler(async (req, res) => {
     console.log(`Creating save record for ${coordinates}`);
     saveRecord = await Save.create({ // TODO: Add to the mod all of this data so we don't have to rely on the save parser project and the mod project.
         seed: saveData.gameData.worldDetail.globalWorldSeed,
-        coordinates: save,
+        coordinates: coordinates,
         gameVersion: saveData.version.major + '.' + saveData.version.minor,
         worldId: worldId,
         vanilla: true,

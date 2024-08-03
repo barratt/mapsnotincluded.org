@@ -18,6 +18,10 @@
       <Selectable :items="selectedCluster" v-model="form.selectedWorld" />
     </div>
 
+    <div class="d-flex justify-content-center mt-5">
+      {{ saveCount }} seeds indexed
+    </div>
+
     <hr class="mt-5"/>
 
     <div v-for="(criteria, i) in form.criteria" :key="i">
@@ -82,12 +86,14 @@
 <script>
 import { DLCs, VanillaWorlds, SpacedOutWorlds, FrostyPlanetWorlds } from '@/oni';
 import Selectable from '@/components/Selectable.vue';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default {
   name: 'MapExplorerView',
-  setup() {
+  data() {
     return {
       DLCs,
+      saveCount: 0,
       form: {
         selectedWorld: null,
         selectedDLC: null,
@@ -122,12 +128,29 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getSaveCount();
+    setInterval(this.getSaveCount, 2000);
+  },
   methods: {
     addCriteria() {
       this.form.criteria.push({});
     },
     removeCriteria(index) {
       this.form.criteria.splice(index, 1);
+    },
+
+    getSaveCount() {
+      console.log('getCount');
+      const url = `${API_URL}/saves/count`;
+      console.log('url', url);
+      // worldId is a query parameter.
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('data', data);
+          this.saveCount = data.count;
+        });
     }
   }
 };

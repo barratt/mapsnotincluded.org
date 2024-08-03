@@ -4,7 +4,11 @@ const sequelize = require('./lib/database');
 const { Save, File } = require('./models');
 
 const express = require('express');
+const cors    = require('cors');
+
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -13,7 +17,7 @@ app.use('/', express.static('public')); // TODO: Host UI from here perhaps?
 
 const port = process.env.PORT || 3000;
 const interface = process.env.INTERFACE || 'localhost';
-const apiPrefix = process.env.API_PREFIX;
+const apiPrefix = process.env.API_PREFIX || '';
 
 app.use((req, res, next) => { // TODO: Proper logging
   console.log(`${req.method} ${req.url}`);
