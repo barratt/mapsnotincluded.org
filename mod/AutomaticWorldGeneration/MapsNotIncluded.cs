@@ -6,12 +6,16 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.Networking;
+using UnityEngine;
 
 namespace AutomaticWorldGeneration
 {
     public class MapsNotIncluded
     {
-        public static void SendData(string seed, List<string> worldTraits, List<Models.Geyser> geysers, byte[] saveFile)
+        public static readonly string API_URL = "https://api.mapsnotincluded.org";
+
+        public static void SendData(MonoBehaviour instance, string seed, List<string> worldTraits, List<Models.Geyser> geysers, byte[] saveFile, Action<string> callback)
         {
             // For now lets save to the saveFile path a .json with worldTraits, geysers, and seed, this can be converted to a HTTP call later.
 
@@ -25,9 +29,7 @@ namespace AutomaticWorldGeneration
 
             try
             {
-                //StartCoroutine(UploadFileAndText(url, filePath, textContent, authToken));
-
-                Debug.Log("Automatic World Generation: "); // + uplaod.Result);
+                instance.StartCoroutine(postRequest(API_URL + "/ingest", json, saveFile, callback));
             } catch (Exception e)
             {
                 Debug.Log("Automatic World Generation: Error uploading data: " + e.Message);
@@ -39,70 +41,33 @@ namespace AutomaticWorldGeneration
             Debug.Log("TODO");
         }
 
-        //public static async Task<string> UploadFileAndText(string url, byte[] saveFile, string data)
-        //{
-        //using (var content = new MultipartFormDataContent())
-        //{
-        //    // Add file content
-        //    var fileContent = new ByteArrayContent(saveFile);
-        //    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
-        //    content.Add(fileContent, "save", "save.sav");
 
-
-        //    // Add text content
-        //    content.Add(new StringContent(data), "data");
-
-        //    if (string.IsNullOrEmpty(url))
-        //    {
-        //        Debug.Log("URL is not set.");
-        //        return "";
-        //    }
-
-        //    string authToken = Environment.GetEnvironmentVariable("MNI_SECRET");
-
-        //    if (!string.IsNullOrEmpty(authToken))
-        //    {
-        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-        //        Debug.Log("Automatic World Generation: Using auth token " + authToken);
-        //    } else
-        //    {
-        //        Debug.Log("Automatic World Generation: No auth token found.");
-        //    }
-
-
-        //    // Send the request
-        //    var response = await client.PostAsync(url, content);
-        //    response.EnsureSuccessStatusCode();
-
-        //    // Read and return the response content
-        //    return await response.Content.ReadAsStringAsync();
-        //}
-        //}
-        IEnumerator UploadFileAndText(string url, string filePath, string textContent, string authToken)
+        public static IEnumerator postRequest(string url, string dataPayload, byte[] save, Action<string> callback)
         {
-            // Read file bytes
-            byte[] fileBytes = File.ReadAllBytes(filePath);
+            List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
+            formData.Add(new MultipartFormDataSection("data", dataPayload));
+            formData.Add(new MultipartFormFileSection("save", save, "save.sav", "application/octet-stream"));
 
-            // Create form data
-            WWWForm form = new WWWForm();
-            form.AddBinaryData("file", fileBytes, Path.GetFileName(filePath), "multipart/form-data");
-            form.AddField("textField", textContent);
+            UnityWebRequest uwr = UnityWebRequest.Post(url, formData);
 
-            // Create UnityWebRequest
-            UnityWebRequest www = UnityWebRequest.Post(url, form);
-            www.SetRequestHeader("Authorization", "Bearer " + authToken);
-
-            // Send request and wait for response
-            yield return www.SendWebRequest();
-
-            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+            if (Environment.GetEnvironmentVariable("MNI_API_KEY") != null)
             {
-                Debug.LogError("Error: " + www.error);
+                uwr.SetRequestHeader("Authorization", Environment.GetEnvironmentVariable("MNI_API_KEY"));
+            }
+
+            yield return uwr.SendWebRequest();
+
+            if (uwr.isNetworkError)
+            {
+                Debug.Log("Automatic World Generation - UWR - Error While Sending: " + uwr.error);
+                callback?.Invoke(null); // Pass null or an error message in case of an error
             }
             else
             {
-                Debug.Log("Response: " + www.downloadHandler.text);
+                Debug.Log("Automatic World Generation - UWR - Received: " + uwr.downloadHandler.text);
+                callback?.Invoke(uwr.downloadHandler.text);
             }
         }
+
     }
 }

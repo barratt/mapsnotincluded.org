@@ -14,7 +14,7 @@
     </div>
 
     <!-- Lets add the option to select between different worlds -->
-    <div class="d-flex gap-5 justify-content-center" v-if="selectedCluster">
+    <div class="d-flex gap-5 justify-content-center flex-wrap" v-if="selectedCluster">
       <Selectable :items="selectedCluster" v-model="form.selectedWorld" />
     </div>
 
@@ -107,7 +107,7 @@ export default {
       saveCount: 0,
       form: {
         selectedWorld: null,
-        selectedDLC: null,
+        selectedDLC: DLCs[0],
         criteria: [
           {
 
@@ -123,16 +123,17 @@ export default {
     selectedCluster() {
       console.log("selectedCluster", this.form.selectedDLC);
       if (!this.form.selectedDLC) {
+        console.log('no selectedDLC');
         return null;
       }
 
-      const name = this.form.selectedDLC.name;
-      console.log('selectedCluster', name);
-      if (name === 'Vanilla') {
+      const id = this.form.selectedDLC.id;
+
+      if (id === 'Vanilla') {
         return VanillaWorlds;
-      } else if (name === 'Spaced Out!') {
+      } else if (id === 'Spaced Out!') {
         return SpacedOutWorlds;
-      } else if (name == 'Frosty Planet') {
+      } else if (id == 'Frosty Planet') {
         return FrostyPlanetWorlds;
       } else {
         return null;

@@ -1,17 +1,12 @@
-require('dotenv').config();
 const fs = require('fs');
-const { Queue } = require('async-await-queue');
-
-const Q = new Queue(12, 100);
-
-let worldTraits = [];
-let geysers = [];
 
 const url = `${process.env.API_URL || 'https://api.mapsnotincluded.org'}/ingest`;
+const apiKey = process.env.AUTH_SECRET;
 
 if (!fs.existsSync('verified.txt')) {
     fs.writeFileSync('verified.txt', '');
 }
+
 const alreadyVerified = fs.readFileSync('verified.txt').toString().split('\n');
 
 // TODO: Queue the promises, so we can do concurrent uploads
@@ -41,7 +36,7 @@ async function uploadSave(saveDir, saveName) {
         method: 'POST',
         body: form,
         headers: {
-            'Authorization': process.env.AUTH_SECRET,
+            'Authorization': apiKey,
         }
     });
 
@@ -55,28 +50,41 @@ async function uploadSave(saveDir, saveName) {
 }
 
 async function main(savesDir) { 
+    console.log(`Processing ${savesDir}`);
+
+    await new Promise(resolve => setTimeout(resolve, 1000 * 5)); // Wait before starting (Give the user time to cancel)
+
     const saves = fs.readdirSync(savesDir);
 
     console.log(`Processing ${saves.length} saves`);
 
-    const toProcess = [];
+    while(true) {
+        for (const save of saves) {
+            if (save == 'auto_save') continue;
 
-    for (const save of saves) {
-        if (save == 'auto_save') continue;
+            if (alreadyVerified.includes(save)) {
+                console.log(`Save ${save} has already been verified, skipping`);
+                continue;
+            }
 
-        if (alreadyVerified.includes(save)) {
-            console.log(`Save ${save} has already been verified, skipping`);
-            continue;
+            try {
+                await uploadSave(savesDir, save);
+                fs.rmSync(`${savesDir}/${save}`, { recursive: true, force: true });
+            } catch (e) {
+                console.error(`E: ${e.message}`);
+                // If it errors, do not remove.
+            }
         }
 
-        toProcess.push(Q.run(() => uploadSave(savesDir, save).catch(e => console.error(`E: ${e.message}`))));
-        // break;
+        // Lets remove the retired colonies which is ../retired from the savesDir
+        const retired = fs.readdirSync(`${savesDir}/../RetiredColonies`);
+
+        for (const save of retired) {
+            fs.rmSync(`${savesDir}/../RetiredColonies/${save}`, { recursive: true, force: true });
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1000 * 60 * 5)); // Upload any new saves.
     }
-
-    await Promise.all(toProcess);
 }
 
-
-if (require.main === module) {
-    main(process.argv[2]);
-}
+main(process.argv[2]);

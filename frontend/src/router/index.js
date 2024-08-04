@@ -9,8 +9,10 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
-    { path: '/about', component: () => import('../views/AboutView.vue') },
     { path: '/map-explorer', component: () => import('../views/MapExplorerView.vue') },
+    { path: '/trait-finder', component: () => import('../views/WorldTraitFinderView.vue') },
+
+    { path: '/about', component: () => import('../views/AboutView.vue') },
     { path: '/contribute', component: () => import('../views/ContributeView.vue') },
 
     { path: '/:pathMatch(.*)*', component: () => import('../views/Errors/404.vue') },

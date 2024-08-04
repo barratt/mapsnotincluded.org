@@ -1,9 +1,11 @@
 <template>
-    <div v-for="(item, i) in items" :key="item.name" class="selectable" @click="select(item)" :class="{ 
-        'selected': selected && selected.name && selected.name == item.name ? true : false,
+    <div v-for="(item, i) in items" :key="item.id" class="selectable" @click="select(item)" :class="{ 
+        'selected': isSelected(item.id),
      }">
-        <img :src="item.img" :alt="item.name" class="img-responsive" />
-        <div class="text-center">{{ item.name }}</div>
+        <img :src="item.img" :alt="item.id" class="img-responsive"/>
+        <div class="text-center" :class="{
+            [selectedTextClass]: isSelected(item.id),
+        }">{{ item.id }}</div>
     </div>
 </template>
 
@@ -18,6 +20,14 @@ export default {
             type: Object,
             default: null,
         },  
+        multiselect: {
+            type: Boolean,
+            default: false,
+        },
+        selectedTextClass: {
+            type: String,
+            default: 'text-info',
+        }
     },
     emits: ['update:modelValue'],
     data() {
@@ -27,16 +37,39 @@ export default {
             first = this.$props.items[0];
         }
 
+        if (this.$props.multiselect) {
+            first = [];
+        }
+    
         return {
             selected: first,
         }
     },
     methods: {
         select(item) {
-            console.log('setSelected', item);
-            this.selected = item;
-            this.$emit('update:modelValue', item.name);
-            this.$forceUpdate();
+            // console.log('setSelected', item);
+            
+            if (this.multiselect) {
+                if (this.selected.includes(item)) {
+                    let index = this.selected.findIndex(i => i.id === item.id);
+                    this.selected.splice(index, 1);
+                } else {
+                    this.selected.push(item);
+                }
+            } else {
+                this.selected = item;
+            }
+
+            console.log('selected', this.selected);
+            this.$emit('update:modelValue', this.selected);
+        },
+
+        isSelected(id) {
+            if (this.multiselect) {
+                return this.selected && this.selected.find(i => i.id === id);
+            }
+
+            return this.selected && this.selected.id && this.selected.id == id;
         }
     },
 }

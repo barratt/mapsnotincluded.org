@@ -223,7 +223,7 @@ namespace AutomaticWorldGeneration
         [HarmonyPatch(typeof(WattsonMessage), "OnDeactivate")]
         public static class QuitGamePt2
         {
-            public static void Postfix()
+            public static void Postfix(WattsonMessage __instance)
             {
                 Debug.Log("AutomaticWorldGeneration - WattsonMessage OnDeactivate");
 
@@ -266,10 +266,8 @@ namespace AutomaticWorldGeneration
                     Debug.Log("Found " + geysers.Count + " geysers");
 
 
-                    MapsNotIncluded.SendData(CustomGameSettings.Instance.GetSettingsCoordinate(), worldTraits, geysers, saveData);
-
-                    GameScheduler.Instance.ScheduleNextFrame("Restart", (__) =>
-                    {
+                    //GameScheduler.Instance.ScheduleNextFrame("Restart", (__) =>
+                    MapsNotIncluded.SendData(GameScheduler.Instance, CustomGameSettings.Instance.GetSettingsCoordinate(), worldTraits, geysers, saveData , (string result) => {
                         Debug.Log("AutomaticWorldGeneration - Restarting Game");
                         //App.Quit();
 
@@ -364,5 +362,7 @@ namespace AutomaticWorldGeneration
                 return false;
             }
         }
+
+
     }
 }
