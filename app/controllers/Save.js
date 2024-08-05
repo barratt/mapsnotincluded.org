@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
+const { Op } = require('sequelize');
 
 
 const Save  = require('../models/Save');
@@ -10,7 +11,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/count', asyncHandler(async (req, res) => {
-    const worldId = req.query.worldId;
+    const worldId = data.worldId;
     const query = {};
 
     if (worldId) {
@@ -22,13 +23,13 @@ router.get('/count', asyncHandler(async (req, res) => {
     return res.json({ count });
 }));
 
-router.get('/search', asyncHandler(async (req, res) => {
-    const worldId = req.query.worldId;
-    const query = {};
-
-    const worldTraits = req.query.worldTraits; // Array , separated
-    const pageSize = req.query.pageSize || 10;
-    const page = req.query.page || 0;
+router.post('/search', asyncHandler(async (req, res) => {
+    const data = Object.assign(req.body, req.query);
+    
+    const worldId = data.worldId;
+    const worldTraits = data.worldTraits; // Array , separated
+    const pageSize = data.pageSize || 10;
+    const page = data.page || 0;
 
     if (pageSize > 100) {
         return res.status(400).json({ error: 'pageSize must be less than 100' });
@@ -38,19 +39,22 @@ router.get('/search', asyncHandler(async (req, res) => {
         return res.status(400).json({ error: 'pageSize and page must be numbers' });
     }
 
+    const query = {};
     if (worldId) {
         query.worldId = worldId;
     }
 
-    if (worldTraits) {
-        query.worldTraits = { $all: worldTraits.split(',') };
+    if (worldTraits && typeof worldTraits === 'string') {
+        query.worldTraits = { [Op.contains]: worldTraits.split(',') }; // TODO: Found a typo in the DB that needs correcting... Probably better sooner than later.. (wordTraits -> worldTraits)
+    } else if (worldTraits && Array.isArray(worldTraits) && worldTraits.length > 0) {
+        query.worldTraits = { [Op.contains]: worldTraits };
     }
 
     const saves = await Save.findAndCountAll({
         where: query,
         limit: pageSize,
         offset: page * pageSize,
-        order: [['createdAt', 'DESC']]
+        order: [[ 'createdAt', 'DESC' ]]
     });
 
 

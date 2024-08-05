@@ -122,7 +122,7 @@ router.post('/', upload.single('save'), asyncHandler(async (req, res) => {
         vanilla: true,
         spacedOut: false,
         frostyPlanet: false,
-        wordTraits: data.worldTraits.map(x => x.replace('traits/', '')),
+        worldTraits: data.worldTraits.map(x => x.replace('traits/', '')),
         fileId: fileRecord.id
     });
 

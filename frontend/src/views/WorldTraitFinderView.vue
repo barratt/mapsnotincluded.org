@@ -5,7 +5,7 @@
 <template>
   <main>
     <div class="mb-5">
-      <h1>Map Explorer</h1>
+      <h1>Trait Finder</h1>
     </div>
 
     <!-- Lets add the option to select between different DLCs -->
@@ -61,6 +61,8 @@
 import { DLCs, VanillaWorlds, SpacedOutWorlds, FrostyPlanetWorlds, WorldTraits } from '@/oni';
 import Selectable from '@/components/Selectable.vue';
 const API_URL = import.meta.env.VITE_API_URL;
+
+import Swal from 'sweetalert2';
 
 // TODO: Watch the traits, and remove any mutual exclusions.
 
@@ -149,6 +151,7 @@ export default {
         const url = `${API_URL}/saves/search`;
 
         let worldTraits = this.negativeWorldTraits.concat(this.neutralWorldTraits).concat(this.positiveWorldTraits);
+        worldTraits = worldTraits.map((c) => c.id);
 
         fetch(url, {
           method: 'POST',
@@ -165,10 +168,25 @@ export default {
             console.log('data', data);
             this.results = data;
             this.isLoading = false;
+          })
+          .catch((e) => {
+            console.error(e)
+            this.isLoading = false;
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+            })
           });
         
       } catch (e){
         this.isLoading = false;
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong!',
+        })
       } 
     }
   }
