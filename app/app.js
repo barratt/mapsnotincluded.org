@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const sequelize = require('./lib/database');
 const { Save, File } = require('./models');
+const discord = require('./lib/discord');
 
 const express = require('express');
 const cors    = require('cors');
@@ -24,8 +25,12 @@ app.use((req, res, next) => { // TODO: Proper logging
   next();
 });
 
-app.use((req, res, err) => {
+app.use((err, req, res, next) => {
+  console.log(`Error: ${err}`);
   console.error(err.stack);
+
+  discord.send(`[${req.method}] ${req.url} Error: ${err}`);
+
   res.status(500).send('Something broke!');
 });
 
