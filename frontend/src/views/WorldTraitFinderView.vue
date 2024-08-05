@@ -6,6 +6,7 @@
   <main>
     <div class="mb-5">
       <h1>Trait Finder</h1>
+      <p>This uses our database to search for existing seeds that contain specific traits, this does seem to be calculatable based on the coordinates, but is not yet known. We hope to get this working soon! If you have any information regarding this, please get in touch on Discord!</p>
     </div>
 
     <!-- Lets add the option to select between different DLCs -->
@@ -74,10 +75,10 @@
               <tr v-for="save in results.saves" :key="save.id">
                 <td>{{ save.coordinates }}</td>
                 <!-- This is a bit awkward, but we want to use a table, and we want the cols/rows to line up -->
-                <td v-for="i in 5">
+                <td v-for="i in 6">
                   <span
-                    v-if="save.worldTraits.length > i"
-                    :class="getTraitConnotationClassById(save.worldTraits[i])">{{ save.worldTraits[i] }}
+                    v-if="save.worldTraits.length > i-1"
+                    :class="getTraitConnotationClassById(save.worldTraits[i-1])">{{ save.worldTraits[i-1] }}
                   </span>
                 </td>
               </tr>
