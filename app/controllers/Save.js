@@ -9,6 +9,8 @@ router.get('/', (req, res) => {
 });
 
 router.get('/count', async (req, res) => {
+    const data = Object.assign({}, req.body, req.query);
+
     const worldId = data.worldId;
     const query = {};
 
