@@ -31,7 +31,7 @@ const Save = sequelize.define('Save', {
         type: DataTypes.BOOLEAN,
         allowNull: false
     },
-    wordTraits: { // Array of enums
+    worldTraits: { // Array of enums
         type: DataTypes.ARRAY(DataTypes.ENUM({
             values: [
                 'BouldersMedium',

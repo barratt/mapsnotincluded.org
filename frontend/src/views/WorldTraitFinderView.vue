@@ -54,6 +54,35 @@
       <button v-else class="btn btn-success" disabled><i class="bi-search me-2"></i>Searching...</button>
     </div>
 
+    <div v-if="results" class="mt-5">
+      <hr />
+      <h2>Results</h2>
+      <div class="row">
+        <div class="col-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>World</th>
+                <th>Traits</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="result in results" :key="result.id">
+                <td>{{ result.name }}</td>
+                <td>
+                  <ul>
+                    <li v-for="trait in result.traits" :key="trait.id">
+                      {{ trait.name }}
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </main>
 </template>
 

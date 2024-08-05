@@ -25,15 +25,6 @@ app.use((req, res, next) => { // TODO: Proper logging
   next();
 });
 
-app.use((err, req, res, next) => {
-  console.log(`Error: ${err}`);
-  console.error(err.stack);
-
-  discord.send(`[${req.method}] ${req.url} Error: ${err}`);
-
-  res.status(500).send('Something broke!');
-});
-
 app.get(`${apiPrefix}`, (req, res) => {
   res.json({
     message: "Welcome to the MapsNotIncluded API"
@@ -43,6 +34,15 @@ app.get(`${apiPrefix}`, (req, res) => {
 app.use(`${apiPrefix}/saves`, require('./controllers/Save'));
 app.use(`${apiPrefix}/files`, require('./controllers/File'));
 app.use(`${apiPrefix}/ingest`, require('./controllers/Ingest'));
+
+app.use((err, req, res, next) => {
+  console.log(`biq Error: ${err}`);
+  console.error(err.stack);
+
+  discord.send(`[${req.method}] ${req.url} Error: ${err}\r\n\r\n \`\`\`${err.stack}\`\`\``);
+
+  res.status(500).send('Something broke!');
+});
 
 app.listen(port, interface, () => {
     console.log(`Server is running on port http://${interface}:${port} with prefix ${apiPrefix}`);
