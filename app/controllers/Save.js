@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const asyncHandler = require('express-async-handler');
 const { Op } = require('sequelize');
-
 
 const Save  = require('../models/Save');
 
@@ -10,7 +8,7 @@ router.get('/', (req, res) => {
     return res.status(501);
 });
 
-router.get('/count', asyncHandler(async (req, res) => {
+router.get('/count', async (req, res) => {
     const worldId = data.worldId;
     const query = {};
 
@@ -21,9 +19,9 @@ router.get('/count', asyncHandler(async (req, res) => {
     const count = await Save.count(query);
 
     return res.json({ count });
-}));
+});
 
-router.post('/search', asyncHandler(async (req, res) => {
+router.post('/search', async (req, res) => {
     const data = Object.assign(req.body, req.query);
     
     const worldId = data.worldId;
@@ -68,7 +66,7 @@ router.post('/search', asyncHandler(async (req, res) => {
         pageSize,
         totalPages: Math.ceil(saves.count / pageSize)
     });
-}));
+});
 
 router.post('/', (req, res) => {
     // Lets upload the file to s3 and save the metadata to the database 

@@ -35,7 +35,8 @@ const Save = sequelize.define('Save', {
         type: DataTypes.ARRAY(DataTypes.ENUM({
             values: [
                 'BouldersMedium',
-                'DeepOil',
+                'TrappedOil',
+                'BuriedOil',
                 'MetalRich',
                 'BouldersMixed',
                 'MagmaVents',

@@ -24,6 +24,11 @@ app.use((req, res, next) => { // TODO: Proper logging
   next();
 });
 
+app.use((req, res, err) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 app.get(`${apiPrefix}`, (req, res) => {
   res.json({
     message: "Welcome to the MapsNotIncluded API"

@@ -5,7 +5,7 @@
         <img :src="item.img" :alt="item.id" class="img-responsive"/>
         <div class="text-center" :class="{
             [selectedTextClass]: isSelected(item.id),
-        }">{{ item.id }}</div>
+        }">{{ item.name }}</div>
     </div>
 </template>
 

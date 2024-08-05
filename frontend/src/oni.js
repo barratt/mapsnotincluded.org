@@ -158,7 +158,7 @@ export const WorldTraits = [
     },
     {
         id: 'DeepOil',
-        name: 'Buried Oil',
+        name: 'Trapped Oil',
         connotation: 0,
         img: '/images/oni/worldTraits/vanilla/DeepOil.webp',
     },
@@ -199,10 +199,16 @@ export const WorldTraits = [
         img: '/images/oni/worldTraits/vanilla/SlimeSplats.webp',
     },
     {
-        id: 'TrappedOil',
-        name: 'Trapped Oil',
+        id: 'IrregularOil',
+        name: 'Irregular Oil',
         connotation: -1,
         img: '/images/oni/worldTraits/vanilla/IrregularOil.webp',
+    },
+    {
+        id: 'BuriedOil',
+        name: 'Buried Oil',
+        connotation: -1,
+        img: '/images/oni/worldTraits/vanilla/DeepOil.webp',
     },
     {
         id: 'Geodes',

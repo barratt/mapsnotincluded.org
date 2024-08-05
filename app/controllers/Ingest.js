@@ -1,6 +1,5 @@
 const express = require('express');
 const multer = require('multer');
-const asyncHandler = require('express-async-handler');
 const oniParser = require('oni-save-parser');
 
 const router = express.Router();
@@ -35,7 +34,7 @@ router.get('/', (req, res) => {
     return res.status(501);
 });
 
-router.post('/', upload.single('save'), asyncHandler(async (req, res) => {
+router.post('/', upload.single('save'), async (req, res) => {
     console.log("Ingesting save");
     // Multi-part form data, a file upload and json body
     const save = req.file;
@@ -147,6 +146,6 @@ router.post('/', upload.single('save'), asyncHandler(async (req, res) => {
     return res.json({
         success: 1, 
     });
-}));
+});
 
 module.exports = router;
