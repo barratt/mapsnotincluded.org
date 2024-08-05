@@ -64,7 +64,8 @@ router.post('/search', async (req, res) => {
         saves: saves.rows,
         page,
         pageSize,
-        totalPages: Math.ceil(saves.count / pageSize)
+        totalPages: Math.ceil(saves.count / pageSize),
+        totalResults: saves.count
     });
 });
 

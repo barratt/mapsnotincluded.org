@@ -56,31 +56,53 @@
 
     <div v-if="results" class="mt-5">
       <hr />
-      <h2>Results</h2>
+      <h2>{{ results.totalResults}} Results</h2>
       <div class="row">
         <div class="col-12">
           <table class="table">
             <thead>
               <tr>
                 <th>World</th>
-                <th>Traits</th>
+                <th>Traits</th> <!-- Trait 1 -->
+                <th></th><!-- Trait 1 -->
+                <th></th><!-- Trait 1 -->
+                <th></th><!-- Trait 1 -->
+                <th></th><!-- Trait 1 -->
               </tr>
             </thead>
             <tbody>
-              <tr v-for="result in results" :key="result.id">
-                <td>{{ result.name }}</td>
-                <td>
-                  <ul>
-                    <li v-for="trait in result.traits" :key="trait.id">
-                      {{ trait.name }}
-                    </li>
-                  </ul>
+              <tr v-for="save in results.saves" :key="save.id">
+                <td>{{ save.coordinates }}</td>
+                <!-- This is a bit awkward, but we want to use a table, and we want the cols/rows to line up -->
+                <td v-for="i in 5">
+                  <span
+                    v-if="save.worldTraits.length > i"
+                    :class="getTraitConnotationClassById(save.worldTraits[i])">{{ save.worldTraits[i] }}
+                  </span>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
+
+      <!-- <- page 1 of max ->> -->
+      <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li class="page-item"><button class="page-link" @click="paginate('prev')">Previous</button></li>
+            <li class="page-item" v-if="results.page > 0"><button class="page-link" @click="paginate(1)">1</button></li>
+            <li class="page-item" v-if="results.page > 2"><button class="page-link" @click="paginate(results.page - 2)">{{ results.page - 2 + 1 }}</button></li>
+            <li class="page-item" v-if="results.page > 1"><button class="page-link" @click="paginate(results.page - 1)">{{ results.page - 1 + 1}}</button></li>
+            <li class="page-item disabled" ><button class="page-link">{{ results.page + 1 }}</button></li>
+            <li class="page-item" v-if="results.totalPages > results.page + 1"><button class="page-link" @click="paginate(results.page + 1)">{{ results.page + 1 + 1 }}</button></li>
+            <li class="page-item" v-if="results.totalPages > results.page + 2"><button class="page-link" @click="paginate(results.page + 2)">{{ results.page + 2 + 1 }}</button></li>
+            <li class="page-item"><button class="page-link" @click="paginate(results.totalPages-1)">{{ results.totalPages }}</button></li>
+            <li class="page-item"><button class="page-link" @click="paginate('next')">Next</button></li>
+          </ul>
+        </nav>
+      </div>
+
     </div>
 
   </main>
@@ -101,6 +123,7 @@ export default {
     return {
       DLCs,
       saveCount: 0,
+      page: 0,
       form: {
         selectedWorld: null,
         selectedDLC: DLCs[0],
@@ -159,6 +182,38 @@ export default {
     removeCriteria(index) {
       this.form.criteria.splice(index, 1);
     },
+    getTrait(id) {
+      const trait = WorldTraits.find((c) => c.id === id);
+      return trait
+    },
+    getConnotationClass(connotation) {
+      if (connotation === 1) {
+        return 'text-success';
+      } else if (connotation === -1) {
+        return 'text-danger';
+      } else {
+        return 'text-info';
+      }
+    },
+    getTraitConnotationClassById(id) {
+      const trait = this.getTrait(id);
+      return this.getConnotationClass(trait.connotation);
+    },
+    paginate(page) {
+      console.log('paginate', page);
+      
+      this.isLoading = true;
+      
+      if (page === 'prev') {
+        page = this.results.page - 1;
+      } else if (page === 'next') {
+        page = this.results.page + 1;
+      }
+
+      this.page = page;
+      
+      this.search();
+    },
 
     // getSaveCount() {
     //   console.log('getCount');
@@ -190,6 +245,7 @@ export default {
           body: JSON.stringify({
             ...this.form,
             worldTraits,
+            page: this.page,
           }),
         })
           .then((response) => response.json())
