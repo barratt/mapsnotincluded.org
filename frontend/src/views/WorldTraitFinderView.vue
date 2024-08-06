@@ -125,7 +125,7 @@ export default {
       DLCs,
       saveCount: 0,
       page: 0,
-      selectedDLC: null,
+      selectedDLC: DLCs[0],
       form: {
         selectedWorld: null,
         worldTraits: [],
@@ -144,13 +144,13 @@ export default {
   },
   computed: {
     selectedCluster() {
-      console.log("selectedCluster", this.form.selectedDLC);
-      if (!this.form.selectedDLC) {
+      console.log("selectedCluster", this.selectedDLC);
+      if (!this.selectedDLC) {
         console.log('no selectedDLC');
         return null;
       }
 
-      const id = this.form.selectedDLC.id;
+      const id = this.selectedDLC.id;
 
       if (id === 'Vanilla') {
         return VanillaWorlds;
@@ -247,7 +247,7 @@ export default {
             ...this.form,
             worldTraits,
             page: this.page,
-            [this.form.selectedDLC.id]: true,
+            [this.selectedDLC.id]: true,
           }),
         })
           .then((response) => response.json())
@@ -268,7 +268,7 @@ export default {
         
       } catch (e){
         this.isLoading = false;
-        
+        console.error(e)        
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
