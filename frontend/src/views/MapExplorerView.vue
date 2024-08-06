@@ -10,7 +10,7 @@
 
     <!-- Lets add the option to select between different DLCs -->
     <div class="d-flex gap-5 justify-content-center flex-wrap">
-      <Selectable :items="DLCs" v-model="form.selectedDLC" />
+      <Selectable :items="DLCs" v-model="selectedDLC" />
     </div>
 
     <!-- Lets add the option to select between different worlds -->
@@ -104,10 +104,10 @@ export default {
   data() {
     return {
       DLCs,
+      selectedDLC: DLCs[0],
       saveCount: 0,
       form: {
         selectedWorld: null,
-        selectedDLC: DLCs[0],
         criteria: [
           {
 
@@ -157,14 +157,23 @@ export default {
       const url = `${API_URL}/saves/count`;
       console.log('url', url);
       // worldId is a query parameter.
-      fetch(url)
+      fetch(url + "?" + (new URLSearchParams({
+        [this.selectedDLC.id]: true,
+      })).toString(), {
+      })
         .then((response) => response.json())
         .then((data) => {
           console.log('data', data);
           this.saveCount = data.count;
         });
     }
-  }
+  },
+  watch: {
+    selectedDLC() {
+      this.saveCount = ''
+      this.getSaveCount();
+    },
+  },
 };
 
 

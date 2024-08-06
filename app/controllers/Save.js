@@ -18,7 +18,13 @@ router.get('/count', async (req, res) => {
         query.worldId = worldId;
     }
 
-    const count = await Save.count(query);
+    if (data.Vanilla) query.vanilla = true;
+    if (data.SpacedOut) query.spacedOut = true;
+    if (data.FrostyPlanet) query.frostyPlanet = true;
+
+    const count = await Save.count({
+        where: query
+    });
 
     return res.json({ count });
 });
@@ -49,6 +55,11 @@ router.post('/search', async (req, res) => {
     } else if (worldTraits && Array.isArray(worldTraits) && worldTraits.length > 0) {
         query.worldTraits = { [Op.contains]: worldTraits };
     }
+
+    
+    if (data.Vanilla) query.vanilla = true;
+    if (data.SpacedOut) query.spacedOut = true;
+    if (data.FrostyPlanet) query.frostyPlanet = true;
 
     const saves = await Save.findAndCountAll({
         where: query,

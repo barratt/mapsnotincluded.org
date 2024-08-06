@@ -11,7 +11,7 @@
 
     <!-- Lets add the option to select between different DLCs -->
     <div class="d-flex gap-5 justify-content-center flex-wrap">
-      <Selectable :items="DLCs" v-model="form.selectedDLC" />
+      <Selectable :items="DLCs" v-model="selectedDLC"  />
     </div>
 
     <!-- Lets add the option to select between different worlds -->
@@ -125,9 +125,9 @@ export default {
       DLCs,
       saveCount: 0,
       page: 0,
+      selectedDLC: null,
       form: {
         selectedWorld: null,
-        selectedDLC: DLCs[0],
         worldTraits: [],
 
       },
@@ -247,6 +247,7 @@ export default {
             ...this.form,
             worldTraits,
             page: this.page,
+            [this.form.selectedDLC.id]: true,
           }),
         })
           .then((response) => response.json())
@@ -275,6 +276,11 @@ export default {
         })
       } 
     }
+  },
+  watch: {
+    selectedDLC() {
+      // this.cou
+    },
   }
 };
 
