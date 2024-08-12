@@ -71,6 +71,7 @@ function runGame(instanceId) {
 
     proc.on('exit', (code) => {
         console.log(`Game exited with code ${code}`);
+        cleanInstance(instanceId);
 
         if (!isExiting) {
             console.log(`Restarting game`);
@@ -144,37 +145,36 @@ for (let i = 1; i < (instanceCount+1); i++) {
     runGame(i);
 }
 
-setInterval(() => {
+async function cleanInstance(i) {
     // Lets clean up the saves and RetiredColonies directories
-    for (let i = 1; i < (instanceCount+1); i++) {
-        const homeDir = `${os.homedir()}/oni${i}`;
-        const oniHomeDir = `${homeDir}/.config/unity3d/Klei/Oxygen Not Included`
-        const savesDir = `${oniHomeDir}/save_files`;
-        const RetiredColoniesDir = `${oniHomeDir}/RetiredColonies`;
+    const homeDir = `${os.homedir()}/oni${i}`;
+    const oniHomeDir = `${homeDir}/.config/unity3d/Klei/Oxygen Not Included`
+    const savesDir = `${oniHomeDir}/save_files`;
+    const RetiredColoniesDir = `${oniHomeDir}/RetiredColonies`;
 
-        // Clean up the saves directory
-        fs.readdir(savesDir, (err, files) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
+    // Annoyingly we cant delete a save that is in use, so only do this on game exit
+    // Clean up the saves directory
+    fs.readdir(savesDir, (err, files) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
 
-            files.forEach(file => {
-                console.log(`Removing save file: ${file}`);
-                fs.rmSync(`${savesDir}/${file}`, { recursive: true, force: true });
-            });
+        files.forEach(file => {
+            console.log(`Removing save file: ${file}`);
+            fs.rmSync(`${savesDir}/${file}`, { recursive: true, force: true });
         });
+    });
 
-        // Clean up the RetiredColonies directory
-        fs.readdir(RetiredColoniesDir, (err, files) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
+    // Clean up the RetiredColonies directory
+    fs.readdir(RetiredColoniesDir, (err, files) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
 
-            files.forEach(file => {
-                fs.rmSync(`${savesDir}/${file}`, { recursive: true, force: true });
-            });
+        files.forEach(file => {
+            fs.rmSync(`${savesDir}/${file}`, { recursive: true, force: true });
         });
-    }
-}, 1000 * 60 * 5);
+    });
+}
