@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{24F61C11-CC87-4DFE-A4CF-659E31DFF121}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.props.default = Directory.Build.props.default
+		Directory.Build.targets = Directory.Build.targets
+		ModVersionData.json = ModVersionData.json
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_WorldGenStateCapture", "_WorldGenStateCapture\_WorldGenStateCapture.csproj", "{B74CE776-4827-47A2-8857-844A88C1C06F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B74CE776-4827-47A2-8857-844A88C1C06F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B74CE776-4827-47A2-8857-844A88C1C06F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B74CE776-4827-47A2-8857-844A88C1C06F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B74CE776-4827-47A2-8857-844A88C1C06F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {898228DF-1C3B-4527-B10D-83145966681D}
+	EndGlobalSection
+EndGlobal
