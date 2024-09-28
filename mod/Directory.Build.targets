@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--Generates the mod yaml files in the output folder-->
+	<Target Name="GenerateYAML" BeforeTargets="Build" Condition="'$(GenerateMetadata)' == 'true'">
+		<GenerateMetadataFiles
+			OutputPath="$(TargetDir)"
+
+			Title="$(ModName)"
+			Description="$(ModDescription)"
+			StaticID="$(AssemblyName)"
+      
+			SupportedContent="$(SupportedContent)"
+			MinimumSupportedBuild="$(MinimumSupportedBuild)"
+			Version="$(FileVersion)"
+			APIVersion="$(APIVersion)"
+        />
+	</Target>
+
+  <!--Merges all dlls in the output folder into a single dll-->
+	<Target Name="ILRepack" AfterTargets="Build" Condition="'$(IsPacked)' == 'true'">
+		<ItemGroup>
+      <InputAssemblies Include="$(TargetPath)" />
+      <InputAssemblies
+			  Include="$(TargetDir)\*.dll"
+			  Exclude="$(TargetPath); **/0Harmony.dll; **_public.dll ;**Newtonsoft.Json;**/System.*; **/Microsoft.*" />
+		</ItemGroup>
+
+		<ILRepack
+		  TargetPlatformVersion="v4"
+		  TargetKind="SameAsPrimaryAssembly"
+		  InputAssemblies="@(InputAssemblies)"
+		  Wildcards="true"
+		  LibraryPath="$(GameLibsFolder)"
+		  Parallel="true"
+		  OutputFile="$(TargetPath)"/>
+	</Target>
+
+  <!--Copies the mod dll, the two yaml files and everything inside the ModAssets folder to the target mod folder-->
+	<Target Name="CopyModsToDevFolder" AfterTargets="ILRepack" Condition="'$(AssemblyName)' != 'UtilLibs' and '$(AssemblyName)' != 'Util_TwitchIntegrationLib'">
+		
+		<Message Text="Executing CopyDLLs task" Importance="High" />
+
+		<ItemGroup>
+			<ModAssets Include="$(TargetDir)\ModAssets\**\*.*" />
+		</ItemGroup>
+
+		<Copy
+		  SourceFiles="
+			$(TargetDir)$(TargetName).dll;
+			$(TargetDir)mod.yaml;
+			$(TargetDir)mod_info.yaml;"
+		  
+		  DestinationFolder="$(ModFolder)\$(TargetName)_dev\" />
+
+		<Message Text="Copy ModAssets to $(ModFolder)\$(TargetName)_dev\" Importance="High"></Message>
+		
+		<Copy SourceFiles="@(ModAssets)" DestinationFolder="$(ModFolder)\$(TargetName)_dev\%(RecursiveDir)" SkipUnchangedFiles="false" />
+		
+		<Message Text="Copied build files" Importance="High" />
+		
+	</Target>
+
+  <!--Create folder for publicized dlls if not existing-->
+  <Target Name="PubliciseMKDIR" BeforeTargets ="Clean">
+    <MakeDir
+            Directories="$(SolutionDir)\PublicisedAssembly"/>
+  </Target>
+
+  <!--Creates publicized dlls from the game dlls-->
+  <Target Name="Publicise" AfterTargets="Clean" Condition="'$(AssemblyName)' == 'CycleComma'">
+    <ItemGroup>
+      <PubliciseInputAssemblies
+			   Include="
+				$(GameLibsFolder)/Assembly-CSharp.dll;
+				$(GameLibsFolder)/Assembly-CSharp-firstpass.dll;
+         "/>
+    </ItemGroup>
+
+    <Publicise
+		   InputAssemblies="@(PubliciseInputAssemblies)"
+		   OutputPath="$(SolutionDir)\PublicisedAssembly"
+		   PubliciseCompilerGenerated="false"/>
+  </Target>
+</Project>
