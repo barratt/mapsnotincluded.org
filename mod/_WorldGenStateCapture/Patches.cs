@@ -4,6 +4,7 @@ using ProcGen;
 using System.IO;
 using static STRINGS.INPUT_BINDINGS;
 using UnityEngine.Networking;
+using ProcGenGame;
 
 namespace _WorldGenStateCapture
 {
@@ -125,6 +126,15 @@ namespace _WorldGenStateCapture
 			public static void Postfix(MainMenu __instance)
 			{
 				bool shouldAutoStart = ShoulDoAutoStartParsing(out _);
+
+
+				if (ModAssets.ModDilution)
+				{
+					Debug.LogWarning("other active mods detected, aborting auto world parsing");
+					return;
+				}
+
+
 				var config = Config.Instance;
 				if (!shouldAutoStart)
 				{
@@ -188,13 +198,37 @@ namespace _WorldGenStateCapture
 
 				targetLayout = null;
 				Debug.Log("autostarting...");
-				foreach (string clusterName in SettingsCache.GetClusterNames())
+
+				if (Config.Instance.RandomizedClusterGen)
 				{
-					ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(clusterName);
-					if (clusterData.coordinatePrefix == clusterPrefix)
+                    while(targetLayout == null)
 					{
-						targetLayout = clusterData;
-						break;
+						targetLayout = SettingsCache.clusterLayouts.clusterCache.GetRandom().Value;
+
+						//skip empty dev clusters
+						if (targetLayout.skip > 0)
+                        {
+                            targetLayout = null;
+                            continue;
+                        }
+						//spaced out loads vanilla terra to the cache, skip that
+						if(DlcManager.IsExpansion1Active() && targetLayout.coordinatePrefix == "SNDST-A")
+						{ 
+                            targetLayout = null;
+                            continue;
+                        }
+                    }
+                }
+				else
+				{
+					foreach (string clusterName in SettingsCache.GetClusterNames())
+					{
+						ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(clusterName);
+						if (clusterData.coordinatePrefix == clusterPrefix)
+						{
+							targetLayout = clusterData;
+							break;
+						}
 					}
 				}
 
@@ -232,6 +266,7 @@ namespace _WorldGenStateCapture
 				if (autoLoadActive)
 				{
 					__instance.OnClickSurvival();
+
 				}
 			}
 		}
@@ -243,13 +278,12 @@ namespace _WorldGenStateCapture
 				if (autoLoadActive)
 				{
 					__instance.newGameSettingsPanel.SetSetting((SettingConfig)CustomGameSettingConfigs.ClusterLayout, targetLayout.filePath);
-					__instance.ShuffleClicked();
 
-					// No traits & no mixing
-                    __instance.newGameSettingsPanel.ConsumeStoryTraitsCode("0");
+					__instance.newGameSettingsPanel.ConsumeStoryTraitsCode("0");					
 					__instance.newGameSettingsPanel.ConsumeMixingSettingsCode("0");
-
-                    __instance.LaunchClicked();
+					
+					__instance.ShuffleClicked();
+					__instance.LaunchClicked();
 				}
 			}
 		}
@@ -288,5 +322,15 @@ namespace _WorldGenStateCapture
 				}
 			}
 		}
-	}
+
+        [HarmonyPatch(typeof(WorldGen), nameof(WorldGen.ReportWorldGenError))]
+        public static class RestartOnFailedSeed
+        {
+            public static void Postfix()
+            {
+                //potential TODO: send post request with "seed failed germination", then quit
+                ModAssets.ClearAndRestart();
+            }
+        }
+    }
 }
