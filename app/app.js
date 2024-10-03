@@ -9,7 +9,20 @@ const cors    = require('cors');
 
 const app = express();
 
-app.use(cors());
+const allowedDomains = process.env.ALLOWED_DOMAINS ? process.env.ALLOWED_DOMAINS.split(',') : [];
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g., mobile apps, curl requests)
+    if (!origin) return callback(null, true);
+
+    // Check if the origin is in the allowed domains array
+    if (allowedDomains.indexOf(origin) !== -1) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
