@@ -30,11 +30,11 @@ namespace _WorldGenStateCapture
 
         public Config()
 		{
-			TargetCoordinateBase = "SNDST-A";
-			TargetCoordinateDLC = "SNDST-C";
-			TargetNumber = 2;
-			ContinuousParsing = false;
-
+            TargetCoordinateBase = "SNDST-A";
+            TargetCoordinateDLC = "SNDST-C";
+            TargetNumber = 5000;
+            ContinuousParsing = true;
+            RandomizedClusterGen = true;
         }
 	}
 }
