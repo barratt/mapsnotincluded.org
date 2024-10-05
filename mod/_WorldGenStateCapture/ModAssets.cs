@@ -209,7 +209,7 @@ namespace _WorldGenStateCapture
 			currentPOIs.Clear();
 			dlcStarmapItems.Clear();
 			baseStarmapItems.Clear();
-			GameScheduler.Instance.ScheduleNextFrame("restart game", (_) => App.instance.Restart());
+			App.instance.Restart();
 		}
 	}
 }
