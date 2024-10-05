@@ -40,7 +40,7 @@
     <div class="mb-5">
       <h2 class="text-danger">Donations</h2>
       <p>
-        We're not looking for donations at this time, but if you would like to support the project, please consider contributing to the <a href="https://oxygennotincluded.com/" target="mni_oni">Oxygen Not Included</a> developers. In the future we may look at hosting costs and other expenses, but for now we're just happy to be here.
+        We're not looking for donations at this time, but if you would like to support the project, please consider contributing to the <a href="https://www.klei.com/games/oxygen-not-included" target="mni_oni">Oxygen Not Included</a> developers. In the future we may look at hosting costs and other expenses, but for now we're just happy to be here.
       </p>
     </div>  
 
@@ -69,59 +69,3 @@
     </div>
   </main>
 </template>
-
-<script>
-import { DLCs, VanillaWorlds, SpacedOutWorlds, FrostyPlanetWorlds } from '@/oni';
-import Selectable from '@/components/Selectable.vue';
-
-export default {
-  name: 'MapExplorerView',
-  setup() {
-    return {
-      DLCs,
-      form: {
-        selectedWorld: null,
-        selectedDLC: null,
-        criteria: [
-          {
-
-          }
-        ],
-      }
-    };
-  },
-  components: {
-    Selectable,
-  },
-  computed: {
-    selectedCluster() {
-      console.log("selectedCluster", this.form.selectedDLC);
-      if (!this.form.selectedDLC) {
-        return null;
-      }
-
-      const name = this.form.selectedDLC.name;
-      console.log('selectedCluster', name);
-      if (name === 'Vanilla') {
-        return VanillaWorlds;
-      } else if (name === 'Spaced Out!') {
-        return SpacedOutWorlds;
-      } else if (name == 'Frosty Planet') {
-        return FrostyPlanetWorlds;
-      } else {
-        return null;
-      }
-    }
-  },
-  methods: {
-    addCriteria() {
-      this.form.criteria.push({});
-    },
-    removeCriteria(index) {
-      this.form.criteria.splice(index, 1);
-    }
-  }
-};
-
-
-</script>
