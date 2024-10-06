@@ -46,14 +46,8 @@
 
 	<ItemGroup>
 	  <Reference Include="UnityEngine.UnityWebRequestModule">
-	    <HintPath>D:\Steam\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+	    <HintPath>X:\SteamLibrary\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
 	  </Reference>
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Update="System.Drawing.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 	
 	<ItemGroup>
