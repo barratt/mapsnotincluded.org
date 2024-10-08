@@ -1,0 +1,10 @@
+{
+    "folders": [
+        {
+            "path": "./mod"
+        }
+    ],
+    "settings": {
+        "files.eol": "\r\n"
+    }
+}

@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "./game-worker"
+		}
+	],
+	"settings": {
+        "files.eol": "\r\n"
+    }
+}

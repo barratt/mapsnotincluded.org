@@ -1,29 +1,11 @@
-# mapsnotincluded
+# Maps Not Included - README
 
-This template should help get you started developing with Vue 3 in Vite.
+Maps Not Included is intended to be a completely open-source, community driven alternative to [Tools Not Included](www.toolsnotincluded.com)
 
-## Recommended IDE Setup
+Resources for building, running, and extending Maps Not Included can be found below.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Maps Not Included is released "Open Source" for the full license information please refer to the [GNU AGPL v3 License](./LICENSE)
 
-## Customize configuration
+## Local Development
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+Setup, and development instructions can be found in the [Local Development](./docs/local-development.md) README.
