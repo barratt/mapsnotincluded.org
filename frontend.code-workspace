@@ -1,0 +1,10 @@
+{
+    "folders": [
+        {
+            "path": "./frontend"
+        }
+    ],
+    "settings": {
+        "files.eol": "\r\n"
+    }
+}

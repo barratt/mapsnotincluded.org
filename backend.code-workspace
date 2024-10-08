@@ -1,0 +1,10 @@
+{
+    "folders": [
+        {
+            "path": "./backend"
+        }
+    ],
+    "settings": {
+        "files.eol": "\r\n"
+    }
+}
