@@ -27,12 +27,15 @@ data class Geyser(
 
     val id: String,
 
-    val posX: Int,
-    val posY: Int,
+    val x: Int,
+    val y: Int,
 
-    val emitRate: Float,
-    val idleTime: Float,
-    val eruptionTime: Float,
+    val emitRate: Int,
+    val avgEmitRate: Int,
+
+    val idleTime: Int,
+    val eruptionTime: Int,
+
     val dormancyCycles: Float,
     val activeCycles: Float
 )

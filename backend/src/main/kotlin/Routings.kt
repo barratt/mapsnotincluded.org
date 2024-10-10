@@ -23,15 +23,17 @@ import com.mongodb.ServerApi
 import com.mongodb.ServerApiVersion
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondBytes
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
@@ -65,24 +67,36 @@ fun Application.configureRouting() {
         json()
     }
 
+    install(CORS) {
+
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Get)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.ContentType)
+
+        // FIXME Not suitable for production
+        anyHost()
+    }
+
     routing {
 
         get("/") {
             call.respondText("MapsNotIncluded.org")
         }
 
-        get("/bench") {
-
-            val start = System.nanoTime()
-
-            Json.decodeFromString<World>(sampleWorldJson)
-
-            val durationNanos = System.nanoTime() - start
-
-            val millis = durationNanos / 1000000.0
-
-            call.respondText("Parsing of sample took $millis ms.")
-        }
+//        get("/bench") {
+//
+//            val start = System.nanoTime()
+//
+//            Json.decodeFromString<World>(sampleWorldJson)
+//
+//            val durationNanos = System.nanoTime() - start
+//
+//            val millis = durationNanos / 1000000.0
+//
+//            call.respondText("Parsing of sample took $millis ms.")
+//        }
 
         get("/all") {
 
