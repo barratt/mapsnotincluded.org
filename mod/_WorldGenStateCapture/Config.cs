@@ -30,13 +30,13 @@ namespace _WorldGenStateCapture
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.DESC")]
 		[JsonProperty]
-		public bool RandomMixing { get; set; } = true;
+		public bool RandomMixing { get; set; } = false;
 
 		public Config()
 		{
 			TargetCoordinateBase = "SNDST-A";
 			TargetCoordinateDLC = "SNDST-C";
-			TargetNumber = 2;
+			TargetNumber = 500;
 			ContinuousParsing = false;
 
         }
