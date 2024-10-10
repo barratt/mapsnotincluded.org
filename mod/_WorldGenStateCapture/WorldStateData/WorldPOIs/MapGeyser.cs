@@ -2,10 +2,11 @@
 {
 	internal class MapGeyser : MapPOI
 	{
-		public float emitRate;
+		public int emitRate;
+		public int avgEmitRate;
 
-		public float idleTime;
-		public float eruptionTime;
+		public int idleTime;
+		public int eruptionTime;
 
 		public float dormancyCycles;
 		public float activeCycles;
