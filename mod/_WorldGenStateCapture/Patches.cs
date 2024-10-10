@@ -220,6 +220,12 @@ namespace _WorldGenStateCapture
 							targetLayout = null;
 							continue;
 						}
+						//skip skewed asteroid and future clusters with a fixed seed
+						if(targetLayout.fixedCoordinate != -1)
+						{
+							targetLayout = null;
+							continue;
+						}
 					}
 				}
 				else
@@ -369,6 +375,31 @@ namespace _WorldGenStateCapture
 					__instance.OnProceed();
 
 				}
+			}
+		}
+		[HarmonyPatch(typeof(GameFlowManager.StatesInstance), nameof(GameFlowManager.StatesInstance.CheckForGameOver))]
+		public static class SkipGameOverCheck
+		{
+			public static bool Prefix()
+			{
+				if (autoLoadActive)
+				{
+					return false;
+				}
+				return true;
+			}
+		}
+		[HarmonyPatch(typeof(GameFlowManager), nameof(GameFlowManager.IsGameOver))]
+		public static class SkipGameOverCheck2
+		{
+			public static bool Prefix(ref bool __result)
+			{
+				if (autoLoadActive)
+				{
+					__result = false;
+					return false;
+				}
+				return true;
 			}
 		}
 
