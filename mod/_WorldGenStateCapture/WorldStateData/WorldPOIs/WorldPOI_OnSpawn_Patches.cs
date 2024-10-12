@@ -157,8 +157,8 @@ namespace _WorldGenStateCapture.WorldStateData.WorldPOIs
 
 				//artifact pedestals in gravitas ruins
 				yield return typeof(GravitasPedestalConfig).GetMethod(name);
-				
-			}
+
+            }
 		}
 		[HarmonyPatch]
 		public static class AddEntitiesToPOIList
@@ -188,7 +188,10 @@ namespace _WorldGenStateCapture.WorldStateData.WorldPOIs
 				yield return typeof(PropSurfaceSatellite1Config).GetMethod(name);
 				yield return typeof(PropSurfaceSatellite2Config).GetMethod(name);
 				yield return typeof(PropSurfaceSatellite3Config).GetMethod(name);
-			}
+
+                //Cryopod
+                yield return typeof(CryoTankConfig).GetMethod(name);
+            }
 		}
 	}
 }
