@@ -41,13 +41,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Aze.Publicise.MSBuild.Task" Version="1.1.0">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
 	  <PackageReference Include="PLib" Version="4.16.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="UnityEngine.UnityWebRequestModule">
-	    <HintPath>X:\SteamLibrary\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
-	  </Reference>
 	</ItemGroup>
 	
 	<ItemGroup>
