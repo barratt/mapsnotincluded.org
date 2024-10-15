@@ -18,10 +18,7 @@ jobs:
     - uses: actions/checkout@v4     
   
     - name: Replace credentials
-      run: |
-        $filePath = ".\_WorldGenStateCapture\Credentials.cs"
-        (Get-Content $filePath) -replace '7FE9SFM9jdv7CcL', "${{ secrets.MNI_API_KEY }}" | Set-Content $filePath
-      shell: pwsh
+      run: sed -i 's\7FE9SFM9jdv7CcL\${{ secrets.MNI_API_KEY }}\g' _WorldGenStateCapture\Credentials.cs
      
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
