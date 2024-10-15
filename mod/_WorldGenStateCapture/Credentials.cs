@@ -8,6 +8,6 @@ namespace _WorldGenStateCapture
 {
 	internal class Credentials
 	{
-		public const string API_Key = "7FE9SFM9jdv7CcL";
+		public static string API_Key = "7FE9SFM9jdv7CcL";
 	}
 }
