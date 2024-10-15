@@ -2,12 +2,10 @@
 using Klei.CustomSettings;
 using ProcGen;
 using System.IO;
-using static STRINGS.INPUT_BINDINGS;
-using UnityEngine.Networking;
 using ProcGenGame;
 using System.Linq;
-using System.Collections.Generic;
-using System.Numerics;
+using System;
+using static STRINGS.UI.FRONTEND;
 
 namespace _WorldGenStateCapture
 {
@@ -128,50 +126,56 @@ namespace _WorldGenStateCapture
 			[HarmonyPriority(Priority.Low)]
 			public static void Postfix(MainMenu __instance)
 			{
+				autoLoadActive = false;
 				bool shouldAutoStart = ShoulDoAutoStartParsing(out _);
 
 
 				if (ModAssets.ModDilution)
 				{
 					Debug.LogWarning("other active mods detected, aborting auto world parsing");
+
+					Dialog(STRINGS.AUTOPARSING.MODSDETECTED.TITLE,
+						STRINGS.AUTOPARSING.MODSDETECTED.DESC);
 					return;
 				}
 
 
 				var config = Config.Instance;
-				if (!shouldAutoStart)
+				//if (!shouldAutoStart)
+				//{
+				var startParsingBTN = Util.KInstantiateUI(__instance.Button_NewGame.gameObject, __instance.Button_NewGame.transform.parent.gameObject, true);
+				startParsingBTN.name = "start parsing";
+				if (startParsingBTN.TryGetComponent<KButton>(out var btn))
 				{
-					var startParsingBTN = Util.KInstantiateUI(__instance.Button_NewGame.gameObject, __instance.Button_NewGame.transform.parent.gameObject, true);
-					startParsingBTN.name = "start parsing";
-					if (startParsingBTN.TryGetComponent<KButton>(out var btn))
+					btn.ClearOnClick();
+					btn.onClick += () =>
 					{
-						btn.ClearOnClick();
-						btn.onClick += () =>
-						{
-							ToggleAutoParse(true);
-							ReduceRemainingRuns();
-							InitAutoStart(__instance);
-						};
-					}
-					LocText componentInChildren = startParsingBTN.GetComponentInChildren<LocText>();
-					componentInChildren.text = STRINGS.STARTPARSING;
+						ToggleAutoParse(true);
+						ReduceRemainingRuns();
+						InitAutoStart(__instance);
+					};
 				}
+				LocText componentInChildren = startParsingBTN.GetComponentInChildren<LocText>();
+				componentInChildren.text = STRINGS.STARTPARSING;
+				//}
+				menuTimer = __instance.gameObject.AddOrGet<MainMenuTimer>();
 
 
 				if (config.ContinuousParsing)
 				{
-					InitAutoStart(__instance);
+					InitDelayedAutoStart(__instance);
 					return;
 				}
 
 				if (shouldAutoStart)
 				{
 					ReduceRemainingRuns();
-					InitAutoStart(__instance);
+					InitDelayedAutoStart(__instance);
 				}
 				else
 					ToggleAutoParse(false);
 			}
+
 			public static string RegistryKey = "SeedParsing_RemainingRuns";
 			public static bool ShoulDoAutoStartParsing(out int remainingRuns)
 			{
@@ -187,17 +191,63 @@ namespace _WorldGenStateCapture
 			}
 			public static void ToggleAutoParse(bool enable)
 			{
-
 				KPlayerPrefs.SetInt(RegistryKey, enable ? Config.Instance.TargetNumber : -1);
-
 			}
-
-
-
+			static void CancelAutoParsing()
+			{
+				if (menuTimer != null)
+					menuTimer.Abort();
+			}
+			static void CloseDialogue()
+			{
+				if (Popup != null)
+					UnityEngine.Object.Destroy(Popup.gameObject);
+			}
+			//copied from KMod.Manager to allow closing it externally;
+			static void Dialog(string title = null, string text = null, string confirm_text = null, System.Action on_confirm = null, string cancel_text = null, System.Action on_cancel = null, string configurable_text = null, System.Action on_configurable_clicked = null, UnityEngine.Sprite image_sprite = null)
+			{
+				//close previous
+				CloseDialogue();
+				Popup = (ConfirmDialogScreen)KScreenManager.Instance.StartScreen(ScreenPrefabs.Instance.ConfirmDialogScreen.gameObject, Global.Instance.globalCanvas);
+				Popup.PopupConfirmDialog(text, on_confirm, on_cancel, configurable_text, on_configurable_clicked, title, confirm_text, cancel_text, image_sprite);
+				
+			}
+			static ConfirmDialogScreen Popup = null;
+			static MainMenuTimer menuTimer = null;
+			public static void InitDelayedAutoStart(MainMenu __instance)
+			{
+				if (menuTimer != null)
+					menuTimer.Abort();
+				menuTimer.SetTimer(10);
+				menuTimer.SetAction(() =>
+				{
+					CloseDialogue();
+					InitAutoStart(__instance);
+				});
+				Dialog(STRINGS.AUTOPARSING.INPROGRESSDIALOG.TITLE,
+					STRINGS.AUTOPARSING.INPROGRESSDIALOG.DESC,
+					STRINGS.AUTOPARSING.INPROGRESSDIALOG.STARTNOW,
+					() => { CancelAutoParsing(); InitAutoStart(__instance); },
+					NEWGAMESETTINGS.BUTTONS.CANCEL, CancelAutoParsing);
+			}
 			public static void InitAutoStart(MainMenu __instance)
 			{
+				//Used to generate dictionaries in Config class, uncomment to regenerate them when new dlc releases
+				//Console.WriteLine("Cluster Dic:");
+				//foreach (string clusterName in SettingsCache.GetClusterNames())
+				//{
+				//	ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(clusterName);
+				//	Console.WriteLine("{" + (DlcManager.IsExpansion1Active() ? "ClusterSelection_SO" : "ClusterSelection_Base") + "." + Strings.Get(clusterData.name).ToString().Replace(" - ", "_").Replace(" ", "_") + ", \"" + clusterData.coordinatePrefix + "\"},");
+				//}
+				//Console.WriteLine("NamesOnly");
+				//foreach (string clusterName in SettingsCache.GetClusterNames())
+				//{
+				//	ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(clusterName);
+				//	Console.WriteLine(Strings.Get(clusterData.name).ToString().Replace(" - ", "_").Replace(" ", "_") + ",");
+				//}
+
 				autoLoadActive = false;
-				var clusterPrefix = DlcManager.IsExpansion1Active() ? Config.Instance.TargetCoordinateDLC : Config.Instance.TargetCoordinateBase;
+				var clusterPrefix = Config.TargetClusterPrefix();//  DlcManager.IsExpansion1Active() ? Config.Instance.TargetCoordinateDLC : Config.Instance.TargetCoordinateBase;
 
 				targetLayout = null;
 				Debug.Log("autostarting...");
@@ -221,7 +271,7 @@ namespace _WorldGenStateCapture
 							continue;
 						}
 						//skip skewed asteroid and future clusters with a fixed seed
-						if(targetLayout.fixedCoordinate != -1)
+						if (targetLayout.fixedCoordinate != -1)
 						{
 							targetLayout = null;
 							continue;
@@ -288,7 +338,7 @@ namespace _WorldGenStateCapture
 				{
 					__instance.newGameSettingsPanel.SetSetting((SettingConfig)CustomGameSettingConfigs.ClusterLayout, targetLayout.filePath);
 
-					Debug.Log("Selected cluster: "+ Strings.Get(targetLayout.name));
+					Debug.Log("Selected cluster: " + Strings.Get(targetLayout.name));
 					__instance.newGameSettingsPanel.ConsumeStoryTraitsCode("0");
 
 					if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID))
@@ -314,14 +364,14 @@ namespace _WorldGenStateCapture
 								}
 								if (setting is DlcMixingSettingConfig dlcSetting) //FP setting
 								{
-									Debug.Log("Turning on dlc mixing "+setting.id);
+									Debug.Log("Turning on dlc mixing " + setting.id);
 									settingsInstance.SetMixingSetting(dlcSetting, DlcMixingSettingConfig.EnabledLevelId);
 									continue;
 								}
-								else if(setting is MixingSettingConfig mixingSetting)
+								else if (setting is MixingSettingConfig mixingSetting)
 								{
 									//disable if forbidden by cluster
-									if(targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
+									if (targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
 									{
 										Debug.Log(setting.id + " is forbidden by the current cluster, disabling it.");
 										settingsInstance.SetMixingSetting(mixingSetting, SubworldMixingSettingConfig.DisabledLevelId); //same id for world and subworld mixing setting
@@ -329,7 +379,7 @@ namespace _WorldGenStateCapture
 									else
 									{
 										string randomLevel = mixingSetting.levels.GetRandom().id;
-										Debug.Log("setting a random value for mixing setting "+setting.id + ": "+ randomLevel);
+										Debug.Log("setting a random value for mixing setting " + setting.id + ": " + randomLevel);
 										settingsInstance.SetMixingSetting(mixingSetting, randomLevel);
 									}
 								}

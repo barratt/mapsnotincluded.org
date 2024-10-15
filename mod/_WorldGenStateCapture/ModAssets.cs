@@ -37,9 +37,6 @@ namespace _WorldGenStateCapture
 				Debug.LogError("Other active mods detected, aborting world parsing.");
 				return;
 			}
-
-
-
 			bool dlcActive = DlcManager.IsExpansion1Active();
 
 			WorldDataInstance DataItem = new WorldDataInstance();
@@ -65,7 +62,7 @@ namespace _WorldGenStateCapture
 
 			var cleanDlcIds = new List<string>();
 
-			foreach (var dlcId in DlcManager.GetActiveDLCIds())
+			foreach (var dlcId in SaveLoader.Instance.GameInfo.dlcIds)
 			{
 				switch (dlcId)
 				{
@@ -284,7 +281,7 @@ namespace _WorldGenStateCapture
 		/// </summary>
 		/// <param name="targetAsteroid"></param>
 		/// <returns>svg biomes image as string</returns>
-		internal static Dictionary<ProcGen.SubWorld.ZoneType, List<biomePolygon>> AccumulateBiomePathData(WorldContainer targetAsteroid)
+		internal static Dictionary<ProcGen.SubWorld.ZoneType, List<biomePolygon>> AccumulateBiomePathData(WorldContainer targetAsteroid, bool includeSpaceBiome = false)
 		{
 			//grid size
 			int height = Grid.HeightInCells;
@@ -314,7 +311,7 @@ namespace _WorldGenStateCapture
 				var currentZoneType = biomeBlob.zoneType;
 				string ZoneTypeCssClass = $"zone{(int)currentZoneType}";
 
-				if (currentZoneType == ZoneType.Space)
+				if (currentZoneType == ZoneType.Space && !includeSpaceBiome)
 					continue;
 
 				var polygon = new biomePolygon();
@@ -372,7 +369,7 @@ namespace _WorldGenStateCapture
 			// Convert JSON string to bytes
 			byte[] bodyRaw = Encoding.UTF8.GetBytes(data);
 
-			using (UnityWebRequest request = new UnityWebRequest("https://api.mapsnotincluded.org/ingest", "POST"))
+			using (UnityWebRequest request = new UnityWebRequest("https://oni-seed-uploader-stefan-oltmann.koyeb.app/upload", "POST"))
 			{
 
 				// Set the request body to the JSON byte array
@@ -383,7 +380,7 @@ namespace _WorldGenStateCapture
 				request.SetRequestHeader("Content-Type", "application/json");
 
 				// Send the API key
-				request.SetRequestHeader("MNI_API_KEY", "KAEofp47Zu8JRUi");
+				request.SetRequestHeader("MNI_API_KEY", "R4K86Fo6D5bmHtJ");
 
 				Debug.Log("request.SendWebRequest() ...");
 
@@ -391,7 +388,7 @@ namespace _WorldGenStateCapture
 
 				if (request.result != UnityWebRequest.Result.Success)
 				{
-					Debug.LogError(request.error);
+					Debug.LogWarning(request.error);
 					ClearAndRestart();
 				}
 				else

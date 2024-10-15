@@ -36,5 +36,19 @@
 				public static LocString DESC = "Mixing Options will be enabled at random";
 			}
 		}
+		public class AUTOPARSING
+		{
+			public class INPROGRESSDIALOG
+			{
+				public static LocString TITLE = "World collecting in progress";
+				public static LocString DESC = "World parsing is in progress and will start in 10 seconds.\nclick below to cancel";
+				public static LocString STARTNOW = "Skip timer";
+			}
+			public class MODSDETECTED
+			{
+				public static LocString TITLE = "Warning: active mods detected";
+				public static LocString DESC = "There are currently other mods enabled that might invalidate the integrity of the collected world data.\nMap collection will proceed after you have disabled them.";				
+			}
+		}
 	}
 }
