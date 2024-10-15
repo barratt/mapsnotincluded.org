@@ -143,7 +143,7 @@ namespace _WorldGenStateCapture
 
 			Console.WriteLine(json);
 			//attach the coroutine to the main game object
-			Game.Instance.StartCoroutine(TryPostRequest(json));
+			Game.Instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart));
 		}
 
 		/// <summary>
@@ -186,8 +186,7 @@ namespace _WorldGenStateCapture
 			}
 			sb.Remove(sb.Length - 1, 1);  //remove last newline
 			return sb.ToString();
-		}
-
+		}		
 
 		/// <summary>
 		/// generates an SVG image of all biome polygons of the given asteroid
@@ -362,41 +361,6 @@ namespace _WorldGenStateCapture
 			// Reset the alpha value so it can be shown nicely both in the map and the legend
 			color.a = 1f;
 			return color;
-		}
-
-		static IEnumerator TryPostRequest(string data)
-		{
-			// Convert JSON string to bytes
-			byte[] bodyRaw = Encoding.UTF8.GetBytes(data);
-
-			using (UnityWebRequest request = new UnityWebRequest("https://oni-seed-uploader-stefan-oltmann.koyeb.app/upload", "POST"))
-			{
-
-				// Set the request body to the JSON byte array
-				request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-				request.downloadHandler = new DownloadHandlerBuffer();
-
-				// Set the content type to JSON
-				request.SetRequestHeader("Content-Type", "application/json");
-
-				// Send the API key
-				request.SetRequestHeader("MNI_API_KEY", "R4K86Fo6D5bmHtJ");
-
-				Debug.Log("request.SendWebRequest() ...");
-
-				yield return request.SendWebRequest();
-
-				if (request.result != UnityWebRequest.Result.Success)
-				{
-					Debug.LogWarning(request.error);
-					ClearAndRestart();
-				}
-				else
-				{
-					Debug.Log("Form upload complete!");
-					ClearAndRestart();
-				}
-			}
 		}
 
 		public static void ClearAndRestart()
