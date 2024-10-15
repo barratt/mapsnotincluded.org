@@ -7,10 +7,8 @@ using UnityEngine;
 
 namespace _WorldGenStateCapture
 {
-	internal class MainMenuTimer : MonoBehaviour
+	internal class MNI_Timer : MonoBehaviour
 	{
-		[MyCmpGet] MainMenu menu;
-
 		System.DateTime targetTime = System.DateTime.MinValue;
 		System.Action OnTimerEnd = null;
 		public void Update()
@@ -25,6 +23,12 @@ namespace _WorldGenStateCapture
 					OnTimerEnd();
 				targetTime = System.DateTime.MinValue;
 			}
+		}
+
+		public void StartDelayedAction(int seconds, System.Action action)
+		{
+			SetAction(action);
+			SetTimer(seconds);
 		}
 		public void SetTimer(int seconds)
 		{

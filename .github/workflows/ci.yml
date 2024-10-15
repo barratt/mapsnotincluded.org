@@ -1,0 +1,36 @@
+name: CI on reference Oxygen Not Included assemblies
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+  
+    - name: Replace credentials
+      run: sed -i 's\7FE9SFM9jdv7CcL\${{ secrets.MNI_API_KEY }}\g' mod\_WorldGenStateCapture\Credentials.cs
+     
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: NuGet Restore
+      run: msbuild -t:restore -property:Configuration=Release
+
+    - name: Build project
+      run: msbuild -t:rebuild -property:Configuration=Release -property:GameLibsFolder="../Lib"
+      
+    - name: Create build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: Builds/_WorldGenStateCapture/
+        name: MapsNotIncludedMod
+        
+
+
+      

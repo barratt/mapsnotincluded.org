@@ -57,21 +57,21 @@ namespace _WorldGenStateCapture
 		}
 		[HarmonyPatch(typeof(RetireColonyUtility), nameof(RetireColonyUtility.StripInvalidCharacters))]
 		public static class PreventCrashOnReveal
-		{
+				{
 			public static bool Prefix(ref string __result, string source)
 			{
 				__result = source;
 				return false;
-			}
+				}
 		}
 		[HarmonyPatch(typeof(Timelapser), nameof(Timelapser.RenderAndPrint))]
 		public static class PreventCrashOnReveal2
-		{
+				{
 			public static bool Prefix()
 			{
 				return false;
 			}
-		}
+				}
 		[HarmonyPatch(typeof(SaveLoader), nameof(SaveLoader.InitialSave))]
 		public static class PreventSavingWorld
 		{
@@ -101,7 +101,7 @@ namespace _WorldGenStateCapture
 				}
 
 
-				GameScheduler.Instance.ScheduleNextFrame("collect data", (_) =>
+				GameScheduler.Instance.Schedule("collect data", 4, (_) =>
 				{
 					ModAssets.AccumulateSeedData();
 				});
@@ -158,7 +158,7 @@ namespace _WorldGenStateCapture
 				LocText componentInChildren = startParsingBTN.GetComponentInChildren<LocText>();
 				componentInChildren.text = STRINGS.STARTPARSING;
 				//}
-				menuTimer = __instance.gameObject.AddOrGet<MainMenuTimer>();
+				menuTimer = __instance.gameObject.AddOrGet<MNI_Timer>();
 
 
 				if (config.ContinuousParsing)
@@ -213,9 +213,26 @@ namespace _WorldGenStateCapture
 				
 			}
 			static ConfirmDialogScreen Popup = null;
-			static MainMenuTimer menuTimer = null;
+			static MNI_Timer menuTimer = null;
 			public static void InitDelayedAutoStart(MainMenu __instance)
 			{
+				//if the application memory takes more than 3/4 of the total system memory, restart after the next run
+				 //RestartAfterGeneration = true
+
+
+				//this is set to true after the first collection of the instance has been completed, skip the 10 second timer for subsequent runs in the same instance
+				//to stop the process, restart the game
+				if (ModAssets.lowMemRestartInitialized)
+				{
+					menuTimer.SetTimer(2);
+					menuTimer.SetAction(() =>
+					{
+						InitAutoStart(__instance);
+					});
+					return;
+				}
+
+
 				if (menuTimer != null)
 					menuTimer.Abort();
 				menuTimer.SetTimer(10);
@@ -453,13 +470,19 @@ namespace _WorldGenStateCapture
 			}
 		}
 
-		[HarmonyPatch(typeof(WorldGen), nameof(WorldGen.ReportWorldGenError))]
+		[HarmonyPatch(typeof(OfflineWorldGen), nameof(OfflineWorldGen.DisplayErrors))]
 		public static class RestartOnFailedSeed
 		{
-			public static void Postfix()
+			/// <summary>
+			/// triggered on errors during worldgen
+			/// </summary>
+			/// <param name="__instance"></param>
+			/// <returns></returns>
+			public static bool Prefix(OfflineWorldGen __instance)
 			{
-				//potential TODO: send post request with "seed failed germination", then quit
-				ModAssets.ClearAndRestart();
+				ModAssets.ClearData();
+				App.LoadScene(__instance.frontendGameLevel);
+				return false;
 			}
 		}
 	}

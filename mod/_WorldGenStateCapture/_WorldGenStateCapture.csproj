@@ -41,6 +41,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Lib\**" />
+	  <EmbeddedResource Remove="Lib\**" />
+	  <None Remove="Lib\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="Aze.Publicise.MSBuild.Task" Version="1.1.0">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

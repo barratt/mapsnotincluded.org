@@ -10,9 +10,8 @@ namespace _WorldGenStateCapture
 {
 	internal class RequestHelper
 	{
-		public static string API_URL => "https://oni-seed-uploader-stefan-oltmann.koyeb.app/upload";
-		public static string API_TOKEN_PUBLIC => "InsertPublicAPIKey";
-		public static string API_TOKEN_DEV = "";
+		public static string API_URL => "https://oni-seed-browser-backend-106729705300.us-central1.run.app/upload";
+		public static string API_TOKEN => Credentials.API_Key;
 
 		public static IEnumerator TryPostRequest(string data, System.Action OnComplete)
 		{
@@ -29,7 +28,7 @@ namespace _WorldGenStateCapture
 				// Set the content type to JSON
 				request.SetRequestHeader("Content-Type", "application/json");
 				// Send the API key
-				request.SetRequestHeader("MNI_API_KEY", API_TOKEN_DEV == string.Empty? API_TOKEN_PUBLIC: API_TOKEN_DEV);
+				request.SetRequestHeader("MNI_API_KEY", API_TOKEN);
 
 				Debug.Log("request.SendWebRequest() ...");
 

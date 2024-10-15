@@ -4,7 +4,7 @@ using _WorldGenStateCapture.WorldStateData.WorldPOIs;
 using Klei.CustomSettings;
 using ProcGen;
 using System;
-using System.Collections;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -365,11 +365,32 @@ namespace _WorldGenStateCapture
 
 		public static void ClearAndRestart()
 		{
+			ClearData();
+			RestartGeneration();
+		}
+		public static void ClearData()
+		{
 			currentGeysers.Clear();
 			currentPOIs.Clear();
 			dlcStarmapItems.Clear();
 			baseStarmapItems.Clear();
-			App.instance.Restart();
+		}
+
+		public static bool lowMemRestartInitialized = false, RestartAfterGeneration = false;
+
+		public static void RestartGeneration()
+		{
+			if (!lowMemRestartInitialized)
+			{
+				lowMemRestartInitialized = true;
+				Application.lowMemory += () => RestartAfterGeneration = true;
+			}
+
+			if (RestartAfterGeneration)
+				App.instance.Restart();
+			else
+				PauseScreen.instance.OnQuitConfirm();
+
 		}
 	}
 }
