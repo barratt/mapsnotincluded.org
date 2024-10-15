@@ -65,7 +65,7 @@
   </Target>
 
   <!--Create folder for publicized dlls if not existing-->
-  <Target Name="PubliciseMKDIR" BeforeTargets ="Clean">
+  <Target Name="PubliciseMKDIR" BeforeTargets ="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
     <MakeDir
             Directories="$(SolutionDir)\PublicisedAssembly"/>
   </Target>
