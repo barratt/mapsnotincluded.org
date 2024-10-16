@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main>
+  <main class="container mt-5">
     <div class="mb-5">
       <h1>Trait Finder</h1>
       <p>This uses our database to search for existing seeds that contain specific traits, this does seem to be calculatable based on the coordinates, but is not yet known. We hope to get this working soon! If you have any information regarding this, please get in touch on Discord!</p>

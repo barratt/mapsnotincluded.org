@@ -2,7 +2,7 @@
 
   <Navbar></Navbar>
 
-  <div class="container mt-4"> <!-- Lets just throw away half the screen -->
+  <div> <!-- Lets just throw away half the screen -->
     <RouterView />
   </div>
 </template>

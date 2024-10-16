@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main>
+  <main class="container mt-5">
     <div class="mb-5">
       <h1>Contribute</h1>
     </div>
