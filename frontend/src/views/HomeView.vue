@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main>
+  <main class="container mt-5">
     <h1>Welcome</h1>
     <p>
       Welcome to MapsNotIncluded! This website is a work in progress, and will eventually contain a variety of map / world generation tools and resources for Oxygen Not Included.
