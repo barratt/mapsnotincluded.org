@@ -19,7 +19,7 @@ main {
 .iframe-container {
   display: flex;
   width: 100%; 
-  height: calc(100vh - 80px); /* not ideal, but I can't seem to work out how to get the frame to take the remaining space and ignore the navbar*/
+  height: calc(100vh - 66px); /* not ideal, but I can't seem to work out how to get the frame to take the remaining space and ignore the navbar*/
   overflow: hidden; 
 }
 
