@@ -77,12 +77,14 @@ namespace _WorldGenStateCapture
 						break;
 				}
 			}
+			DataItem.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData);
 
 			DataItem.dlcs = cleanDlcIds;
 
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)
 			{
+				IntegrityCheck.AddTraits(asteroid.WorldTraitIds, ref DataItem.fileHashes);
 				Debug.Log("collecting " + asteroid.GetProperName());
 				// Clean worldTraits by removing parts before "/"
 				var cleanWorldTraits = asteroid.WorldTraitIds.Select(trait => System.IO.Path.GetFileNameWithoutExtension(trait)).ToList();
@@ -134,7 +136,6 @@ namespace _WorldGenStateCapture
 				DataItem.starMapEntriesVanilla = new(baseStarmapItems);
 			}
 			Debug.Log("Serializing data...");
-
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(DataItem);
 
 

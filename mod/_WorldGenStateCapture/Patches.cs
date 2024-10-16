@@ -224,7 +224,7 @@ namespace _WorldGenStateCapture
 				//to stop the process, restart the game
 				if (ModAssets.lowMemRestartInitialized)
 				{
-					menuTimer.SetTimer(2);
+					menuTimer.SetTimer(5);
 					menuTimer.SetAction(() =>
 					{
 						InitAutoStart(__instance);
