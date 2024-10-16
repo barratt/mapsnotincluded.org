@@ -22,6 +22,7 @@ namespace _WorldGenStateCapture
 		internal static Dictionary<string, string> HarvestClusterHashes(ClusterLayout targetLayout)
 		{
 			Dictionary<string, string> AccumulatedHashes = new Dictionary<string, string>();
+			AccumulatedHashes["modHash"] = GetModHash();
 
 			AddFileToDic(targetLayout.filePath, ref AccumulatedHashes);
 

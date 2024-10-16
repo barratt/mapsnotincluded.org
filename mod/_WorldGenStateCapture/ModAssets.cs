@@ -20,6 +20,7 @@ namespace _WorldGenStateCapture
 {
 	internal class ModAssets
 	{
+		public static int SeedCounter = 0;
 
 		//if any other mods are installed
 		public static bool ModDilution = false;
@@ -81,6 +82,8 @@ namespace _WorldGenStateCapture
 
 			DataItem.dlcs = cleanDlcIds;
 
+
+			Debug.Log($"MNI Mod initializing seed collection. Seeds collected before in this session: {SeedCounter++}");
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)
 			{
@@ -196,6 +199,7 @@ namespace _WorldGenStateCapture
 		/// <returns>svg biomes image as string</returns>
 		internal static string AccumulateBiomeData(WorldContainer targetAsteroid)
 		{
+
 			//connects the individual vertices to a path for each biome blob for polygon generation
 			StringBuilder PathBuilder = new StringBuilder();
 			//collects the polygons
