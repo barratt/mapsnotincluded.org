@@ -346,6 +346,19 @@ namespace _WorldGenStateCapture
 				}
 			}
 		}
+		[HarmonyPatch(typeof(NewBaseScreen), nameof(NewBaseScreen.SpawnMinions))]
+		public static class PreventMinionSpawnCrash
+		{
+			public static bool Prefix(ModeSelectScreen __instance)
+			{
+				if (autoLoadActive)
+				{
+					return false;
+
+				}
+				return true;
+			}
+		}
 		[HarmonyPatch(typeof(ColonyDestinationSelectScreen), nameof(ColonyDestinationSelectScreen.OnSpawn))]
 		public static class SelectCluster
 		{
