@@ -7,6 +7,9 @@ on:
       - 'mod/**'
   workflow_dispatch:
 
+permissions:
+  contents: write # Grant write permission for creating releases
+
 defaults:
   run:
     working-directory: ./mod
@@ -35,7 +38,26 @@ jobs:
       with:
         path: mod/Builds/MapsNotIncluded_WorldParser
         name: MapsNotIncludedMod
-        
 
+    - name: Create GitHub release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: "mod-${{ env.NOW }}"
+        release_name: "Mod binary ${{ env.NOW }} "
+        draft: false
+        prerelease: false
+
+    - name: Upload MapsNotIncludedMod.zip to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: mod/Builds/MapsNotIncluded_WorldParser
+        asset_name: MapsNotIncludedMod.zip
+        asset_content_type: application/zip
 
       
