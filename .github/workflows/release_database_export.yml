@@ -5,20 +5,19 @@ on:
     # Run every day at midnight (00:00 UTC)
     - cron: '0 0 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write # Grant write permission for creating releases
   
 jobs:
   export_database:
     runs-on: ubuntu-latest
-
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v3
-
       - name: Download worlds.json.zip
         run: |
           curl -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
-
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
@@ -30,7 +29,6 @@ jobs:
           body: "Automated release of database export."
           draft: false
           prerelease: false
-
       - name: Upload worlds.json.zip to release
         uses: actions/upload-release-asset@v1
         with:
