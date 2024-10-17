@@ -151,7 +151,11 @@ namespace _WorldGenStateCapture
 
 			Console.WriteLine(json);
 			//attach the coroutine to the main game object
-			App.instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart, (data)=> StoreForLater(data, worldDataItem.coordinate)));
+			App.instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart, (data) =>
+			{
+				StoreForLater(data, worldDataItem.coordinate);
+				ClearAndRestart();
+			}));
 		}
 
 		/// <summary>
@@ -406,10 +410,10 @@ namespace _WorldGenStateCapture
 		{
 			if (offlineFileName == string.Empty)
 				return;
-
+			Debug.Log("Could not send seed data to the api, storing " + offlineFileName + " for later...");
 			Directory.CreateDirectory(WorldsFolder);
 
-			string file = System.IO.Path.Combine(WorldsFolder, offlineFileName.Replace("-", string.Empty));
+			string file = System.IO.Path.Combine(WorldsFolder, offlineFileName);
 			ByteArrayToFile(file, data);
 		}
 		internal static void UnstoreLater(string offlineFileName)
@@ -419,7 +423,12 @@ namespace _WorldGenStateCapture
 
 		public static void TrySendingCollected()
 		{
+			Directory.CreateDirectory(WorldsFolder);
 			var files = Directory.GetFiles(WorldsFolder);
+			if (files == null || files.Length == 0)
+				return;
+
+			Debug.Log("Connection reestablished, uploading stored " + files.Length + " datasets");
 			foreach (var file in files)
 			{
 				if(FileToByteArray(file, out var data))

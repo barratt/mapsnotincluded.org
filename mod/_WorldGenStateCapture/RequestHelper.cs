@@ -10,7 +10,7 @@ namespace _WorldGenStateCapture
 {
 	internal class RequestHelper
 	{
-		public static string API_URL => "https://oni-seed-browser-backend-106729705300.us-central1.run.app/upload";
+		public static string API_URL => Credentials.API_URL;
 		public static string API_TOKEN => Credentials.API_Key;
 
 		public static IEnumerator TryPostRequest(byte[] bodyRaw, System.Action OnComplete, System.Action<byte[]> OnFail)
@@ -35,7 +35,6 @@ namespace _WorldGenStateCapture
 				{
 					Debug.LogWarning(request.error);
 					OnFail(bodyRaw);
-					ModAssets.ClearAndRestart();
 				}
 				else
 				{
