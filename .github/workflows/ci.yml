@@ -34,15 +34,6 @@ jobs:
       with:
         path: mod/Builds/_WorldGenStateCapture
         name: MapsNotIncludedMod
-
-    - name: Create Release
-      uses: ncipollo/release-action@v1.14.0
-      with:
-        allowUpdates: true
-        artifacts: "MapsNotIncludedMod.zip"
-        tag: "MNI_Mod_Latest"
-
-            
         
 
 
