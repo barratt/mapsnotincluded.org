@@ -22,13 +22,14 @@ jobs:
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "database-export-$(date +'%Y%m%d')"
           release_name: "Database Export - $(date +'%Y-%m-%d')"
           body: "Automated release of database export."
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload worlds.json.zip to release
         uses: actions/upload-release-asset@v1
