@@ -18,15 +18,22 @@
     <div class="mb-5">
       <h2 class="text-info">Gamers</h2>
       <p>
-        We're looking for cool saves that we can index so other players can enjoy them, please share with us your worlds over on our <a href="https://discord.gg/3vhCpp6PNq" target="mni_gh">Discord</a>. Eventually this will be replaced with a nice automated upload process.
+        Please donate your compute power and upload saves to make this tool better for everyone. <br>
+        <br>
+        To do this, please follow the instructions below. <br>
+        1. Locate your ONI mod folder. It is usually in C:\Users\USERNAME\Documents\Klei\OxygenNotIncluded\mods. <br>
+        2. Go into or create a folder named local.<br>
+        3. Download and unzip the latest build from <a href=https://github.com/barratt/mapsnotincluded.org/actions/workflows/build_mod.yml target="_blank">Github</a>.<br>
+        4. Put the fild in the local folder.<br>
+        5. Start Oxygen Not Included and enable the mod. It won't work if there are any other mods enabled. You may also need to disable default save to cloud in Oxygen Not Included settings.<br>
       </p>
 
       <p>
-        Additionally we're looking for feedback on the site, if you have any suggestions or found a bug, please come and share your thoughts.
+        Additionally we're looking for feedback on the site, if you have any suggestions or found a bug, please come and share your thoughts on <a href="https://discord.gg/3vhCpp6PNq" target="mni_gh">Discord</a>.
       </p>
 
       <p>
-        And finally, if you know anything about the world generation process in Oxygen Not Included, we would love to hear from you. We're always looking to improve our understanding of the game and the tools we build around it. Even if its some cool ideas on the seed-format
+        And finally, if you know anything about the world generation process in Oxygen Not Included, we would love to hear from you. We're always looking to improve our understanding of the game and the tools we build around it.
       </p>
     </div>
 
