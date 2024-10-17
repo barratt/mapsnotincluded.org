@@ -13,19 +13,15 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v3
-    # - name: Build the Docker image
-      # run: cd api && docker build . --file Dockerfile --tag mni:$(date +%s)
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v1
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GHCR_TOKEN }}
-
     - name: Build and push Docker images
       uses: docker/build-push-action@v4.0.0
       with:
         context: app
         push: true
         tags: ghcr.io/barratt/mni:latest
-        # token: ${{ secrets.GHCR_TOKEN }}

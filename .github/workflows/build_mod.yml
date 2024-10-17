@@ -1,10 +1,11 @@
-name: CI on reference Oxygen Not Included assemblies
+name: Build Mod
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    paths:
+      - 'mod/**'
+  workflow_dispatch:
 
 defaults:
   run:
