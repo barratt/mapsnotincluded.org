@@ -19,6 +19,11 @@ namespace _WorldGenStateCapture
 		public int HourCounter = 0;
 		public System.DateTime LastHourStart;
 
+		public bool RestartThresholdReached()
+		{
+			return SessionCounter >= 100;
+		}
+
 		public void OnGameStart()
 		{
 			PrintStartStatistics();

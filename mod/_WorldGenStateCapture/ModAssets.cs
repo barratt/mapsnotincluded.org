@@ -397,6 +397,8 @@ namespace _WorldGenStateCapture
 				lowMemRestartInitialized = true;
 				Application.lowMemory += () => RestartAfterGeneration = true;
 			}
+			if (MNI_Statistics.Instance.RestartThresholdReached())
+				RestartAfterGeneration = true;
 
 			if (RestartAfterGeneration)
 				App.instance.Restart();
