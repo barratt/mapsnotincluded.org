@@ -2,19 +2,19 @@
 
 	<!-- General Package Properties -->
 	<PropertyGroup>
-		<PackageId>_WorldGenStateCapture</PackageId>
+		<PackageId>MapsNotIncluded_WorldParser</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>Sgt_Imalas</Authors>
     <Copyright>$(AssemblyCopyright)</Copyright>
-		<RepositoryUrl>https://github.com/Sgt-Imalas/Sgt_Imalas-Oni-Mods</RepositoryUrl>
+		<RepositoryUrl>https://github.com/barratt/mapsnotincluded.org</RepositoryUrl>
 	</PropertyGroup>
 
 	<!-- Build Properties -->
 	<PropertyGroup>
 		<TargetFramework>net471</TargetFramework>
 		<Configurations>Debug;Release</Configurations>
-		<AssemblyName>_WorldGenStateCapture</AssemblyName>
-		<RootNamespace>_WorldGenStateCapture</RootNamespace>
+		<AssemblyName>MapsNotIncluded_WorldParser</AssemblyName>
+		<RootNamespace>MapsNotIncluded_WorldParser</RootNamespace>
 		<IsMod>true</IsMod>
 		<GenerateMetadata>true</GenerateMetadata>
 		<IsPacked>true</IsPacked>
@@ -23,10 +23,10 @@
 
 	<!-- Mod Info -->
 	<PropertyGroup>
-		<ModName>MapsNotIncluded World Parser</ModName>
+		<ModName>MapsNotIncluded Seed Collector</ModName>
 		<ModDescription></ModDescription>
 		<SupportedContent>ALL</SupportedContent> <!-- Use "EXPANSION1_ID" for dlc only -->
-		<MinimumSupportedBuild>587362</MinimumSupportedBuild>
+		<MinimumSupportedBuild>626616</MinimumSupportedBuild>
 		<APIVersion>2</APIVersion>
 	</PropertyGroup>
 
