@@ -18,6 +18,8 @@ jobs:
       - name: Download worlds.json.zip
         run: |
           curl -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
+      - name: Debug export
+        run: echo database-export-$(date +'%Y%m%d')
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
@@ -25,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "database-export-$(date +'%Y%m%d')"
-          release_name: "Database Export - $(date +'%Y-%m-%d')"
+          release_name: "Database export - $(date +'%Y-%m-%d')"
           body: "Automated release of database export."
           draft: false
           prerelease: false
