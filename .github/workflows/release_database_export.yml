@@ -1,0 +1,39 @@
+name: Release database export
+
+on:
+  schedule:
+    # Run every day at midnight (00:00 UTC)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+  
+jobs:
+  export_database:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download worlds.json.zip
+        run: |
+          curl -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
+
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: "database-export-$(date +'%Y%m%d')"
+          release_name: "Database Export - $(date +'%Y-%m-%d')"
+          body: "Automated release of database export."
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload worlds.json.zip to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./worlds.json.zip
+          asset_name: worlds.json.zip
+          asset_content_type: application/zip
