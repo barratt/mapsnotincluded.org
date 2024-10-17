@@ -148,7 +148,7 @@ namespace _WorldGenStateCapture
 			Debug.Log("Send data to webservice...");
 
 
-			Console.WriteLine(json);
+			//Console.WriteLine(json);
 			//attach the coroutine to the main game object
 			App.instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart, (data) =>
 			{
