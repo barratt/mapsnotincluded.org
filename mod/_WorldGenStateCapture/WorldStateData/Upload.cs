@@ -18,6 +18,7 @@ namespace _WorldGenStateCapture.WorldStateData
 		{
 			userId = IntegrityCheck.GetUserId();
 			installationId = IntegrityCheck.GetInstallationId();
+			gameVersion = BuildWatermark.GetBuildText();
 		}
 	}
 }
