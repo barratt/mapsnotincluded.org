@@ -15,6 +15,7 @@ namespace _WorldGenStateCapture
 			base.OnLoad(harmony);
 			harmonyInstance = harmony;
 			Debug.Log($"{mod.staticID} - Mod Version: {mod.packagedModInfo.version} ");
+			MNI_Statistics.Initialize();
 		}
 		public static Harmony harmonyInstance;
 

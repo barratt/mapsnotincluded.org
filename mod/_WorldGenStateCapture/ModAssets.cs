@@ -21,8 +21,6 @@ namespace _WorldGenStateCapture
 {
 	internal class ModAssets
 	{
-		public static int SeedCounter = 0;
-
 		//if any other mods are installed
 		public static bool ModDilution = false;
 		public static string ModPath => System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -86,13 +84,11 @@ namespace _WorldGenStateCapture
 
 			worldDataItem.dlcs = cleanDlcIds;
 
-
-			Debug.Log($"MNI Mod initializing seed collection. Seeds collected before in this session: {SeedCounter++}");
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)
 			{
 				IntegrityCheck.AddTraits(asteroid.WorldTraitIds, ref data.fileHashes);
-				Debug.Log("collecting " + asteroid.GetProperName());
+				Debug.Log("collecting " + System.IO.Path.GetFileName(asteroid.worldName));
 				// Clean worldTraits by removing parts before "/"
 				var cleanWorldTraits = asteroid.WorldTraitIds.Select(trait => System.IO.Path.GetFileNameWithoutExtension(trait)).ToList();
 
@@ -142,6 +138,9 @@ namespace _WorldGenStateCapture
 			}
 			data.world = worldDataItem;
 
+
+			MNI_Statistics.Instance.OnSeedGenerated();
+
 			Debug.Log("Serializing data...");
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 
@@ -153,7 +152,7 @@ namespace _WorldGenStateCapture
 			//attach the coroutine to the main game object
 			App.instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart, (data) =>
 			{
-				StoreForLater(data, worldDataItem.coordinate);
+				//StoreForLater(data, worldDataItem.coordinate);
 				ClearAndRestart();
 			}));
 		}
@@ -405,15 +404,14 @@ namespace _WorldGenStateCapture
 				PauseScreen.instance.OnQuitConfirm();
 		}
 
-		static string WorldsFolder => System.IO.Path.Combine(IntegrityCheck.ConfigFolder, "OfflineWorlds");
 		internal static void StoreForLater(byte[] data, string offlineFileName)
 		{
 			if (offlineFileName == string.Empty)
 				return;
 			Debug.Log("Could not send seed data to the api, storing " + offlineFileName + " for later...");
-			Directory.CreateDirectory(WorldsFolder);
+			Directory.CreateDirectory(Paths.WorldsFolder);
 
-			string file = System.IO.Path.Combine(WorldsFolder, offlineFileName);
+			string file = System.IO.Path.Combine(Paths.WorldsFolder, offlineFileName);
 			ByteArrayToFile(file, data);
 		}
 		internal static void UnstoreLater(string offlineFileName)
@@ -423,8 +421,9 @@ namespace _WorldGenStateCapture
 
 		public static void TrySendingCollected()
 		{
-			Directory.CreateDirectory(WorldsFolder);
-			var files = Directory.GetFiles(WorldsFolder);
+			return;
+			Directory.CreateDirectory(Paths.WorldsFolder);
+			var files = Directory.GetFiles(Paths.WorldsFolder);
 			if (files == null || files.Length == 0)
 				return;
 

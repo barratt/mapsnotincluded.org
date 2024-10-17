@@ -63,7 +63,7 @@ namespace _WorldGenStateCapture
 			}
 			//normalize
 			fullFilePath = System.IO.Path.GetFullPath(fullFilePath); 
-			string gameFolderPath = System.IO.Path.GetFullPath(GameFolder);
+			string gameFolderPath = System.IO.Path.GetFullPath(Paths.GameFolder);
 			string pathKey = fullFilePath
 				.Replace(gameFolderPath, string.Empty)
 				.Replace("\\OxygenNotIncluded_Data\\StreamingAssets\\", string.Empty)
@@ -98,9 +98,9 @@ namespace _WorldGenStateCapture
 		}
 		public static string GetInstallationId()
 		{
-			Directory.CreateDirectory(ConfigFolder);
+			Directory.CreateDirectory(Paths.ConfigFolder);
 			var idFileName = "MNI_GUID";
-			var filepath = System.IO.Path.Combine(ConfigFolder, idFileName);
+			var filepath = System.IO.Path.Combine(Paths.ConfigFolder, idFileName);
 
 			string GUID = Guid.NewGuid().ToString();
 			if (!File.Exists(filepath))
@@ -109,8 +109,5 @@ namespace _WorldGenStateCapture
 				GUID = File.ReadAllText(filepath);
 			return GUID;
 		}
-		public static string GameFolder => System.IO.Path.GetDirectoryName(UnityEngine.Application.dataPath);
-		public static string ModsFolder => System.IO.Directory.GetParent(System.IO.Directory.GetParent(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName).ToString() + "\\";
-		public static string ConfigFolder => System.IO.Path.Combine(ModsFolder, "config");
 	}
 }
