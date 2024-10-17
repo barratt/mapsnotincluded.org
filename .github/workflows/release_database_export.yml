@@ -18,7 +18,7 @@ jobs:
       - name: Download worlds.json.zip
         run: curl -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
       - name: set NOW
-        run: echo "::set-env name=NOW::$(date +'%Y-%m-%d')"
+        run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
