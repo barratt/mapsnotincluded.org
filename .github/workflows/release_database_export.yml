@@ -16,18 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Download worlds.json.zip
-        run: |
-          curl -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
-      - name: Debug export
-        run: echo database-export-$(date +'%Y%m%d')
+        run: curl -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
+      - name: set NOW
+        run: echo "::set-env name=NOW::$(date +'%Y-%m-%d')"
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "database-export-$(date +'%Y%m%d')"
-          release_name: "Database export - $(date +'%Y-%m-%d')"
+          tag_name: "database-export-${{ env.NOW }}"
+          release_name: "Database export ${{ env.NOW }} "
           body: "Automated release of database export."
           draft: false
           prerelease: false
