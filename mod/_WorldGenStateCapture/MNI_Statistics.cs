@@ -25,7 +25,6 @@ namespace _WorldGenStateCapture
 
 			SessionCounter = 0;
 			HourCounter = 0;
-			TotalCounter = 0;
 			LastHourStart = System.DateTime.Now;
 		}
 		public void OnSeedGenerated()
