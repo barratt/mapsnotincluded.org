@@ -25,9 +25,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "database-export-${{ env.NOW }}"
-          release_name: "Database export ${{ env.NOW }} "
-          body: "Automated release of database export."
+          tag_name: "data-${{ env.NOW }}"
+          release_name: "Data ${{ env.NOW }} "
+          body: "Automated export of collected maps data in JSON format."
           draft: false
           prerelease: false
       - name: Upload worlds.json.zip to release
