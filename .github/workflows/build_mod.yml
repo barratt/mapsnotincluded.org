@@ -39,6 +39,9 @@ jobs:
         path: mod/Builds/MapsNotIncluded_WorldParser
         name: MapsNotIncludedMod
 
+    - name: set NOW
+      run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
     - name: Create GitHub release
       id: create_release
       uses: actions/create-release@v1
