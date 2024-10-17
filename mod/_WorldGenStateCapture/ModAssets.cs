@@ -15,6 +15,7 @@ using static ProcGen.ClusterLayout;
 using static ProcGen.SubWorld;
 using static STRINGS.COLONY_ACHIEVEMENTS.ACTIVATEGEOTHERMALPLANT.STATUSITEMS;
 using static STRINGS.UI.CLUSTERMAP;
+using System.IO;
 
 namespace _WorldGenStateCapture
 {
@@ -40,7 +41,8 @@ namespace _WorldGenStateCapture
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();
 
-			WorldDataInstance DataItem = new WorldDataInstance();
+			Upload data = new Upload();
+			WorldDataInstance worldDataItem = new WorldDataInstance();
 
 			SettingLevel currentQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.ClusterLayout);
 			if (currentQualitySetting == null)
@@ -58,8 +60,8 @@ namespace _WorldGenStateCapture
 
 			// DataItem.seed = seed;
 
-			DataItem.cluster = clusterData.GetCoordinatePrefix();
-			DataItem.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
+			worldDataItem.cluster = clusterData.GetCoordinatePrefix();
+			worldDataItem.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
 
 			var cleanDlcIds = new List<string>();
 
@@ -67,6 +69,8 @@ namespace _WorldGenStateCapture
 			{
 				switch (dlcId)
 				{
+					case "": //base game "dlc" id, skip that
+						break;
 					case "DLC2_ID":
 						cleanDlcIds.Add("FrostyPlanet");
 						break;
@@ -78,16 +82,16 @@ namespace _WorldGenStateCapture
 						break;
 				}
 			}
-			DataItem.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData);
+			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData);
 
-			DataItem.dlcs = cleanDlcIds;
+			worldDataItem.dlcs = cleanDlcIds;
 
 
 			Debug.Log($"MNI Mod initializing seed collection. Seeds collected before in this session: {SeedCounter++}");
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)
 			{
-				IntegrityCheck.AddTraits(asteroid.WorldTraitIds, ref DataItem.fileHashes);
+				IntegrityCheck.AddTraits(asteroid.WorldTraitIds, ref data.fileHashes);
 				Debug.Log("collecting " + asteroid.GetProperName());
 				// Clean worldTraits by removing parts before "/"
 				var cleanWorldTraits = asteroid.WorldTraitIds.Select(trait => System.IO.Path.GetFileNameWithoutExtension(trait)).ToList();
@@ -113,12 +117,10 @@ namespace _WorldGenStateCapture
 
 				CleanPOICoordinates(asteroidData);
 
-
 				if (asteroid.IsStartWorld)
-					DataItem.asteroids.Insert(0, asteroidData);
+					worldDataItem.asteroids.Insert(0, asteroidData);
 				else
-					DataItem.asteroids.Add(asteroidData);
-
+					worldDataItem.asteroids.Add(asteroidData);
 
 				//Debug.Log("SVG:");
 				//Console.WriteLine(asteroidData.biomesSVG);
@@ -132,14 +134,16 @@ namespace _WorldGenStateCapture
 
 			if (dlcActive)
 			{
-				DataItem.starMapEntriesSpacedOut = new(dlcStarmapItems);
+				worldDataItem.starMapEntriesSpacedOut = new(dlcStarmapItems);
 			}
 			else
 			{
-				DataItem.starMapEntriesVanilla = new(baseStarmapItems);
+				worldDataItem.starMapEntriesVanilla = new(baseStarmapItems);
 			}
+			data.world = worldDataItem;
+
 			Debug.Log("Serializing data...");
-			string json = Newtonsoft.Json.JsonConvert.SerializeObject(DataItem);
+			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 
 
 			Debug.Log("Send data to webservice...");
@@ -147,7 +151,7 @@ namespace _WorldGenStateCapture
 
 			Console.WriteLine(json);
 			//attach the coroutine to the main game object
-			Game.Instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart));
+			App.instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart, (data)=> StoreForLater(data, worldDataItem.coordinate)));
 		}
 
 		/// <summary>
@@ -395,7 +399,62 @@ namespace _WorldGenStateCapture
 				App.instance.Restart();
 			else
 				PauseScreen.instance.OnQuitConfirm();
+		}
 
+		static string WorldsFolder => System.IO.Path.Combine(IntegrityCheck.ConfigFolder, "OfflineWorlds");
+		internal static void StoreForLater(byte[] data, string offlineFileName)
+		{
+			if (offlineFileName == string.Empty)
+				return;
+
+			Directory.CreateDirectory(WorldsFolder);
+
+			string file = System.IO.Path.Combine(WorldsFolder, offlineFileName.Replace("-", string.Empty));
+			ByteArrayToFile(file, data);
+		}
+		internal static void UnstoreLater(string offlineFileName)
+		{
+			System.IO.File.Delete(offlineFileName);
+		}
+
+		public static void TrySendingCollected()
+		{
+			var files = Directory.GetFiles(WorldsFolder);
+			foreach (var file in files)
+			{
+				if(FileToByteArray(file, out var data))
+				{
+					App.instance.StartCoroutine(RequestHelper.TryPostRequest(data, () => UnstoreLater(file), (_) =>{ }));
+				}
+			}
+		}
+		public static bool ByteArrayToFile(string fileName, byte[] byteArray)
+		{
+			try
+			{
+				File.WriteAllBytes(fileName, byteArray);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Exception caught in process: {0}", ex);
+				return false;
+			}
+		}
+		public static bool FileToByteArray(string fileName, out byte[] byteArray)
+		{
+			try
+			{
+				using var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+				byteArray = File.ReadAllBytes(fileName);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				byteArray = null;
+				Console.WriteLine("Exception caught in process: {0}", ex);
+				return false;
+			}
 		}
 	}
 }

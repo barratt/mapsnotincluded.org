@@ -88,8 +88,15 @@ namespace _WorldGenStateCapture
 			//Console.WriteLine("Hashing: " + filename);
 			return BitConverter.ToString(hasher.ComputeHash(stream)).Replace("-",string.Empty).ToLowerInvariant();
 		}
-
 		public static string GetUserId()
+		{
+			if (DistributionPlatform.Initialized) //this should usually always be initialized
+			{
+				return DistributionPlatform.Inst.Name + "-" + DistributionPlatform.Inst.LocalUser.Id;
+			}
+			return "LocalUser-" + Environment.UserName;
+		}
+		public static string GetInstallationId()
 		{
 			Directory.CreateDirectory(ConfigFolder);
 			var idFileName = "MNI_GUID";

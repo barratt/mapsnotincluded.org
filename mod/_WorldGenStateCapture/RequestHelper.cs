@@ -13,11 +13,8 @@ namespace _WorldGenStateCapture
 		public static string API_URL => "https://oni-seed-browser-backend-106729705300.us-central1.run.app/upload";
 		public static string API_TOKEN => Credentials.API_Key;
 
-		public static IEnumerator TryPostRequest(string data, System.Action OnComplete)
+		public static IEnumerator TryPostRequest(byte[] bodyRaw, System.Action OnComplete, System.Action<byte[]> OnFail)
 		{
-			// Convert JSON string to bytes
-			byte[] bodyRaw = Encoding.UTF8.GetBytes(data);
-
 			using (UnityWebRequest request = new UnityWebRequest(API_URL, "POST"))
 			{
 
@@ -37,14 +34,18 @@ namespace _WorldGenStateCapture
 				if (request.result != UnityWebRequest.Result.Success)
 				{
 					Debug.LogWarning(request.error);
+					OnFail(bodyRaw);
 					ModAssets.ClearAndRestart();
 				}
 				else
 				{
 					Debug.Log("Form upload complete!");
+					ModAssets.TrySendingCollected();
 					OnComplete();
 				}
 			}
 		}
+		public static IEnumerator TryPostRequest(string data, System.Action OnComplete, System.Action<byte[]> OnFail) => TryPostRequest(Encoding.UTF8.GetBytes(data), OnComplete, OnFail);
+
 	}
 }
