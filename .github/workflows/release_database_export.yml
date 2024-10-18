@@ -16,7 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Download worlds.json.zip
-        run: curl -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
+        env:
+          DATABASE_EXPORT_API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
+        run: |
+          curl --fail -H "DATABASE_EXPORT_API_KEY: $DATABASE_EXPORT_API_KEY" -o worlds.json.zip https://apibeta.mapsnotincluded.org/export
       - name: set NOW
         run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Create GitHub release
