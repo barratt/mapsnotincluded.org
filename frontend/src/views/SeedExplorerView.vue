@@ -1,15 +1,29 @@
 <script setup>
+import { ref } from 'vue';
 
+// Define a reactive variable using ref
+const seedInput = ref("0000-0-0-0-0");
+
+const submit = () => {
+    //add api code here
+    console.log('submitted: ', seedInput.value);
+};
 </script>
 
 <template>
   <main class="container mt-5">
     <h1>Seed Explorer</h1>
     <p>Input a seed, and see whether our database has it and you can explore the map!</p>
-    <label for="seedInput">Seed: </label> <br>
-    <input type="text" id="seedInput" name="seedInput">
-    <input type="submit" value="Submit">
-    <br>
-    <p>You can also <router-link to="/contribute">contribute</router-link> to the development of this website.</p>
+
+    
+    <div>
+        <label for="seedInput">Seed: </label> <br>
+        <input type="text" v-model="seedInput" size="40">
+        <br>
+        <button @click="submit">Submit</button>
+    </div>
+    
+
+    
   </main>
 </template>
