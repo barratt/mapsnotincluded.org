@@ -22,8 +22,8 @@
         <br>
         To do this, please follow the instructions below. <br>
         1. Locate your ONI mod folder. It is usually in C:\Users\USERNAME\Documents\Klei\OxygenNotIncluded\mods. <br>
-        2. Go into or create a folder named local.<br>
-        3. Download and unzip the latest build from <a href=https://github.com/barratt/mapsnotincluded.org/actions/workflows/build_mod.yml target="_blank">Github</a>.<br>
+        2. Go into or create a folder named "Local" (case sensitive on linux).<br>
+        3. Download and unzip the latest mod build from the <a href=https://github.com/barratt/mapsnotincluded.org/releases target="_blank">Github Release page</a>.<br>
         4. Put the fild in the local folder.<br>
         5. Start Oxygen Not Included and enable the mod. It won't work if there are any other mods enabled. You may also need to disable default save to cloud in Oxygen Not Included settings.<br>
       </p>

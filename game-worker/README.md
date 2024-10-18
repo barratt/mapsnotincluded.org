@@ -1,5 +1,0 @@
-This is a test idea, as writing a mod for world generation seems to be a little out of my depth at the moment, there are plenty of save-parsers we can use. We just need to generate saves. Going to see if we can write some code to automatically do this via PyAutoGui or ahk
-
-This is less than ideal and really we would want a mod that injects.
-
-When evaluating the save files it looks like (oni-save-parser)[https://www.npmjs.com/package/oni-save-parser] is able to extract most of the data, if we expand it and save it, it works out to be 17MB from a 750KB save. Either we can extract what we feel is useful, i.e seed, geyser locations etc or we can just keep a copy of the save file. We will probably end up doing both, as the extracted data will be useful for querying, while the raw saves serve as a potential future database if we're interested in more stuff.
