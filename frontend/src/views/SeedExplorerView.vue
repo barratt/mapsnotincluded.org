@@ -5,7 +5,7 @@ import { ref } from 'vue';
 const seedInput = ref("0000-0-0-0-0");
 
 const submit = () => {
-    //add api code here
+    // TODO add api code here
     console.log('submitted: ', seedInput.value);
 };
 </script>
