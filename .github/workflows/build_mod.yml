@@ -42,9 +42,11 @@ jobs:
 #    - name: Zip the directory
 #      run: Compress-Archive -Path mod/Builds/MapsNotIncluded_WorldParser -DestinationPath MapsNotIncludedMod.zip
 
-    - name: Get short commit hash
-      id: vars
-      run: echo "SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+    - name: Set SHORT_COMMIT environment variable
+      shell: pwsh
+      run: |
+        $SHORT_COMMIT = git rev-parse --short HEAD
+        echo "SHORT_COMMIT=$SHORT_COMMIT" >> $env:GITHUB_ENV
 
     - name: Create GitHub release
       id: create_release
