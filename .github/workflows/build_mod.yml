@@ -40,7 +40,7 @@ jobs:
         name: MapsNotIncludedMod
 
     - name: Move
-      run:  move "mod\Builds\MapsNotIncluded_WorldParser" .
+      run:  move "Builds\MapsNotIncluded_WorldParser" .
 
     - name: Zip the directory
       run: Compress-Archive -Path "MapsNotIncluded_WorldParser" -DestinationPath MapsNotIncludedMod.zip
