@@ -117,8 +117,6 @@ namespace _WorldGenStateCapture
 			}
 		}
 
-
-
 		[HarmonyPatch(typeof(MainMenu), nameof(MainMenu.OnSpawn))]
 
 		public static class AutoLaunchParser
@@ -127,9 +125,6 @@ namespace _WorldGenStateCapture
 			public static void Postfix(MainMenu __instance)
 			{
 				autoLoadActive = false;
-				bool shouldAutoStart = ShoulDoAutoStartParsing(out _);
-
-
 				if (ModAssets.ModDilution)
 				{
 					Debug.LogWarning("other active mods detected, aborting auto world parsing");
@@ -138,61 +133,10 @@ namespace _WorldGenStateCapture
 						STRINGS.AUTOPARSING.MODSDETECTED.DESC);
 					return;
 				}
-
-
-				var config = Config.Instance;
-				//if (!shouldAutoStart)
-				//{
-				var startParsingBTN = Util.KInstantiateUI(__instance.Button_NewGame.gameObject, __instance.Button_NewGame.transform.parent.gameObject, true);
-				startParsingBTN.name = "start parsing";
-				if (startParsingBTN.TryGetComponent<KButton>(out var btn))
-				{
-					btn.ClearOnClick();
-					btn.onClick += () =>
-					{
-						ToggleAutoParse(true);
-						ReduceRemainingRuns();
-						InitAutoStart(__instance);
-					};
-				}
-				LocText componentInChildren = startParsingBTN.GetComponentInChildren<LocText>();
-				componentInChildren.text = STRINGS.STARTPARSING;
-				//}
-				menuTimer = __instance.gameObject.AddOrGet<MNI_Timer>();
-
-
-				if (config.ContinuousParsing)
-				{
-					InitDelayedAutoStart(__instance);
-					return;
-				}
-
-				if (shouldAutoStart)
-				{
-					ReduceRemainingRuns();
-					InitDelayedAutoStart(__instance);
-				}
-				else
-					ToggleAutoParse(false);
+				menuTimer = __instance.gameObject.AddOrGet<MNI_Timer>();				
+				InitDelayedAutoStart(__instance);				
 			}
 
-			public static string RegistryKey = "SeedParsing_RemainingRuns";
-			public static bool ShoulDoAutoStartParsing(out int remainingRuns)
-			{
-				remainingRuns = KPlayerPrefs.GetInt(RegistryKey);
-				return remainingRuns > 0;
-			}
-			public static void ReduceRemainingRuns()
-			{
-				int remaining = KPlayerPrefs.GetInt(RegistryKey);
-				remaining--;
-				KPlayerPrefs.SetInt(RegistryKey, remaining);
-
-			}
-			public static void ToggleAutoParse(bool enable)
-			{
-				KPlayerPrefs.SetInt(RegistryKey, enable ? Config.Instance.TargetNumber : -1);
-			}
 			static void CancelAutoParsing()
 			{
 				if (menuTimer != null)
@@ -209,8 +153,7 @@ namespace _WorldGenStateCapture
 				//close previous
 				CloseDialogue();
 				Popup = (ConfirmDialogScreen)KScreenManager.Instance.StartScreen(ScreenPrefabs.Instance.ConfirmDialogScreen.gameObject, Global.Instance.globalCanvas);
-				Popup.PopupConfirmDialog(text, on_confirm, on_cancel, configurable_text, on_configurable_clicked, title, confirm_text, cancel_text, image_sprite);
-				
+				Popup.PopupConfirmDialog(text, on_confirm, on_cancel, configurable_text, on_configurable_clicked, title, confirm_text, cancel_text, image_sprite);				
 			}
 			static ConfirmDialogScreen Popup = null;
 			static MNI_Timer menuTimer = null;
@@ -241,6 +184,7 @@ namespace _WorldGenStateCapture
 					CloseDialogue();
 					InitAutoStart(__instance);
 				});
+				
 				Dialog(STRINGS.AUTOPARSING.INPROGRESSDIALOG.TITLE,
 					STRINGS.AUTOPARSING.INPROGRESSDIALOG.DESC,
 					STRINGS.AUTOPARSING.INPROGRESSDIALOG.STARTNOW,
@@ -249,6 +193,7 @@ namespace _WorldGenStateCapture
 			}
 			public static void InitAutoStart(MainMenu __instance)
 			{
+				MNI_Statistics.Initialize();
 				//Used to generate dictionaries in Config class, uncomment to regenerate them when new dlc releases
 				//Console.WriteLine("Cluster Dic:");
 				//foreach (string clusterName in SettingsCache.GetClusterNames())
@@ -374,9 +319,9 @@ namespace _WorldGenStateCapture
 					if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID))
 					{
 						//ceres clusters require dlc mixing to be enabled
-						if (Config.Instance.RandomMixing == false)
+						if (!MNI_Statistics.Instance.IsMixingRun())
 						{
-							Debug.Log("Mixing disabled by config");
+							Debug.Log("no mixing active this run");
 							//if its a ceres cluster, turn off any mixing, otherwise leave them at default (adjust in the future if klei releases a second mixing dlc, rn ceres comes with everything disabled by default)
 							if (!targetLayout.requiredDlcIds.Contains(DlcManager.DLC2_ID))
 							{

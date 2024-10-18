@@ -5,6 +5,11 @@
 		public static LocString STARTPARSING = "Start Collecting Worlds";
 		public class WORLDPARSERMODCONFIG
 		{
+			public class RANDOMIZEDGEN
+			{
+				public static LocString NAME = "Generate random Clusters";
+				public static LocString DESC = "Selects the cluster to generate at random.";
+			}
 			public class TARGETCLUSTERBASE
 			{
 				public static LocString NAME = "Target World (Basegame)";
@@ -15,25 +20,15 @@
 				public static LocString NAME = "Target Cluster (DLC)";
 				public static LocString DESC = "Coordinate prefix of the cluster to parse seeds from.";
             }
-            public class RANDOMIZEDGEN
-            {
-				public static LocString NAME = "generate random Clusters";
-                public static LocString DESC = "selects the cluster to generate at random.";
-            }
             public class TARGETNUMBER
 			{
-				public static LocString NAME = "Number of runs";
-				public static LocString DESC = "total number of runs the program should parse before stopping.\nInfinite parsing overrides this!";
-			}
-			public class TARGETINFINITE
-			{
-				public static LocString NAME = "Infinite parsing";
-				public static LocString DESC = "the tool will run continuously until the mod is removed by deleting the mods.json file.\nOnly do this if you want fully autonomous seed parsing!";
+				public static LocString NAME = "Seeds per Session";
+				public static LocString DESC = "Total number of seeds the mod collects before doing a restart.";
 			}
 			public class RANDOMMIXING
 			{
-				public static LocString NAME = "Enable Random Mixing";
-				public static LocString DESC = "Mixing Options will be enabled at random";
+				public static LocString NAME = "Mixing Percentage";
+				public static LocString DESC = "Percentage of worlds that will be generated with DLC Remixing enabled";
 			}
 		}
 		public class AUTOPARSING

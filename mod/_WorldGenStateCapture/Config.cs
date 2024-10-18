@@ -11,27 +11,26 @@ namespace _WorldGenStateCapture
 	[ModInfo("World Parser")]
 	public class Config : SingletonOptions<Config>
 	{
+		[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC")]
+		[JsonProperty]
+		public bool RandomizedClusterGen { get; set; } = true;
+
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.DESC")]
 		[JsonProperty]
 		public ClusterSelection_Base TargetCoordinateBase { get; set; } = ClusterSelection_Base.Terra;
+
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC")]
 		[JsonProperty]
 		public ClusterSelection_SO TargetCoordinateDLC { get; set; } = ClusterSelection_SO.Terrania_Cluster;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.DESC")]
 		[JsonProperty]
-		public int TargetNumber { get; set; } = 50;
-		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETINFINITE.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETINFINITE.DESC")]
-		[JsonProperty]
-		public bool ContinuousParsing { get; set; } = true;
-
-		[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC")]
-		[JsonProperty]
-		public bool RandomizedClusterGen { get; set; } = true;
+		public int RestartTarget { get; set; } = 100;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.DESC")]
 		[JsonProperty]
-		public bool RandomMixing { get; set; } = false;
+		[Limit(0, 100)]
+		public int RandomMixingPercentage { get; set; } = 5;
 
 		public enum ClusterSelection_Base
 		{
