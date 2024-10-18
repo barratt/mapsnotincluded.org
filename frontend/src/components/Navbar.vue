@@ -14,7 +14,7 @@
                     </li>
                     <!--
                     <li class="nav-item">
-                        <router-link to="/seed-explorer" class="nav-link">Seed Explorer</router-link>
+                        <router-link to="/seed-viewer" class="nav-link">Seed Viewer</router-link>
                     </li>
                     -->
                     <li class="nav-item">
