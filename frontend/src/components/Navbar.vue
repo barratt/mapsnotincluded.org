@@ -16,7 +16,7 @@
                         <router-link to="/trait-finder" class="nav-link">World Trait Finder</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/trait-finder" class="nav-link">StarMap Generator</router-link>
+                        <router-link to="/starmap-generator" class="nav-link">StarMap Generator</router-link>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
