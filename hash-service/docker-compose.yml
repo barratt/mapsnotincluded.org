@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  hashservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" 
+    volumes:
+      - ./:/app           # Mount current directory to /app inside the container
+      - /app/node_modules # Prevent overwriting node_modules
+      - config:/root      # Persist config data for SteamCMD
+      - oni:/oni          # Persist the game data to prevent constant redownloading
+    environment:
+      NODE_ENV: development
+    
+    env_file:
+      - .env
+    command: npm run dev  # Run in development mode (you can change this)
+
+volumes:
+  oni:
+  config:
