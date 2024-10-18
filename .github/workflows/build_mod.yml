@@ -39,8 +39,8 @@ jobs:
         path: mod/Builds/MapsNotIncluded_WorldParser
         name: MapsNotIncludedMod
 
-#    - name: Zip the directory
-#      run: Compress-Archive -Path mod/Builds/MapsNotIncluded_WorldParser -DestinationPath MapsNotIncludedMod.zip
+    - name: Zip the directory
+      run: Compress-Archive -Path "mod\Builds\MapsNotIncluded_WorldParser" -DestinationPath MapsNotIncludedMod.zip
 
     - name: Set SHORT_COMMIT environment variable
       shell: pwsh
