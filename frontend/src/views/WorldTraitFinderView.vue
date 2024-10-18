@@ -7,22 +7,19 @@
     <div class="mb-5">
       <h1>Trait Finder</h1>
       <!-- <p>This uses our database to search for existing seeds that contain specific traits, this does seem to be calculatable based on the coordinates, but is not yet known. We hope to get this working soon! If you have any information regarding this, please get in touch on Discord!</p>-->
-      <p>Unfortunatly, the Trait Finder is still a work in progress.</p>
-      <p>Once it has been completed, it will be put here.</p>
-      <div class="text-center"><span class="fw-bold fs-4 text-danger">This is a work in progress!</span></div>
-    <br>
-    <p>You can also <router-link to="/contribute">contribute</router-link> to the development of this website.</p>
+      <p>A world trait finder will be available here once development is complete.</p>
+      <br>
+      <p>If you'd like to get involved, feel free to <router-link to="/contribute">contribute</router-link> to the development of this site.</p>
     </div>
-
     <!-- Lets add the option to select between different DLCs -->
     <!-- <div class="d-flex gap-5 justify-content-center flex-wrap">
       <Selectable :items="DLCs" v-model="selectedDLC"  />
-    </div>
+    </div-->
 
     <!-- Lets add the option to select between different worlds -->
     <!--<div class="d-flex gap-5 justify-content-center flex-wrap mt-5" v-if="selectedCluster">
       <Selectable :items="selectedCluster" v-model="form.selectedWorld"  />
-    </div>
+    </div-->
 
     <!-- TODO: Some way of turning on the good and the bad traits. -->
 <!--
