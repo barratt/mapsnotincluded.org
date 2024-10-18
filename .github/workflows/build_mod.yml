@@ -40,7 +40,8 @@ jobs:
         name: MapsNotIncludedMod
 
     - name: set NOW
-      run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      run: echo "NOW=$(Get-Date -Format 'yyyy-MM-dd')" >> $env:GITHUB_ENV
+      shell: powershell
 
     - name: Create GitHub release
       id: create_release
