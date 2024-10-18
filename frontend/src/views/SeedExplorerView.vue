@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
 
-// Define a reactive variable using ref
 const seedInput = ref("0000-0-0-0-0");
 
 const submit = () => {
