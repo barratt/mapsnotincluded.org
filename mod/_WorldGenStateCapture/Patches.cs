@@ -82,6 +82,25 @@ namespace _WorldGenStateCapture
 		}
 		#endregion
 
+		[HarmonyPatch(typeof(Game), nameof(Game.StopBE))]
+		public static class PreventDoubleShutdown
+		{
+			//there seems to be a rare occurence that the game tries to execute this method twice, dying on the second attempt in a second thread
+			public static bool Prefix()
+			{
+				var sessionCounter = MNI_Statistics.Instance.SessionCounter;
+				if(sessionCounter == seedcount)
+				{
+					Debug.LogWarning("Game tried to stop the backend twice, something is broken. Restarting the game...");
+					App.instance.Restart();
+					return false;
+				}
+				seedcount = sessionCounter;
+				return true;
+			}
+			static int seedcount = -1;
+		}
+
 		[HarmonyPatch(typeof(WattsonMessage), nameof(WattsonMessage.OnDeactivate))]
 		public static class QuitGamePt2
 		{
@@ -124,6 +143,8 @@ namespace _WorldGenStateCapture
 			[HarmonyPriority(Priority.Low)]
 			public static void Postfix(MainMenu __instance)
 			{
+				ModAssets.OnMainMenuLoaded();
+
 				autoLoadActive = false;
 				if (ModAssets.ModDilution)
 				{
@@ -441,6 +462,14 @@ namespace _WorldGenStateCapture
 				ModAssets.ClearData();
 				App.LoadScene(__instance.frontendGameLevel);
 				return false;
+			}
+		}
+		[HarmonyPatch(typeof(KCrashReporter), nameof(KCrashReporter.ShowDialog))]
+		public static class RestartOnCrash
+		{
+			public static void Prefix()
+			{
+				App.instance.Restart();
 			}
 		}
 	}
