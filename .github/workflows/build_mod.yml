@@ -40,7 +40,7 @@ jobs:
         name: MapsNotIncludedMod
 
     - name: Zip the directory
-      run: zip -r MapsNotIncludedMod.zip mod/Builds/MapsNotIncluded_WorldParser
+      run: Compress-Archive -Path mod/Builds/MapsNotIncluded_WorldParser/* -DestinationPath MapsNotIncludedMod.zip
 
     - name: set NOW
       run: echo "NOW=$(Get-Date -Format 'yyyy-MM-dd')" >> $env:GITHUB_ENV
