@@ -4,12 +4,12 @@
 
 <template>
   <main class="container mt-5">
-    <h1>Welcome</h1>
+    <h1>Welcome to MapsNotIncluded!</h1>
     <p>
-      Welcome to MapsNotIncluded! This website is a work in progress, and will eventually contain a variety of map / world generation tools and resources for Oxygen Not Included.
+      This website is currently a work in progress, and will eventually contain a variety of tools and resources for Oxygen Not Included. Our map explorer is already live, and with your contributions, we'll be adding even more useful features soon.
     </p>
     <p>
-      If you would like to get involved, head over to <router-link to="/contribute">contribute</router-link>, otherwise please consider joining our <a href="https://discord.gg/3vhCpp6PNq" target="mni_disc">Discord</a>, or submit an issue / PR on <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_gh">GitHub</a>!
+      Want to get involved? Head over to our <router-link to="/contribute">Contribute</router-link> page. You can also join our community on <a href="https://discord.gg/3vhCpp6PNq" target="mni_disc">Discord</a> or submit issues and pull requests via <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_gh">GitHub</a>!
     </p>
 
     <div class="d-flex gap-3 mt-5 flex-column flex-md-row">
