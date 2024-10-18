@@ -15,6 +15,8 @@ const submit = () => {
     <h1>Seed Explorer</h1>
     <p>Input a seed, and see whether our database has it and you can explore the map!</p>
 
+    <h2 style="color: #FF0000;"><strong>THIS IS NOT WORKING YET!!!</strong></h2>
+
     
     <div>
         <label for="seedInput">Seed: </label> <br>
