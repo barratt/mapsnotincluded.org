@@ -13,6 +13,7 @@ const router = createRouter({
     // { path: '/map-explorer', component: () => import('../views/MapExplorerView.vue') },
     { path: '/trait-finder', component: () => import('../views/WorldTraitFinderView.vue') },
     { path: '/starmap-generator', component: () => import('../views/StarmapGeneratorView.vue') },
+    { path: '/seed-explorer', component: () => import('../views/SeedExplorerView.vue') },
 
     { path: '/about', component: () => import('../views/AboutView.vue') },
     { path: '/contribute', component: () => import('../views/ContributeView.vue') },

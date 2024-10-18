@@ -18,6 +18,9 @@
                     <li class="nav-item">
                         <router-link to="/starmap-generator" class="nav-link">StarMap Generator</router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/seed-explorer" class="nav-link">StarMap Generator</router-link>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
