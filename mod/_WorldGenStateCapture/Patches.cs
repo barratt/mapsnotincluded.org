@@ -498,7 +498,7 @@ namespace _WorldGenStateCapture
 		{
 			public static void Prefix()
 			{
-			//	App.instance.Restart();
+				App.instance.Restart();
 			}
 		}
 	}
