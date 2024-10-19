@@ -72,6 +72,7 @@ namespace _WorldGenStateCapture
 			}
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+			MNI_Statistics.Instance.OnFailedSeedGenerated();
 
 			App.instance.StartCoroutine( RequestHelper.TryPostRequest(Credentials.API_URL_REPORT_FAILED, json, 
 			() =>

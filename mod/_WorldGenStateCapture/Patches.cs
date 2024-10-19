@@ -89,6 +89,7 @@ namespace _WorldGenStateCapture
 			public static bool Prefix()
 			{
 				var sessionCounter = MNI_Statistics.Instance.SessionCounter;
+				Console.WriteLine("stopping BE; "+sessionCounter + " " + seedcount);
 				if(sessionCounter == seedcount)
 				{
 					Debug.LogWarning("Game tried to stop the backend twice, something is broken. Restarting the game...");
@@ -215,7 +216,7 @@ namespace _WorldGenStateCapture
 
 			public static void InitAutoStart(MainMenu __instance)
 			{
-				MNI_Statistics.Instance.OnGameStart();
+				MNI_Statistics.MainMenuInitialize();
 				//Used to generate dictionaries in Config class, uncomment to regenerate them when new dlc releases
 				//Console.WriteLine("Cluster Dic:");
 				//foreach (string clusterName in SettingsCache.GetClusterNames())

@@ -55,12 +55,13 @@ namespace _WorldGenStateCapture
 		internal static void OnGameInitialisation()
 		{
 			ModInitTime = System.DateTime.Now;
-			Initialize();
 		}
 		private static bool initialized = false;
-		internal static void Initialize()
+		internal static void MainMenuInitialize()
 		{
-			if (initialized) return;
+			if (initialized) 
+				return;
+			Console.WriteLine("Initializing MNI Statistics");
 			initialized = true;
 			Instance = ReadStatisticsFile();
 			Instance.OnGameStart();
@@ -68,16 +69,13 @@ namespace _WorldGenStateCapture
 		public void OnGameStart()
 		{
 			PrintStartStatistics();
-
 			SessionCounter = 0;
 			HourCounter = 0;
 			LastHourStart = System.DateTime.Now;
 			SessionStart = System.DateTime.Now;
 			LastGenerationTimeSeconds = -1;
 			LastSeedGenerated = default;
-
 			CheckDailyStatistic();
-
 		}
 		public void CheckDailyStatistic()
 		{
@@ -97,6 +95,12 @@ namespace _WorldGenStateCapture
 				CurrentDay = System.DateTime.Now;
 				DailyCounter = 0;
 			}
+		}
+
+		public void OnFailedSeedGenerated()
+		{
+			OnSeedGenerated();
+			Console.WriteLine($"This seed failed to germinate!");
 		}
 
 		public void OnSeedGenerated()
@@ -147,11 +151,11 @@ namespace _WorldGenStateCapture
 			TotalContributions();
 			if (PastDayCount > 0)
 			{
-				Console.WriteLine($"The last time the mod collected seed on {PastDay.Date} with a total of {PastDayCount} seeds.");
+				Console.WriteLine($"The last time the mod collected seed on {PastDay.Date:d} with a total of {PastDayCount} seeds.");
 			}
 			if (HighscoreCount> 0)
 			{
-				Console.WriteLine($"The most contributions were on {HighScoreDay.Date} with a total of {HighscoreCount} seeds.");
+				Console.WriteLine($"The most contributions were on {HighScoreDay.Date:d} with a total of {HighscoreCount} seeds.");
 			}
 
 			DailyContributions();
