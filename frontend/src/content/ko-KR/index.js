@@ -1,17 +1,19 @@
-import koKRNotFound from './view/not_found.js'
-import koKRAbout from './view/about.js'
-import koKRContribute from './view/contribute.js'
-import koKRHome from './view/home.js'
-import koKRMapExplorerSteps from './view/map_explorer_steps.js'
-import koKRMapExplorer from './view/map_explorer.js'
-import koKRWorldTraitFinder from './view/world_trait_finder.js'
+import notFound from './view/not_found.js'
+import about from './view/about.js'
+import contribute from './view/contribute.js'
+import home from './view/home.js'
+import mapExplorerSteps from './view/map_explorer_steps.js'
+import mapExplorer from './view/map_explorer.js'
+import worldTraitFinder from './view/world_trait_finder.js'
+import seedViewer from './view/seed_viewer.js'
 
 export default {
-  not_found: koKRNotFound,
-  about: koKRAbout,
-  contribute: koKRContribute,
-  home: koKRHome,
-  map_explorer_steps: koKRMapExplorerSteps,
-  map_explorer: koKRMapExplorer,
-  world_trait_finder: koKRWorldTraitFinder,
+  not_found: notFound,
+  about: about,
+  contribute: contribute,
+  home: home,
+  seed_viewer: seedViewer,
+  map_explorer_steps: mapExplorerSteps,
+  map_explorer: mapExplorer,
+  world_trait_finder: worldTraitFinder,
 }
