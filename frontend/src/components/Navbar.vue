@@ -34,6 +34,9 @@
                     <li class="nav-item">
                         <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">{{ $t('navbar.github_link') }}</a>
                     </li>
+                    <li class="nav-item">
+                        <i class="bi bi-globe nav-link"></i>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -43,5 +46,9 @@
 <style scoped>
 .navbar {
     background-color: #4F5F80;
+}
+.nav-item {
+    display: flex;
+    align-items: center;
 }
 </style>
