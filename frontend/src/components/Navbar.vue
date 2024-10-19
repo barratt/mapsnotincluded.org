@@ -1,11 +1,5 @@
 <script setup>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-
-let localeMap = {
-  "en": "English",
-  "zh": "Chinese",
-  "kr": "Korean",
-}
 </script>
 
 <template>
@@ -57,7 +51,7 @@ let localeMap = {
                             :class="`locale-dropdown-item ${ locale === $i18n.locale ? 'locale-selected' : '' }`"
                             @click="$i18n.locale = locale"
                           >
-                            <p class="locale-text">{{localeMap[locale]}}</p>
+                            <p class="locale-text">{{$localeLabels[locale]}}</p>
                           </MenuItem>
                         </MenuItems>
                       </Menu>
