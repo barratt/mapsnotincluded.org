@@ -30,6 +30,16 @@ namespace _WorldGenStateCapture
 		public System.DateTime LastSeedGenerated;
 		public double LastGenerationTimeSeconds;
 
+		
+		public System.DateTime CurrentDay;
+		public int DailyCounter = 0;
+
+		public System.DateTime PastDay;
+		public int PastDayCount = 0;
+
+		public System.DateTime HighScoreDay;
+		public int HighscoreCount = 0;
+
 		public bool RestartThresholdReached()
 		{
 			return SessionCounter >= Config.Instance.RestartTarget;
@@ -45,6 +55,7 @@ namespace _WorldGenStateCapture
 		internal static void OnGameInitialisation()
 		{
 			ModInitTime = System.DateTime.Now;
+			Initialize();
 		}
 		private static bool initialized = false;
 		internal static void Initialize()
@@ -64,9 +75,33 @@ namespace _WorldGenStateCapture
 			SessionStart = System.DateTime.Now;
 			LastGenerationTimeSeconds = -1;
 			LastSeedGenerated = default;
+
+			CheckDailyStatistic();
+
 		}
+		public void CheckDailyStatistic()
+		{
+			//a new day has begun
+			if (CurrentDay.Date != System.DateTime.Now.Date)
+			{
+				PastDayCount = DailyCounter;
+				PastDay = CurrentDay;
+
+				if (PastDayCount > HighscoreCount)
+				{
+					HighscoreCount = PastDayCount;
+					HighScoreDay = PastDay;
+				}
+
+
+				CurrentDay = System.DateTime.Now;
+				DailyCounter = 0;
+			}
+		}
+
 		public void OnSeedGenerated()
 		{
+			CheckDailyStatistic();
 			if (LastSeedGenerated == default)
 			{
 				LastGenerationTimeSeconds = (System.DateTime.Now - SessionStart).TotalSeconds;
@@ -79,6 +114,8 @@ namespace _WorldGenStateCapture
 
 			TotalCounter++;
 			SessionCounter++;
+			DailyCounter++;
+
 			if (LastHourStart.AddHours(1) < System.DateTime.Now)
 			{
 				HourCounter = SessionCounter - HourCounter;
@@ -94,6 +131,7 @@ namespace _WorldGenStateCapture
 
 			Console.WriteLine($"MNI Statistics");
 			TotalContributions();
+			DailyContributions();
 			Console.WriteLine($"The last seed took {(int)LastGenerationTimeSeconds} seconds to generate.");
 			if (LastRunMixingRun())
 				Console.WriteLine($"The last seed was a mixed seed.");
@@ -107,11 +145,23 @@ namespace _WorldGenStateCapture
 		{
 			Console.WriteLine($"MNI Statistics - Startup");
 			TotalContributions();
+			if (PastDayCount > 0)
+			{
+				Console.WriteLine($"The last time the mod collected seed on {PastDay.Date} with a total of {PastDayCount} seeds.");
+			}
+			if (HighscoreCount> 0)
+			{
+				Console.WriteLine($"The most contributions were on {HighScoreDay.Date} with a total of {HighscoreCount} seeds.");
+			}
+
+			DailyContributions();
 			Console.WriteLine($"The previous session had collected {SessionCounter} seeds.");
 			var timeToBoot = (System.DateTime.Now - ModInitTime).TotalSeconds;
 			Console.WriteLine($"The game took {(int)timeToBoot} seconds since mod intialisation to start collecting seeds.");				
 		}
 		void TotalContributions() => Console.WriteLine($"This contributor has collected a total of {TotalCounter} seeds so far.");
+		void DailyContributions() => Console.WriteLine($"Today you have collected a total of {DailyCounter} seeds so far.");
+		
 		public void WriteStatisticsFile()
 		{
 			Directory.CreateDirectory(Paths.ConfigFolder);

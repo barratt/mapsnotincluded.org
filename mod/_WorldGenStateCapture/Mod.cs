@@ -30,7 +30,7 @@ namespace _WorldGenStateCapture
 					ModAssets.ModDilution = true;
 					break;
 				}
-			}			
+			}	
 		}
 	}
 }

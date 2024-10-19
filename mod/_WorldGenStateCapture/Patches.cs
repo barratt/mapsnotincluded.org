@@ -214,7 +214,7 @@ namespace _WorldGenStateCapture
 			}
 			public static void InitAutoStart(MainMenu __instance)
 			{
-				MNI_Statistics.Initialize();
+				MNI_Statistics.Instance.OnGameStart();
 				//Used to generate dictionaries in Config class, uncomment to regenerate them when new dlc releases
 				//Console.WriteLine("Cluster Dic:");
 				//foreach (string clusterName in SettingsCache.GetClusterNames())
