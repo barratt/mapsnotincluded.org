@@ -1,5 +1,5 @@
 // TODO Implement actual test logic 
-const KRandom = require('../KRandom.js');
+const KRandom = require('../oni/KRandom.js');
 
 const assert = require('assert');
 
@@ -61,7 +61,7 @@ describe('KRandom', function() {
       
       let failures = 0;
       for (const pair of testPairs) {
-        const result = new KRandom(pair.seed).Next(pair.min, pair.max);
+        const result = new KRandom(pair.seed).next(pair.min, pair.max);
         if (result !== pair.value) {
           console.log(`Failed: ${pair.seed} => ${result} !== ${pair.value}`);
           failures++;

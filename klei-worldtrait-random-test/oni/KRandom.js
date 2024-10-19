@@ -32,7 +32,7 @@ class KRandom {
         this.inextp = 21;
     }
 
-    InternalSample() {
+    internalSample() {
         let num = this.inext;
         let num2 = this.inextp;
 
@@ -51,47 +51,48 @@ class KRandom {
         return num3;
     }
 
-    Sample() {
-        return this.InternalSample() * (1 / KRandom.MBIG);
+    sample() {
+        return this.internalSample() * (1 / KRandom.MBIG);
     }
 
-    GetSampleForLargeRange() {
-        let num = this.InternalSample();
-        if (this.InternalSample() % 2 === 0) {
+    getSampleForLargeRange() {
+        let num = this.internalSample();
+        if (this.internalSample() % 2 === 0) {
             num = -num;
         }
         return (num + 2147483646) / 4294967293.0;
     }
 
-    Next(minValue, maxValue) {
+    // Adjusted to ensure maxValue is used properly
+    next(minValue, maxValue) {
         if (arguments.length === 0) {
-            return this.InternalSample();
+            return this.internalSample();
         }
         if (arguments.length === 1) {
-            return Math.floor(this.Sample() * minValue);
+            return Math.floor(this.sample() * minValue); // minValue is actually maxValue, 1 argument
         }
 
         let range = maxValue - minValue;
         if (range <= KRandom.MBIG) {
-            return Math.floor(this.Sample() * range) + minValue;
+            return Math.floor(this.sample() * range) + minValue;
         } else {
-            return Math.floor(this.GetSampleForLargeRange() * range) + minValue;
+            return Math.floor(this.getSampleForLargeRange() * range) + minValue;
         }
     }
 
-    NextDouble() {
-        return this.Sample();
+    nextDouble() {
+        return this.sample();
     }
 
-    NextBytes(buffer) {
+    nextBytes(buffer) {
         if (!buffer || !Array.isArray(buffer)) {
             throw new Error('Invalid buffer provided.');
         }
 
         for (let i = 0; i < buffer.length; i++) {
-            buffer[i] = this.InternalSample() % 256;
+            buffer[i] = this.internalSample() % 256;
         }
     }
 }
 
-module.exports = KRandom
+module.exports = KRandom;
