@@ -6,6 +6,7 @@ import mapExplorerSteps from './view/map_explorer_steps.js'
 import mapExplorer from './view/map_explorer.js'
 import worldTraitFinder from './view/world_trait_finder.js'
 import seedViewer from './view/seed_viewer.js'
+import starmapGenerator from './view/starmap_generator.js'
 
 export default {
   not_found: notFound,
@@ -16,4 +17,5 @@ export default {
   map_explorer_steps: mapExplorerSteps,
   map_explorer: mapExplorer,
   world_trait_finder: worldTraitFinder,
+  starmap_generator: starmapGenerator,
 }
