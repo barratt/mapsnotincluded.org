@@ -3,6 +3,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
 let localeMap = {
   "en": "English",
+  "zh": "Chinese",
   "kr": "Korean",
 }
 </script>
