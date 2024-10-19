@@ -36,4 +36,9 @@ And finally, if you know anything about the world generation process in Oxygen N
     },
     "contact": "If you would like to contact us directly and more formally, please email us at {email}",
   },
+  "link": {
+    "github": "GitHub",
+    "github_release": "Github Release page",
+    "discord": "Discord",
+  }
 }

@@ -5,4 +5,9 @@ export default {
   "link_map_explorer": "Map Explorer",
   "link_trait_finder": "World Trait Finder",
   "link_starmap_generator": "Star Map Generator",
+  "link": {
+    "contribute": "Contribute",
+    "discord": "Discord",
+    "github": "GitHub",
+  }
 }

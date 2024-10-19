@@ -8,13 +8,13 @@
     <p>{{ $t('home.description_1') }}</p>
     <i18n-t keypath="home.description_2" tag="p">
       <template v-slot:contributeLink>
-        <router-link to="/contribute">Contribute</router-link>
+        <router-link to="/contribute">{{ $t('home.link.contribute') }}</router-link>
       </template>
       <template v-slot:discordLink>
-        <a href="https://discord.gg/3vhCpp6PNq" target="mni_disc">Discord</a>
+        <a href="https://discord.gg/3vhCpp6PNq" target="mni_disc">{{ $t('home.link.discord') }}</a>
       </template>
       <template v-slot:githubLink>
-        <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_gh">GitHub</a>
+        <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_gh">{{ $t('home.link.github') }}</a>
       </template>
     </i18n-t>
 

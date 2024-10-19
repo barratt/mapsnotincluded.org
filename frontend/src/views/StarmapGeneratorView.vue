@@ -9,7 +9,7 @@
     <br/>
     <i18n-t keypath="starmap_generator.description_2" tag="p">
       <template v-slot:contribute>
-        <router-link to="/contribute">contribute</router-link>
+        <router-link to="/contribute">{{ $t('starmap_generator.link.contribute') }}</router-link>
       </template>
     </i18n-t>
   </main>
