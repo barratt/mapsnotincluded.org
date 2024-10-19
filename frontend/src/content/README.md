@@ -12,6 +12,7 @@ We welcome contributions to help translate the website into different languages!
 3. Translation Files:
 - Each page or component of the site will have its own javascript file associated within the content folder (e.g., home.js, navbar.js).
 - Translate the content in each of these files into the appropriate language, ensuring the structure remains the same (keys must not be altered).
+- Make sure you modify `index.js` file to include your translation.
 4. Testing:
 - After adding or updating a translation, make sure to test your changes by running the website locally to verify that the translations display correctly.
 5. Submitting:
