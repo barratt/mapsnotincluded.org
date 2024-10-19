@@ -1,3 +1,11 @@
+<script setup>
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+
+let locales = [
+  {"label": "English"}
+]
+</script>
+
 <template>
     <!-- Bootstrap 5 navbar -->
     <nav class="navbar navbar-expand-lg">
@@ -35,7 +43,22 @@
                         <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">{{ $t('navbar.github_link') }}</a>
                     </li>
                     <li class="nav-item">
-                        <i class="bi bi-globe nav-link"></i>
+                      <Menu>
+                        <MenuButton class="locale-button">
+                          <i class="bi bi-globe nav-link"></i>
+                        </MenuButton>
+                        <MenuItems class="locale-dropdown">
+                          <MenuItem 
+                            v-for="locale in $i18n.availableLocales" 
+                            :key="`locale-${locale}`" 
+                            :value="locale" 
+                            class="locale-dropdown-item"
+                            @click="$i18n.locale = locale"
+                          >
+                            <p class="locale-text">{{locale}}</p>
+                          </MenuItem>
+                        </MenuItems>
+                      </Menu>
                     </li>
                 </ul>
             </div>
@@ -48,7 +71,32 @@
     background-color: #4F5F80;
 }
 .nav-item {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.locale-button {
+  background-color: transparent;
+  border: none;
+}
+.locale-dropdown {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  transform: translateY(100%);
+  background-color: #4F5F80;
+  border: 1px solid white;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.locale-dropdown-item {
+  padding: 3px 12px;
+  margin: 0px;
+}
+.locale-dropdown-item:hover {
+  cursor: pointer;
+  background-color: #43516d;
+  border-radius:4px;
 }
 </style>
