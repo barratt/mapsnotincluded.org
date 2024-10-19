@@ -12,6 +12,9 @@ const SettingsCache = {
   BaseGameId: '',
   worldTraits: {},
   worlds: {},
+  clusters: {},
+
+
 
   initData(data) {
     // Populate worlds and traits from vanilla
@@ -26,6 +29,10 @@ const SettingsCache = {
       this.worldTraits[key] = { ...trait, filePath: key };
     }
 
+    for (const [key, cluster] of Object.entries(data.vanilla.clusters)) {
+      this.clusters[key] = { ...cluster, id: key };
+    }
+
     // Populate worlds and traits for SpacedOut
     if (this.IsInSpacedOutMode) {
       for (const [key, world] of Object.entries(data.SpacedOut.worlds)) {
@@ -38,7 +45,14 @@ const SettingsCache = {
         }
         this.worldTraits[key] = { ...trait, filePath: key };
       }
+
+      for (const [key, cluster] of Object.entries(data.SpacedOut.clusters)) {
+        this.clusters[key] = { ...cluster, id: key };
+      }
+
     }
+
+
 
     // Populate worlds and traits for FrostyPlanet
     for (const [key, world] of Object.entries(data.FrostyPlanet.worlds)) {
@@ -52,8 +66,13 @@ const SettingsCache = {
       this.worldTraits[key] = { ...trait, filePath: key };
     }
 
+    for (const [key, cluster] of Object.entries(data.FrostyPlanet.clusters)) {
+      this.clusters[key] = { ...cluster, id: key };
+    }
+
     console.log(`Worlds initialized, ${Object.keys(this.worlds).length} entries`);
     console.log(`Traits initialized, ${Object.keys(this.worldTraits).length} entries`);
+    console.log(`Clusters initialized, ${Object.keys(this.clusters).length} entries`);
   },
 
   getRandomWorld() {
@@ -65,7 +84,15 @@ const SettingsCache = {
     return this.worlds[key];
   },
 
+  getCluster(key) {
+    return this.clusters[key];
+  },
+
   getRandomTraits(seed, world) {
+    if (!world) {
+      throw new Error('World is required');
+    }
+    
     if (world.disableWorldTraits) {
       console.log('Traits disabled');
       return [];

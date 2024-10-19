@@ -10,7 +10,6 @@ const worldgenPaths = [
     { id: "FrostyPlanet", path: `${gamePath}\\OxygenNotIncluded_Data\\StreamingAssets\\dlc\\dlc2\\worldgen`, traitsPrefix: "dlc2::traits/"},
 ];
 
-
 function compileYamlToJson() {
     let data = {};
 
@@ -33,6 +32,23 @@ function compileYamlToJson() {
             for (let file of files) {
                 let world = yaml.parse(fs.readFileSync(`${worldgenPath.path}\\worlds\\${file}`, 'utf8'));
                 data[worldgenPath.id].worlds[file.replace('.yaml', '')] = world;
+            }
+        }
+
+        const clustersPath = `${worldgenPath.path}\\clusters`;
+        data[worldgenPath.id].clusters = {};
+        if (fs.existsSync(clustersPath)) {
+            const files = fs.readdirSync(clustersPath);
+            for (let file of files) {
+                console.log(file);
+                // Some clusters fail due to bad yaml, (Namely bigemptycluster....)
+                try {
+                    let cluster = yaml.parse(fs.readFileSync(`${worldgenPath.path}\\clusters\\${file}`, 'utf8'));
+                    data[worldgenPath.id].clusters[file.replace('.yaml', '')] = cluster;
+                    // TODO: Skip editor only? I guess not since that would be down to whatever is consuming this
+                } catch (e) {
+                    console.error(e);
+                }
             }
         }
     }
