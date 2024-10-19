@@ -1,5 +1,5 @@
 export default {
-  "title": "Starmap Generator",
-  "description_1": "A starmap generator will be available here once development is complete.",
-  "description_2": "If you'd like to get involved, feel free to {contribute} to the development of this site.",
+  "title": "스타맵 생성기",
+  "description_1": "개발이 완료되면 스타맵 생성기를 여기에서 사용할 수 있습니다.",
+  "description_2": "참여하고 싶다면 언제든지 이 사이트 개발에 {contribute}하세요.",
 }

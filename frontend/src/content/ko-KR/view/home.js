@@ -1,8 +1,8 @@
 export default {
   "title": "Welcome to MapsNotIncluded!",
-  "description_1": "This website is currently a work in progress, and will eventually contain a variety of tools and resources for Oxygen Not Included. Our map explorer is already live, and with your contributions, we'll be adding even more useful features soon.",
-  "description_2": "Want to get involved? Head over to our {contributeLink} page. You can also join our community on {discordLink} or submit issues and pull requests via {githubLink}!",
-  "link_map_explorer": "Map Explorer",
-  "link_trait_finder": "World Trait Finder",
-  "link_starmap_generator": "Star Map Generator",
+  "description_1": "이 웹사이트는 현재 진행 중이며, Oxygen Not Included를 위한 다양한 도구와 리소스가 포함될 것입니다. 지도 탐색기는 이미 활성화되어 있으며, 여러분의 의견에 따라 곧 더 유용한 기능을 추가할 예정입니다.",
+  "description_2": "참여하고 싶으신가요? {contributeLink} 페이지로 이동하세요. {discordLink}에서 커뮤니티에 가입하거나 {githubLink}를 통해 이슈를 제출하고 Pull Request를 할수도 있습니다!",
+  "link_map_explorer": "지도 탐색기",
+  "link_trait_finder": "세계 특성 파인더",
+  "link_starmap_generator": "스타 맵 생성기",
 }
