@@ -4,18 +4,15 @@ using _WorldGenStateCapture.WorldStateData.WorldPOIs;
 using Klei.CustomSettings;
 using ProcGen;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using UnityEngine.Networking;
-using static ProcGen.ClusterLayout;
 using static ProcGen.SubWorld;
-using static STRINGS.COLONY_ACHIEVEMENTS.ACTIVATEGEOTHERMALPLANT.STATUSITEMS;
-using static STRINGS.UI.CLUSTERMAP;
 using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace _WorldGenStateCapture
 {
@@ -197,7 +194,7 @@ namespace _WorldGenStateCapture
 			}
 			sb.Remove(sb.Length - 1, 1);  //remove last newline
 			return sb.ToString();
-		}		
+		}
 
 		/// <summary>
 		/// generates an SVG image of all biome polygons of the given asteroid
@@ -403,8 +400,57 @@ namespace _WorldGenStateCapture
 			if (RestartAfterGeneration)
 				App.instance.Restart();
 			else
-				PauseScreen.instance.OnQuitConfirm();
+			{
+				StartBackupRestart();
+				if (PauseScreen.instance != null)
+				{
+					PauseScreen.instance.OnQuitConfirm();
+				}
+				else
+					App.instance.Restart(); //fallback
+			}
 		}
+
+		public static void StartBackupRestart()
+		{
+			if (cancelTokenSource != null) //cancel previous timer
+				cancelTokenSource.Cancel();
+
+			cancelTokenSource = new CancellationTokenSource();
+
+			var ct = cancelTokenSource.Token;
+			Task.Factory.StartNew(() =>
+			{
+				for (int i = 0; i < 60; ++i)
+				{
+					if (ct.IsCancellationRequested)
+					{
+						Console.WriteLine($"MNI UnloadedBackend\nTime to load to the main menu after seed committment: {i} seconds");
+						break;
+					}
+					Thread.Sleep(1000);
+
+				}
+				//if this thread wasnt canceled after 60 seconds, restart app (sth has crashed in the bg)
+				if (!ct.IsCancellationRequested)
+				{
+					Console.WriteLine($"MNI UnloadedBackend\nThe Backend wasn't unloaded in less than 60 seconds, the application will now restart.");
+					App.instance.Restart();
+				}
+
+			}, ct);
+
+		}
+		public static void OnMainMenuLoaded()
+		{
+			if (cancelTokenSource != null) //cancel previous timer
+			{
+				//Console.WriteLine("main menu reached, canceling backup timer");
+				cancelTokenSource.Cancel();
+			}
+		}
+
+		static CancellationTokenSource cancelTokenSource = null;
 
 		internal static void StoreForLater(byte[] data, string offlineFileName)
 		{
@@ -432,9 +478,9 @@ namespace _WorldGenStateCapture
 			Debug.Log("Connection reestablished, uploading stored " + files.Length + " datasets");
 			foreach (var file in files)
 			{
-				if(FileToByteArray(file, out var data))
+				if (FileToByteArray(file, out var data))
 				{
-					App.instance.StartCoroutine(RequestHelper.TryPostRequest(data, () => UnstoreLater(file), (_) =>{ }));
+					App.instance.StartCoroutine(RequestHelper.TryPostRequest(data, () => UnstoreLater(file), (_) => { }));
 				}
 			}
 		}
