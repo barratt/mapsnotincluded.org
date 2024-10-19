@@ -1,4 +1,4 @@
-name: Build API Docker
+name: Build Hash Service
 
 on:
   push:
@@ -22,6 +22,6 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v4.0.0
       with:
-        context: app
+        context: hash-service
         push: true
         tags: ghcr.io/barratt/mnihashservice:latest
