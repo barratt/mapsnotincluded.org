@@ -37,7 +37,6 @@ namespace _WorldGenStateCapture
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();
 			Upload_FailedGeneration data = new Upload_FailedGeneration();
-
 			SettingLevel layoutQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.ClusterLayout);
 			ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(layoutQualitySetting.id);
 
@@ -48,30 +47,12 @@ namespace _WorldGenStateCapture
 			int.TryParse(seedQualitySetting.id, out int seed);
 
 			// DataItem.seed = seed;
-			 
+
 			data.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
-
-			var cleanDlcIds = new List<string>();
-
-			foreach (var dlcId in SaveLoader.Instance.GameInfo.dlcIds)
-			{
-				switch (dlcId)
-				{
-					case "": //base game "dlc" id, skip that
-						break;
-					case "DLC2_ID":
-						cleanDlcIds.Add("FrostyPlanet");
-						break;
-					case "EXPANSION1_ID":
-						cleanDlcIds.Add("SpacedOut");
-						break;
-					default:
-						cleanDlcIds.Add(dlcId); // If it's not a known ID, keep it as is
-						break;
-				}
-			}
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
+
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+
 			MNI_Statistics.Instance.OnFailedSeedGenerated();
 
 			App.instance.StartCoroutine( RequestHelper.TryPostRequest(Credentials.API_URL_REPORT_FAILED, json, 

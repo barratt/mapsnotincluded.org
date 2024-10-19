@@ -145,6 +145,7 @@ namespace _WorldGenStateCapture
 			public static void Postfix(MainMenu __instance)
 			{
 				ModAssets.OnMainMenuLoaded();
+				MNI_Statistics.MainMenuInitialize();
 
 				autoLoadActive = false;
 				if (ModAssets.ModDilution)
@@ -216,7 +217,6 @@ namespace _WorldGenStateCapture
 
 			public static void InitAutoStart(MainMenu __instance)
 			{
-				MNI_Statistics.MainMenuInitialize();
 				//Used to generate dictionaries in Config class, uncomment to regenerate them when new dlc releases
 				//Console.WriteLine("Cluster Dic:");
 				//foreach (string clusterName in SettingsCache.GetClusterNames())
@@ -498,7 +498,7 @@ namespace _WorldGenStateCapture
 		{
 			public static void Prefix()
 			{
-				App.instance.Restart();
+			//	App.instance.Restart();
 			}
 		}
 	}
