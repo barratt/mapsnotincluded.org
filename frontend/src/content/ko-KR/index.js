@@ -11,7 +11,7 @@ export default {
   about: koKRAbout,
   contribute: koKRContribute,
   home: koKRHome,
-  mapExplorerSteps: koKRMapExplorerSteps,
-  mapExplorer: koKRMapExplorer,
-  worldTraitFinder: koKRWorldTraitFinder,
+  map_explorer_steps: koKRMapExplorerSteps,
+  map_explorer: koKRMapExplorer,
+  world_trait_finder: koKRWorldTraitFinder,
 }

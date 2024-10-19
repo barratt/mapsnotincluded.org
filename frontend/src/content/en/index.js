@@ -11,7 +11,7 @@ export default {
   about: enAbout,
   contribute: enContribute,
   home: enHome,
-  mapExplorerSteps: enMapExplorerSteps,
-  mapExplorer: enMapExplorer,
-  worldTraitFinder: enWorldTraitFinder,
+  map_explorer_steps: enMapExplorerSteps,
+  map_explorer: enMapExplorer,
+  world_trait_finder: enWorldTraitFinder,
 }
