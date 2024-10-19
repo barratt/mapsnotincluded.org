@@ -13,6 +13,7 @@ using static ProcGen.SubWorld;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using MapsNotIncluded_WorldParser.WorldStateData;
 
 namespace _WorldGenStateCapture
 {
@@ -26,6 +27,66 @@ namespace _WorldGenStateCapture
 		public static List<HexMap_Entry> dlcStarmapItems = new List<HexMap_Entry>();
 		public static List<VanillaMap_Entry> baseStarmapItems = new List<VanillaMap_Entry>();
 
+
+		internal static void AccumulateFailedSeedData(OfflineWorldGen instance)
+		{
+			if (ModAssets.ModDilution)
+			{
+				Debug.LogError("Other active mods detected, aborting world parsing.");
+				return;
+			}
+			bool dlcActive = DlcManager.IsExpansion1Active();
+			Upload_FailedGeneration data = new Upload_FailedGeneration();
+
+			SettingLevel layoutQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.ClusterLayout);
+			ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(layoutQualitySetting.id);
+
+			SettingLevel seedQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.WorldgenSeed);
+			//string otherSettingsCode = CustomGameSettings.Instance.GetOtherSettingsCode();
+			string storyTraitSettingsCode = CustomGameSettings.Instance.GetStoryTraitSettingsCode();
+
+			int.TryParse(seedQualitySetting.id, out int seed);
+
+			// DataItem.seed = seed;
+			 
+			data.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
+
+			var cleanDlcIds = new List<string>();
+
+			foreach (var dlcId in SaveLoader.Instance.GameInfo.dlcIds)
+			{
+				switch (dlcId)
+				{
+					case "": //base game "dlc" id, skip that
+						break;
+					case "DLC2_ID":
+						cleanDlcIds.Add("FrostyPlanet");
+						break;
+					case "EXPANSION1_ID":
+						cleanDlcIds.Add("SpacedOut");
+						break;
+					default:
+						cleanDlcIds.Add(dlcId); // If it's not a known ID, keep it as is
+						break;
+				}
+			}
+			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
+			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+
+			App.instance.StartCoroutine( RequestHelper.TryPostRequest(Credentials.API_URL_REPORT_FAILED, json, 
+			() =>
+			{
+				ClearData();
+				App.LoadScene(instance.frontendGameLevel);
+			}, (_) =>
+			{
+				ClearData();
+				App.LoadScene(instance.frontendGameLevel);
+			}));
+		}
+
+
+
 		internal static void AccumulateSeedData()
 		{
 
@@ -36,22 +97,22 @@ namespace _WorldGenStateCapture
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();
 
-			Upload data = new Upload();
+			Upload_SuccessfulGeneration data = new Upload_SuccessfulGeneration();
 			WorldDataInstance worldDataItem = new WorldDataInstance();
 
-			SettingLevel currentQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.ClusterLayout);
-			if (currentQualitySetting == null)
+			SettingLevel layoutQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.ClusterLayout);
+			if (layoutQualitySetting == null)
 			{
 				Debug.LogError("Clusterlayout was null");
 				return;
 			}
 
-			ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(currentQualitySetting.id);
-			SettingLevel currentQualitySetting2 = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.WorldgenSeed);
+			ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(layoutQualitySetting.id);
+			SettingLevel seedQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.WorldgenSeed);
 			//string otherSettingsCode = CustomGameSettings.Instance.GetOtherSettingsCode();
 			string storyTraitSettingsCode = CustomGameSettings.Instance.GetStoryTraitSettingsCode();
 
-			int.TryParse(currentQualitySetting2.id, out int seed);
+			int.TryParse(seedQualitySetting.id, out int seed);
 
 			// DataItem.seed = seed;
 
@@ -77,7 +138,7 @@ namespace _WorldGenStateCapture
 						break;
 				}
 			}
-			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData);
+			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
 
 			worldDataItem.dlcs = cleanDlcIds;
 
@@ -133,7 +194,7 @@ namespace _WorldGenStateCapture
 			{
 				worldDataItem.starMapEntriesVanilla = new(baseStarmapItems);
 			}
-			data.world = worldDataItem;
+			data.cluster = worldDataItem;
 
 
 			MNI_Statistics.Instance.OnSeedGenerated();
@@ -147,7 +208,7 @@ namespace _WorldGenStateCapture
 
 			//Console.WriteLine(json);
 			//attach the coroutine to the main game object
-			App.instance.StartCoroutine(RequestHelper.TryPostRequest(json, ClearAndRestart, (data) =>
+			App.instance.StartCoroutine(RequestHelper.TryPostRequest(Credentials.API_URL_UPLOAD, json, ClearAndRestart, (data) =>
 			{
 				//StoreForLater(data, worldDataItem.coordinate);
 				ClearAndRestart();
@@ -480,7 +541,7 @@ namespace _WorldGenStateCapture
 			{
 				if (FileToByteArray(file, out var data))
 				{
-					App.instance.StartCoroutine(RequestHelper.TryPostRequest(data, () => UnstoreLater(file), (_) => { }));
+					App.instance.StartCoroutine(RequestHelper.TryPostRequest(Credentials.API_URL_UPLOAD, data, () => UnstoreLater(file), (_) => { }));
 				}
 			}
 		}

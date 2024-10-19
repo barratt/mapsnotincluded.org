@@ -212,6 +212,7 @@ namespace _WorldGenStateCapture
 					() => { CancelAutoParsing(); InitAutoStart(__instance); },
 					NEWGAMESETTINGS.BUTTONS.CANCEL, CancelAutoParsing);
 			}
+
 			public static void InitAutoStart(MainMenu __instance)
 			{
 				MNI_Statistics.Instance.OnGameStart();
@@ -230,12 +231,35 @@ namespace _WorldGenStateCapture
 				//}
 
 				autoLoadActive = false;
-				var clusterPrefix = Config.TargetClusterPrefix();//  DlcManager.IsExpansion1Active() ? Config.Instance.TargetCoordinateDLC : Config.Instance.TargetCoordinateBase;
+				var clusterPrefix = Config.TargetClusterPrefix();
 
 				targetLayout = null;
 				Debug.Log("autostarting...");
+				bool ServerSeed = RequestHelper.HasServerRequestedSeed(out string coordinate);
+				if(ServerSeed)
+				{
+					string[] array = CustomGameSettings.ParseSettingCoordinate(coordinate);
+					if (array.Length < 4 || array.Length > 6 || !int.TryParse(array[2], out var _))
+					{
+						ServerSeed = false; //invalid coordinate
+					}
+					if(ServerSeed)
+						clusterPrefix = array[1];
+				}
 
-				if (Config.Instance.RandomizedClusterGen)
+				if (!Config.Instance.RandomizedClusterGen || ServerSeed)
+				{
+					foreach (string clusterName in SettingsCache.GetClusterNames())
+					{
+						ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(clusterName);
+						if (clusterData.coordinatePrefix == clusterPrefix)
+						{
+							targetLayout = clusterData;
+							break;
+						}
+					}
+				}
+				else
 				{
 					while (targetLayout == null)
 					{
@@ -261,18 +285,6 @@ namespace _WorldGenStateCapture
 						}
 					}
 				}
-				else
-				{
-					foreach (string clusterName in SettingsCache.GetClusterNames())
-					{
-						ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(clusterName);
-						if (clusterData.coordinatePrefix == clusterPrefix)
-						{
-							targetLayout = clusterData;
-							break;
-						}
-					}
-				}
 
 				if (targetLayout == null)
 					return;
@@ -281,7 +293,6 @@ namespace _WorldGenStateCapture
 				autoLoadActive = true;
 				clusterCategory = (int)targetLayout.clusterCategory;
 				__instance.NewGame();
-
 			}
 		}
 		static ClusterLayout targetLayout;
@@ -308,7 +319,6 @@ namespace _WorldGenStateCapture
 				if (autoLoadActive)
 				{
 					__instance.OnClickSurvival();
-
 				}
 			}
 		}
@@ -320,7 +330,6 @@ namespace _WorldGenStateCapture
 				if (autoLoadActive)
 				{
 					return false;
-
 				}
 				return true;
 			}
@@ -330,16 +339,35 @@ namespace _WorldGenStateCapture
 		{
 			public static void Postfix(ColonyDestinationSelectScreen __instance)
 			{
+				//always default those to 0
+
+				//default "survival" settings
+				__instance.newGameSettingsPanel.ConsumeSettingsCode("0");
+				//no story traits by default
+				__instance.newGameSettingsPanel.ConsumeStoryTraitsCode("0");
+				//no mixings by default
+				__instance.newGameSettingsPanel.ConsumeMixingSettingsCode("0");
+
 				if (autoLoadActive)
 				{
+					bool serverRequestedRun = RequestHelper.HasServerRequestedSeed(out string serverCoordinate);
+					if (serverRequestedRun)
+					{
+						Debug.Log("Running server requested seed: " + serverCoordinate);
+
+						__instance.CoordinateChanged(serverCoordinate);
+						__instance.newGameSettingsPanel.ConsumeSettingsCode("0");
+						__instance.newGameSettingsPanel.ConsumeStoryTraitsCode("0");
+						__instance.LaunchClicked();
+						return;
+					}
 					__instance.newGameSettingsPanel.SetSetting((SettingConfig)CustomGameSettingConfigs.ClusterLayout, targetLayout.filePath);
 
 					Debug.Log("Selected cluster: " + Strings.Get(targetLayout.name));
-					__instance.newGameSettingsPanel.ConsumeStoryTraitsCode("0");
 
+					//ceres clusters require dlc mixing to be enabled
 					if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID))
-					{
-						//ceres clusters require dlc mixing to be enabled
+					{					
 						if (!MNI_Statistics.Instance.IsMixingRun())
 						{
 							Debug.Log("no mixing active this run");
@@ -419,10 +447,10 @@ namespace _WorldGenStateCapture
 				if (__instance is MinionSelectScreen)
 				{
 					__instance.OnProceed();
-
 				}
 			}
 		}
+		#region skipGameOverChecks
 		[HarmonyPatch(typeof(GameFlowManager.StatesInstance), nameof(GameFlowManager.StatesInstance.CheckForGameOver))]
 		public static class SkipGameOverCheck
 		{
@@ -448,6 +476,7 @@ namespace _WorldGenStateCapture
 				return true;
 			}
 		}
+		#endregion
 
 		[HarmonyPatch(typeof(OfflineWorldGen), nameof(OfflineWorldGen.DisplayErrors))]
 		public static class RestartOnFailedSeed
@@ -459,8 +488,7 @@ namespace _WorldGenStateCapture
 			/// <returns></returns>
 			public static bool Prefix(OfflineWorldGen __instance)
 			{
-				ModAssets.ClearData();
-				App.LoadScene(__instance.frontendGameLevel);
+				ModAssets.AccumulateFailedSeedData(__instance);
 				return false;
 			}
 		}

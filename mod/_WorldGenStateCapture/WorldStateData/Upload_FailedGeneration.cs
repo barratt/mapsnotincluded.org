@@ -1,20 +1,21 @@
-﻿using System;
+﻿using _WorldGenStateCapture.WorldStateData;
+using _WorldGenStateCapture;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static DistributionPlatform;
 
-namespace _WorldGenStateCapture.WorldStateData
+namespace MapsNotIncluded_WorldParser.WorldStateData
 {
-	internal class Upload
+	internal class Upload_FailedGeneration
 	{
 		public string userId;
 		public string installationId;
 		public string gameVersion;
 		public Dictionary<string, string> fileHashes;
-		public WorldDataInstance world; 
-		public Upload()
+		public string coordinate;
+		public Upload_FailedGeneration()
 		{
 			userId = IntegrityCheck.GetUserId();
 			installationId = IntegrityCheck.GetInstallationId();

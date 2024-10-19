@@ -10,12 +10,21 @@ namespace _WorldGenStateCapture
 {
 	internal class RequestHelper
 	{
-		public static string API_URL => Credentials.API_URL;
 		public static string API_TOKEN => Credentials.API_Key;
 
-		public static IEnumerator TryPostRequest(byte[] bodyRaw, System.Action OnComplete, System.Action<byte[]> OnFail)
+
+
+		public static bool HasServerRequestedSeed(out string coordinate)
 		{
-			using (UnityWebRequest request = new UnityWebRequest(API_URL, "POST"))
+			//TODO
+			coordinate = string.Empty;
+			return false;
+		}
+
+		public static IEnumerator TryPostRequest(string url, byte[] bodyRaw, System.Action OnComplete, System.Action<byte[]> OnFail)
+		{
+			//Debug.Log("Calling MNI API: " + url);
+			using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
 			{
 
 				// Set the request body to the JSON byte array
@@ -44,7 +53,8 @@ namespace _WorldGenStateCapture
 				}
 			}
 		}
-		public static IEnumerator TryPostRequest(string data, System.Action OnComplete, System.Action<byte[]> OnFail) => TryPostRequest(Encoding.UTF8.GetBytes(data), OnComplete, OnFail);
+
+		public static IEnumerator TryPostRequest(string url, string data, System.Action OnComplete, System.Action<byte[]> OnFail) => TryPostRequest(url,Encoding.UTF8.GetBytes(data), OnComplete, OnFail);
 
 	}
 }

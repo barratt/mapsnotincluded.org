@@ -1,4 +1,5 @@
 ﻿using ProcGen;
+using ProcGenGame;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,10 +20,14 @@ namespace _WorldGenStateCapture
 			return values;
 		}
 
-		internal static Dictionary<string, string> HarvestClusterHashes(ClusterLayout targetLayout)
+		internal static Dictionary<string, string> HarvestClusterHashes(ClusterLayout targetLayoutOriginal, int seed)
 		{
 			Dictionary<string, string> AccumulatedHashes = new Dictionary<string, string>();
 			AccumulatedHashes["modHash"] = GetModHash();
+
+			//if the current settngs have replaced an asteroid, it only shows up in the list if mixing is reapplied to the cluster data
+			var mutatedTargetLayout = WorldgenMixing.DoWorldMixing(targetLayoutOriginal, seed, false, false);
+			var targetLayout = mutatedTargetLayout.layout;
 
 			AddFileToDic(targetLayout.filePath, ref AccumulatedHashes);
 
