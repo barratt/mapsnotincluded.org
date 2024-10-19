@@ -1,0 +1,27 @@
+name: Build API Docker
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'hash-service/**'
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v3
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v4.0.0
+      with:
+        context: app
+        push: true
+        tags: ghcr.io/barratt/mnihashservice:latest
