@@ -7,8 +7,10 @@ import mapExplorer from './view/map_explorer.js'
 import worldTraitFinder from './view/world_trait_finder.js'
 import seedViewer from './view/seed_viewer.js'
 import starmapGenerator from './view/starmap_generator.js'
+import navbar from './components/navbar.js'
 
 export default {
+  navbar: navbar,
   not_found: notFound,
   about: about,
   contribute: contribute,
