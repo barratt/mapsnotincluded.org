@@ -5,11 +5,15 @@
 <template>
   <main class="container mt-5">
     <div class="mb-5">
-      <h1>World Trait Finder</h1>
+      <h1>{{ $t('world_trait_finder.title') }}</h1>
       <!-- <p>This uses our database to search for existing seeds that contain specific traits, this does seem to be calculatable based on the coordinates, but is not yet known. We hope to get this working soon! If you have any information regarding this, please get in touch on Discord!</p>-->
-      <p>A world trait finder will be available here once development is complete.</p>
+      <p>{{ $t('world_trait_finder.description_1') }}</p>
       <br>
-      <p>If you'd like to get involved, feel free to <router-link to="/contribute">contribute</router-link> to the development of this site.</p>
+      <i18n-t keypath="world_trait_finder.description_2" tag="p">
+        <template v-slot:contribute>
+          <router-link to="/contribute">contribute</router-link>
+        </template>
+      </i18n-t>
     </div>
     <!-- Lets add the option to select between different DLCs -->
     <!-- <div class="d-flex gap-5 justify-content-center flex-wrap">
