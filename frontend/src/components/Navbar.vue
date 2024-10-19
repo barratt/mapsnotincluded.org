@@ -1,9 +1,10 @@
 <script setup>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
-let locales = [
-  {"label": "English"}
-]
+let localeMap = {
+  "en": "English",
+  "kr": "Korean",
+}
 </script>
 
 <template>
@@ -52,10 +53,10 @@ let locales = [
                             v-for="locale in $i18n.availableLocales" 
                             :key="`locale-${locale}`" 
                             :value="locale" 
-                            class="locale-dropdown-item"
+                            :class="`locale-dropdown-item ${ locale === $i18n.locale ? 'locale-selected' : '' }`"
                             @click="$i18n.locale = locale"
                           >
-                            <p class="locale-text">{{locale}}</p>
+                            <p class="locale-text">{{localeMap[locale]}}</p>
                           </MenuItem>
                         </MenuItems>
                       </Menu>
@@ -85,7 +86,7 @@ let locales = [
   right: 0px;
   transform: translateY(100%);
   background-color: #4F5F80;
-  border: 1px solid white;
+  border: 1px solid #b4bdd1;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -97,6 +98,10 @@ let locales = [
 .locale-dropdown-item:hover {
   cursor: pointer;
   background-color: #43516d;
-  border-radius:4px;
+  border-radius: 4px;
+}
+.locale-selected {
+  background-color: #43516d;
+  border-radius: 4px;
 }
 </style>
