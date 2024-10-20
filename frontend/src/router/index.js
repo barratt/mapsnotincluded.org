@@ -10,6 +10,7 @@ const router = createRouter({
       component: HomeView
     },
     { path: '/map-explorer', component: () => import('../views/MapExplorerStepsView.vue') },
+    { path: '/map-explorer/:seed', component: () => import('../views/MapExplorerStepsView.vue') },
     // { path: '/map-explorer', component: () => import('../views/MapExplorerView.vue') },
     { path: '/trait-finder', component: () => import('../views/WorldTraitFinderView.vue') },
     { path: '/starmap-generator', component: () => import('../views/StarmapGeneratorView.vue') },

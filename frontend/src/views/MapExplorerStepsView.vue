@@ -1,12 +1,33 @@
 <template>
   <div class="iframe-container">
-    <iframe src="https://stefan-oltmann.de/oni-seed-browser" frameborder="0"></iframe>
+    <iframe :src="iframeUrl" frameborder="0"></iframe>
   </div>
 </template>
 
 <script>
+const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
+
 export default {
   name: 'IframePage',
+  data() {
+    return {
+      iframeUrl: MAPEXPLORER_URL,
+      queryParams: {},
+    }
+  },
+  mounted() {
+    this.queryParams = this.$route.query;
+    this.queryParams.embedded = 'mni'; 
+
+    let url = MAPEXPLORER_URL;
+    if (this.$route.params.seed) {
+      url = `${url}#${this.$route.params.seed}`;
+    }
+    url = `${url}?${new URLSearchParams(this.queryParams).toString()}`;
+    
+    this.iframeUrl = url;
+    console.log(this.iframeUrl);
+  },
 };
 </script>
 
@@ -19,7 +40,7 @@ main {
 .iframe-container {
   display: flex;
   width: 100%; 
-  height: calc(100vh - 66px); /* not ideal, but I can't seem to work out how to get the frame to take the remaining space and ignore the navbar*/
+  height: calc(100vh - 68px); /* not ideal, but I can't seem to work out how to get the frame to take the remaining space and ignore the navbar*/
   overflow: hidden; 
 }
 
