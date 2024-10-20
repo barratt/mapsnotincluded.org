@@ -1,5 +1,5 @@
 const yaml  = require('yaml');
-const fs    = require('fs');
+const fs = require('fs');
 
 const gamePath = `C:\\Program Files (x86)\\Steam\\steamapps\\common\\OxygenNotIncluded`;
 
@@ -53,7 +53,12 @@ function compileYamlToJson() {
         }
     }
 
-    fs.writeFileSync('compiledTraits.json', JSON.stringify(data, null, 4));
+    return data;
 }
 
-compileYamlToJson();
+if (require.main === module) {
+    const data = compileYamlToJson();
+    fs.writeFileSync('compiledTraits.json', JSON.stringify(data, null, 4));
+} else {
+    module.exports = compileYamlToJson;
+}

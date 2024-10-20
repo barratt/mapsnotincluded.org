@@ -1,13 +1,14 @@
 {
-  "name": "klei-worldtrait-random-test",
+  "name": "oniworldgen",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
+
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
+  "author": "LeCoffee",
   "license": "ISC",
-  "description": "",
+  "description": "A simple library that mimics some basic functionality of ONI world generation",
   "dependencies": {
     "yaml": "^2.6.0"
   },

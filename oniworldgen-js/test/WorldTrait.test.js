@@ -29,14 +29,14 @@ describe("WorldTrait", function () {
     let wordsToGenerate = clusterInfo.worldPlacements;
 
     let expectedTraits = [
-        [ "traits/MisalignedStart", "traits/BouldersSmall", ],   // Folia
-        [ "traits/MetalCaves, traits/Geodes", ], // Irradiated Swampty
-        [ "traits/DeepOil", ],                      // Rusty Oil
-        [ "frozenFriend", "traits/MetalRich", ],       // Tundra
+        [ "traits/MisalignedStart", "traits/BouldersSmall", ],      // Folia
+        [ "expansion1::traits/MetalCaves", "traits/Geodes" ],         // Irradiated Swampty
+        [ "traits/DeepOil", ],                                      // Rusty Oil
+        [ "expansion1::traits/DistressSignal", "traits/MetalRich", ],       // Tundra
         [],                                     // Marshy
         [],                                     // Moo
         [],                                     // Water
-        ["traits/MetalRich"],                          // Superconductive
+        ["traits/MetalRich"],                   // Superconductive
         [],                                     // Reoglith
     ]
 
