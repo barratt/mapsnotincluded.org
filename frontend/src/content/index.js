@@ -2,7 +2,6 @@ import koKRContent from './ko-KR'
 import enContent from './en'
 import cnContent from './cn'
 import twContent from './tw'
-import deContent from './de'
 
 // Export i18n config object
 export const i18nConfig = {
