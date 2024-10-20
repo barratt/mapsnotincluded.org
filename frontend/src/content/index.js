@@ -13,7 +13,6 @@ export const i18nConfig = {
     cn: cnContent,
     tw: twContent,
     ko: koKRContent,
-    de: deContent
   },
 };
 
@@ -21,7 +20,6 @@ export const i18nConfig = {
 export const localeLabels = {
   en: 'English',
   ko: 'Korean',
-  de: 'German',
   cn: 'Simplified Chinese',
   tw: 'Traditional Chinese',
 }
