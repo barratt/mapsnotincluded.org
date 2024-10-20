@@ -7,13 +7,14 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 
 const { locale } = useI18n();
 const route = useRoute();
 
 const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
 
-const iframeUrl = ref(MAPEXPLORER_URL)
+const iframeUrl = ref(null)
 const iframeRef = ref(null)
 const queryParams = ref({});
 
