@@ -1,12 +1,22 @@
 <template>
   <div class="iframe-container">
-    <iframe :src="iframeUrl" frameborder="0"></iframe>
+    <button @click="sendEvent">Send Event</button>
+    <iframe ref="iframeRef" :src="iframeUrl" frameborder="0"></iframe>
   </div>
 </template>
 
 <script setup>
-const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
+import { ref } from 'vue';
+
+const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'http://localhost:8080/';
 const iframeUrl = MAPEXPLORER_URL
+const iframeRef = ref(null)
+
+function sendEvent() {
+  if (iframeRef.value && iframeRef.value.contentWindow) {
+    iframeRef.value.contentWindow.postMessage("test data", MAPEXPLORER_URL);
+  }
+}
 </script>
 
 <style scoped>
