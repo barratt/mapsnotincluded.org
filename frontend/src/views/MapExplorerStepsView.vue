@@ -10,7 +10,7 @@ import { useI18n } from 'vue-i18n';
 
 const { locale } = useI18n();
 
-const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'http://localhost:8080/';
+const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
 const iframeUrl = MAPEXPLORER_URL
 const iframeRef = ref(null)
 
