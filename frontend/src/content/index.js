@@ -2,6 +2,7 @@ import koKRContent from './ko-KR'
 import enContent from './en'
 import cnContent from './cn'
 import twContent from './tw'
+import deContent from './de'
 
 // Export i18n config object
 export const i18nConfig = {
@@ -11,7 +12,8 @@ export const i18nConfig = {
     en: enContent,
     cn: cnContent,
     tw: twContent,
-    ko: koKRContent
+    ko: koKRContent,
+    de: deContent
   },
 };
 
@@ -19,6 +21,7 @@ export const i18nConfig = {
 export const localeLabels = {
   en: 'English',
   ko: 'Korean',
+  de: 'German',
   cn: 'Simplified Chinese',
   tw: 'Traditional Chinese',
 }
