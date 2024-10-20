@@ -19,7 +19,7 @@ const router = createRouter({
     { path: '/about', component: () => import('../views/AboutView.vue') },
     { path: '/contribute', component: () => import('../views/ContributeView.vue') },
 
-    { path: '/:pathMatch(.*)*', component: () => import('../views/Errors/404.vue') },
+    { path: '/:pathMatch(.*)*', component: () => import('../views/Errors/404.vue') }, // todo: check if they have passed a seed, if not, redirect to map-explorer/seed
   ]
 })
 
