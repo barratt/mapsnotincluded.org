@@ -4,31 +4,9 @@
   </div>
 </template>
 
-<script>
+<script setup>
 const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
-
-export default {
-  name: 'IframePage',
-  data() {
-    return {
-      iframeUrl: MAPEXPLORER_URL,
-      queryParams: {},
-    }
-  },
-  mounted() {
-    this.queryParams = this.$route.query;
-    this.queryParams.embedded = 'mni'; 
-
-    let url = MAPEXPLORER_URL;
-    if (this.$route.params.seed) {
-      url = `${url}#${this.$route.params.seed}`;
-    }
-    url = `${url}?${new URLSearchParams(this.queryParams).toString()}`;
-    
-    this.iframeUrl = url;
-    console.log(this.iframeUrl);
-  },
-};
+const iframeUrl = MAPEXPLORER_URL
 </script>
 
 <style scoped>
