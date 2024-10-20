@@ -1,12 +1,11 @@
 <template>
   <div class="iframe-container">
-    <button @click="sendEvent">Send Event</button>
     <iframe ref="iframeRef" :src="iframeUrl" frameborder="0"></iframe>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { locale } = useI18n();
@@ -15,11 +14,20 @@ const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'http://localhos
 const iframeUrl = MAPEXPLORER_URL
 const iframeRef = ref(null)
 
-function sendEvent() {
+watch(locale, () => {
   if (iframeRef.value && iframeRef.value.contentWindow) {
     iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
   }
-}
+});
+
+onMounted(() => {
+  if (iframeRef.value && iframeRef.value.contentWindow) {
+    // TODO: Find better way of knowing when compose is ready to accept message
+    setTimeout(() => {
+      iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
+    }, 200)
+  }
+})
 </script>
 
 <style scoped>
