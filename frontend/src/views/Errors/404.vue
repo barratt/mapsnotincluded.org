@@ -4,8 +4,15 @@
 
 <template>
   <main>
-    <h1>404 Not Found</h1>
-    <p>Sorry, the page you are looking for does not exist.</p>
-    <p>If you reached this page by clicking around, the chances are it hasn't been built yet, if your technically minded, please use our <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_gh">GitHub</a> link to contribute, otherwise come and nag us on our <a href="https://discord.gg/3vhCpp6PNq" target="mni_disc">Discord</a>.</p>
+    <h1>{{ $t('not_found.title') }}</h1>
+    <p>{{ $t('not_found.description_1') }}</p>
+    <i18n-t keypath="not_found.description_2" tag="p">
+      <template v-slot:githubLink>
+        <a href="https://github.com/barratt/mapsnotincluded.org" target="_blank">GitHub</a>
+      </template>
+      <template v-slot:discordLink>
+        <a href="https://discord.gg/3vhCpp6PNq" target="_blank">Discord</a>
+      </template>
+    </i18n-t>
   </main>
 </template>
