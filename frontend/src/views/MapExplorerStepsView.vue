@@ -12,7 +12,7 @@ import { useRoute } from 'vue-router';
 const { locale } = useI18n();
 const route = useRoute();
 
-const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'http://localhost:8080/';
+const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
 
 const iframeUrl = ref(null)
 const iframeRef = ref(null)
@@ -28,7 +28,6 @@ watch(locale, () => {
 onMounted(() => {
   // Store current route's query param
   queryParams.value = { ...route.query, embedded: 'mni' };
-  console.log(queryParams.value)
 
   // Construct iframe url from query param  
   let url = MAPEXPLORER_URL;
