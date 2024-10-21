@@ -1,6 +1,7 @@
 import koKRContent from './ko-KR'
 import enContent from './en'
-import zhContent from './zh'
+import cnContent from './cn'
+import twContent from './tw'
 
 // Export i18n config object
 export const i18nConfig = {
@@ -8,14 +9,16 @@ export const i18nConfig = {
   fallbackLocale: 'en',
   messages: {
     en: enContent,
-    zh: zhContent,
-    ko: koKRContent
+    cn: cnContent,
+    tw: twContent,
+    ko: koKRContent,
   },
 };
 
 // Export locale label object
 export const localeLabels = {
   en: 'English',
-  ko: 'Korean',
-  zh: 'Chinese',
+  ko: '한국어',
+  cn: '简体中文',
+  tw: '繁體中文',
 }

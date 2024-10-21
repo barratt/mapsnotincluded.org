@@ -78,7 +78,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 .locale-dropdown {
   position: absolute;
   bottom: 0px;
-  right: 0px;
+  left: 0px;
   transform: translateY(100%);
   background-color: #4F5F80;
   border: 1px solid #b4bdd1;
@@ -87,7 +87,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
   flex-direction: column;
 }
 .locale-dropdown-item {
-  padding: 3px 12px;
+  padding: 3px 10px;
   margin: 0px;
 }
 .locale-dropdown-item:hover {
@@ -98,5 +98,9 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 .locale-selected {
   background-color: #43516d;
   border-radius: 4px;
+}
+.locale-text {
+  font-size: 18px;
+  white-space: nowrap;
 }
 </style>

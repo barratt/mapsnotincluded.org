@@ -6,7 +6,7 @@ export default {
   "link_trait_finder": "세계 특성 탐색",
   "link_starmap_generator": "스타 맵 생성",
   "link": {
-    "contribute": "개발",
+    "contribute": "기여",
     "discord": "디스코드",
     "github": "깃허브",
   }

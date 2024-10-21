@@ -1,34 +1,51 @@
 <template>
   <div class="iframe-container">
-    <iframe :src="iframeUrl" frameborder="0"></iframe>
+    <iframe ref="iframeRef" :src="iframeUrl" frameborder="0"></iframe>
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
+
+const { locale } = useI18n();
+const route = useRoute();
+
 const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
 
-export default {
-  name: 'IframePage',
-  data() {
-    return {
-      iframeUrl: MAPEXPLORER_URL,
-      queryParams: {},
-    }
-  },
-  mounted() {
-    this.queryParams = this.$route.query;
-    this.queryParams.embedded = 'mni'; 
+const iframeUrl = ref(null)
+const iframeRef = ref(null)
+const queryParams = ref({});
 
-    let url = MAPEXPLORER_URL;
-    if (this.$route.params.seed) {
-      url = `${url}#${this.$route.params.seed}`;
-    }
-    url = `${url}?${new URLSearchParams(this.queryParams).toString()}`;
-    
-    this.iframeUrl = url;
-    console.log(this.iframeUrl);
-  },
-};
+// Whenever locale code changes, send it to compose
+watch(locale, () => {
+  if (iframeRef.value && iframeRef.value.contentWindow) {
+    iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
+  }
+});
+
+onMounted(() => {
+  // Store current route's query param
+  queryParams.value = { ...route.query, embedded: 'mni' };
+
+  // Construct iframe url from query param  
+  let url = MAPEXPLORER_URL;
+
+  if (route.params.seed) {
+    url = `${url}#${route.params.seed}`;
+  }
+  url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
+  iframeUrl.value = url;
+
+  // Send locale code to compose
+  if (iframeRef.value && iframeRef.value.contentWindow) {
+    // TODO: Find better way of knowing when compose is ready to accept message
+    setTimeout(() => {
+      iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
+    }, 200)
+  }
+})
 </script>
 
 <style scoped>
