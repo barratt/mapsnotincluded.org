@@ -18,7 +18,7 @@ export const i18nConfig = {
 // Export locale label object
 export const localeLabels = {
   en: 'English',
-  ko: 'Korean',
-  cn: 'Simplified Chinese',
-  tw: 'Traditional Chinese',
+  ko: '한국어',
+  cn: '简体中文',
+  tw: '繁體中文',
 }

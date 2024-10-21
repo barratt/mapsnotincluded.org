@@ -101,5 +101,6 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 }
 .locale-text {
   font-size: 18px;
+  white-space: nowrap;
 }
 </style>
