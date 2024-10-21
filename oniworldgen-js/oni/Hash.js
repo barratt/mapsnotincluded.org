@@ -13,7 +13,7 @@ const Hash = {
   },
 };
 
-module.exports = { Hash };
+module.exports = Hash;
 
 // Example usage:
 //   const hashValue = Hash.SDBMLower("ExampleString");

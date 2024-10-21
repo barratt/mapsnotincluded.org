@@ -42,3 +42,5 @@ class TraitRule {
         }
     }
 }
+
+module.exports = TraitRule;

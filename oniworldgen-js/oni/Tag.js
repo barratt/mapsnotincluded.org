@@ -1,4 +1,4 @@
-const { Hash } = require("./Hash");
+const Hash = require("./Hash");
 
 class Tag {
   static Invalid = new Tag(0); // Static Invalid tag

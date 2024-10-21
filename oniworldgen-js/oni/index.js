@@ -1,7 +1,7 @@
-module.exports.Hash = require('./oni/Hash');
-module.exports.KRandom = require('./oni/KRandom');
-module.exports.SettingsCache = require('./oni/SettingsCache');
-module.exports.Tag = require('./oni/Tag');
-module.exports.TagSet = require('./oni/TagSet');
-module.exports.TraitRule = require('./oni/TraitRule');
-module.exports.WorldTrait = require('./oni/WorldTrait');
+module.exports.Hash = require('./Hash.js');
+module.exports.KRandom = require('./KRandom.js');
+module.exports.SettingsCache = require('./SettingsCache.js');
+module.exports.Tag = require('./Tag.js');
+module.exports.TagSet = require('./TagSet.js');
+module.exports.TraitRule = require('./TraitRule.js');
+module.exports.WorldTrait = require('./WorldTrait.js');

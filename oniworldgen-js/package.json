@@ -2,17 +2,19 @@
   "name": "oniworldgen",
   "version": "1.0.0",
   "main": "index.js",
-
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "vite build"
   },
   "author": "LeCoffee",
   "license": "ISC",
   "description": "A simple library that mimics some basic functionality of ONI world generation",
   "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "yaml": "^2.6.0"
   },
   "devDependencies": {
-    "mocha": "^10.7.3"
+    "mocha": "^10.7.3",
+    "vite": "^5.4.9"
   }
 }

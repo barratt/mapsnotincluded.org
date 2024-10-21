@@ -6,9 +6,8 @@
   <main class="container mt-5">
     <div class="mb-5">
       <h1>{{ $t('world_trait_finder.title') }}</h1>
-      <!-- <p>This uses our database to search for existing seeds that contain specific traits, this does seem to be calculatable based on the coordinates, but is not yet known. We hope to get this working soon! If you have any information regarding this, please get in touch on Discord!</p>-->
-      <p>{{ $t('world_trait_finder.description_1') }}</p>
-      <br>
+      <!-- <p>This uses our database to search for existing seeds that contain specific traits, this does seem to be calculatable based on the coordinates, but is not yet known. We hope to get this working soon! If you have any information regarding this, please get in touch on Discord!</p> -->
+      <p class="text-danger fs-1">{{ $t('world_trait_finder.description_1') }}</p>
       <i18n-t keypath="world_trait_finder.description_2" tag="p">
         <template v-slot:contribute>
           <router-link to="/contribute">{{ $t('world_trait_finder.link.contribute') }}</router-link>
@@ -18,36 +17,35 @@
     <!-- Lets add the option to select between different DLCs -->
     <!-- <div class="d-flex gap-5 justify-content-center flex-wrap">
       <Selectable :items="DLCs" v-model="selectedDLC"  />
-    </div-->
+    </div> -->
 
     <!-- Lets add the option to select between different worlds -->
-    <!--<div class="d-flex gap-5 justify-content-center flex-wrap mt-5" v-if="selectedCluster">
+    <div class="d-flex gap-5 justify-content-center flex-wrap mt-5" v-if="selectedCluster">
       <Selectable :items="selectedCluster" v-model="form.selectedWorld"  />
-    </div-->
+    </div>
 
     <!-- TODO: Some way of turning on the good and the bad traits. -->
-<!--
     <hr/>
     <div class="row text-center mt-5">
       <div class="col-12 col-md-4">
         <span class="text-danger">{{ negativeWorldTraits.length }} Negative Traits</span>
 
         <div class="d-flex gap-5 justify-content-center flex-wrap mt-4">
-          <Selectable :items="negativeTraits" v-model="negativeWorldTraits" :multiselect="true" selected-text-class="text-danger"/>
+          <Selectable :items="negativeTraits" v-model="selectedTraits" :multiselect="true" selected-text-class="text-danger"/>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <span class="">{{ neutralWorldTraits.length }} Neutral Traits</span>
         <div class="d-flex gap-5 justify-content-center flex-wrap mt-4">
-          <Selectable :items="neutralTraits" v-model="neutralWorldTraits" :multiselect="true" selected-text-class="text-info"/>
+          <Selectable :items="neutralTraits" v-model="selectedTraits" :multiselect="true" selected-text-class="text-info"/>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <span class="text-success">{{ positiveWorldTraits.length }} Positive Traits</span>
         <div class="d-flex gap-5 justify-content-center flex-wrap mt-4">
-          <Selectable :items="positiveTraits" v-model="positiveWorldTraits" :multiselect="true" selected-text-class="text-success"/>
+          <Selectable :items="positiveTraits" v-model="selectedTraits" :multiselect="true" selected-text-class="text-success"/>
         </div>
       </div>
 
@@ -56,35 +54,34 @@
 
     <hr/>
 
-    <div class="d-flex justify-content-center mt-3">
-      <button v-if="!isLoading" class="btn btn-success" @click="search"><i class="bi-search me-2"></i>Search</button>
-      <button v-else class="btn btn-success" disabled><i class="bi-search me-2"></i>Searching...</button>
+    <div class="d-flex justify-content-center mt-3 mb-5">
+      <button class="btn btn-success" @click="generate" :disabled="isLoading"><i class="bi-search me-2"></i>Generate</button>
     </div>
 
     <div v-if="results" class="mt-5">
       <hr />
-      <h2>{{ results.totalResults}} Results</h2>
+      <h2>{{ results.length}} Results</h2>
       <div class="row">
         <div class="col-12">
           <table class="table">
             <thead>
               <tr>
                 <th>World</th>
-                <th>Traits</th> <!-- Trait 1 -->
-               <!-- <th></th><!-- Trait 1 -->
-               <!-- <th></th><!-- Trait 1 -->
-               <!-- <th></th><!-- Trait 1 -->
-              <!--  <th></th><!-- Trait 1 -->
-             <!-- </tr>
+                <th>Traits</th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+             </tr>
             </thead>
             <tbody>
-              <tr v-for="save in results.saves" :key="save.id">
-                <td>{{ save.coordinates }}</td>
-                <!-- This is a bit awkward, but we want to use a table, and we want the cols/rows to line up -->
-               <!-- <td v-for="i in 6">
+              <tr v-for="result in results" :key="result.id">
+                <!-- TODO: Build co-ordinates -->
+                <td>{{ result.seed }}</td> 
+               <td v-for="i in 6">
                   <span
-                    v-if="save.worldTraits.length > i-1"
-                    :class="getTraitConnotationClassById(save.worldTraits[i-1])">{{ save.worldTraits[i-1] }}
+                    v-if="result && result.traits && result.traits.length > i-1"
+                    :class="getTraitConnotationClassById(result.traits[i-1])">{{ result.traits[i-1] }}
                   </span>
                 </td>
               </tr>
@@ -93,24 +90,8 @@
         </div>
       </div>
 
-      <!-- <- page 1 of max ->> -->
-    <!--  <div class="d-flex justify-content-center">
-        <nav aria-label="Page navigation">
-          <ul class="pagination">
-            <li class="page-item"><button class="page-link" @click="paginate('prev')">Previous</button></li>
-            <li class="page-item" v-if="results.page > 0"><button class="page-link" @click="paginate(1)">1</button></li>
-            <li class="page-item" v-if="results.page > 2"><button class="page-link" @click="paginate(results.page - 2)">{{ results.page - 2 + 1 }}</button></li>
-            <li class="page-item" v-if="results.page > 1"><button class="page-link" @click="paginate(results.page - 1)">{{ results.page - 1 + 1}}</button></li>
-            <li class="page-item disabled" ><button class="page-link">{{ results.page + 1 }}</button></li>
-            <li class="page-item" v-if="results.totalPages > results.page + 1"><button class="page-link" @click="paginate(results.page + 1)">{{ results.page + 1 + 1 }}</button></li>
-            <li class="page-item" v-if="results.totalPages > results.page + 2"><button class="page-link" @click="paginate(results.page + 2)">{{ results.page + 2 + 1 }}</button></li>
-            <li class="page-item"><button class="page-link" @click="paginate(results.totalPages-1)">{{ results.totalPages }}</button></li>
-            <li class="page-item"><button class="page-link" @click="paginate('next')">Next</button></li>
-          </ul>
-        </nav>
-      </div>
 
-    </div> -->
+    </div>
 
   </main>
 </template>
@@ -118,7 +99,10 @@
 <script>
 import { DLCs, VanillaWorlds, SpacedOutWorlds, FrostyPlanetWorlds, WorldTraits } from '@/oni';
 import Selectable from '@/components/Selectable.vue';
-const API_URL = import.meta.env.VITE_API_URL;
+
+import oniGen from '../../../oniworldgen-js/dist/oniworldgen.mjs'
+
+import worldGenJSON from '../../../oniworldgen-js/worldgen.json'
 
 import Swal from 'sweetalert2';
 
@@ -129,17 +113,13 @@ export default {
   data() {
     return {
       DLCs,
-      saveCount: 0,
-      page: 0,
       selectedDLC: DLCs[0],
       form: {
         selectedWorld: null,
         worldTraits: [],
 
       },
-      negativeWorldTraits: [],
-      neutralWorldTraits: [],
-      positiveWorldTraits: [],
+      selectedTraits: [],
 
       isLoading: false,
       results: null,
@@ -171,16 +151,28 @@ export default {
     neutralTraits() {
       return WorldTraits.filter((c) => c.connotation === 0);
     },
+    neutralWorldTraits() {
+      return this.selectedTraits.connotation === 0;
+    },
     positiveTraits() {
       return WorldTraits.filter((c) => c.connotation === 1);
     },
+    positiveWorldTraits() {
+      return this.selectedTraits.connotation === 1;
+    },
     negativeTraits() {
       return WorldTraits.filter((c) => c.connotation === -1);
-    }
+    },
+    negativeWorldTraits() {
+      return this.selectedTraits.connotation === -1;
+    },
   },
   mounted() {
+    console.log("hi");
     // this.getSaveCount();
     // setInterval(this.getSaveCount, 2000);
+    oniGen.SettingsCache.initData(worldGenJSON);
+
   },
   methods: {
     addCriteria() {
@@ -206,81 +198,67 @@ export default {
       const trait = this.getTrait(id);
       return this.getConnotationClass(trait.connotation);
     },
-    paginate(page) {
-      console.log('paginate', page);
-      
-      this.isLoading = true;
-      
-      if (page === 'prev') {
-        page = this.results.page - 1;
-      } else if (page === 'next') {
-        page = this.results.page + 1;
+
+    generate() {
+      let minSeedLength = 5;
+      let maxSeedLength = 6;
+      const wantedTraits = this.selectedTraits;
+
+      // TODO: Add proper IDs to the clusters const so we can use them here.
+      // Really we need to update oni.js to pull it from the clusters JSON 
+
+      const clusterFile = "ForestStartCluster";
+      const clusterInfo = oniGen.SettingsCache.getCluster(clusterFile);
+      const worldPlacements = clusterInfo.worldPlacements;
+
+      console.log("Generating", this.selectedTraits, " for ", clusterFile);
+
+      let foundWorlds = [];
+      let seedBase = 1824076888; // TODO: Pick a random number between minseedlength and maxseedlength
+      let attempts = 1000;
+      let wantedResults = 10;
+
+      // TODO: Parallelise this, move to a server, loads of stuff we can do to make faster.
+      for (let i = 0; i < attempts; i++) { 
+        let seed = seedBase + i;
+
+        let traitsFound = [];
+
+        for (let j = 0; j < worldPlacements; j++) {
+          const worldPlacement = worldPlacements[j];
+          const worldName = worldPlacement.world.split('/')[1];
+
+          console.log("Generating world: " + worldName 
+            + " with seed: " + seed + j + " and index: " + j
+          );
+
+          let world = oniGen.SettingsCache.getWorld(worldName);        
+          let traits = SettingsCache.getRandomTraits(seed + i, world);
+
+          for (let trait of traits) {
+            if (wantedTraits.includes(trait)) {
+              traitsFound.push(trait);
+            }
+          }
+        }
+        
+        // Lets check that all the traits are in the found traits array, there may be duplicates - this is ok
+        // TODO: Another implementation may be to only check for worlds with all the traits, but this is a good start.
+
+        if (wantedTraits.every(trait => traitsFound.includes(trait))) {
+          foundWorlds.push({
+            seed: seed,
+            traits: traitsFound
+          });
+        }
+
+        if (foundWorlds.length > wantedResults) {
+          break;
+        }
       }
 
-      this.page = page;
-      
-      this.search();
-    },
-
-    // getSaveCount() {
-    //   console.log('getCount');
-    //   const url = `${API_URL}/saves/count`;
-    //   console.log('url', url);
-    //   // worldId is a query parameter.
-    //   fetch(url)
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       console.log('data', data);
-    //       this.saveCount = data.count;
-    //     });
-    // }
-
-    search() {
-      this.isLoading = true;
-      try {
-        console.log('search', this.form);
-        const url = `${API_URL}/saves/search`;
-
-        let worldTraits = this.negativeWorldTraits.concat(this.neutralWorldTraits).concat(this.positiveWorldTraits);
-        worldTraits = worldTraits.map((c) => c.id);
-
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...this.form,
-            worldTraits,
-            page: this.page,
-            [this.selectedDLC.id]: true,
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log('data', data);
-            this.results = data;
-            this.isLoading = false;
-          })
-          .catch((e) => {
-            console.error(e)
-            this.isLoading = false;
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Something went wrong!',
-            })
-          });
-        
-      } catch (e){
-        this.isLoading = false;
-        console.error(e)        
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong!',
-        })
-      } 
+      console.log("Found Worlds", foundWorlds);
+      this.results = foundWorlds
     }
   },
   watch: {
