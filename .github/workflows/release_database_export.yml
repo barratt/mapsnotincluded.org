@@ -19,7 +19,7 @@ jobs:
         env:
           DATABASE_EXPORT_API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
         run: |
-          curl --fail -H "DATABASE_EXPORT_API_KEY: $DATABASE_EXPORT_API_KEY" -o data.zip https://apibeta.mapsnotincluded.org/export
+          curl --fail -H "DATABASE_EXPORT_API_KEY: $DATABASE_EXPORT_API_KEY" -o data.zip https://ingest.mapsnotincluded.org/export
       - name: set NOW
         run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Create GitHub release
