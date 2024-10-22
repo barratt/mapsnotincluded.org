@@ -5,7 +5,7 @@ import twContent from './tw'
 
 // Export i18n config object
 export const i18nConfig = {
-  locale: 'en',
+  locale: navigator.language,
   fallbackLocale: 'en',
   messages: {
     en: enContent,
