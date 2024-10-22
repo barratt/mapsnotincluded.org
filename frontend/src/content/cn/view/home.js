@@ -6,8 +6,8 @@ export default {
   "link_trait_finder": "星球特质查找器",
   "link_starmap_generator": "星图产生器",
   "link": {
-  "contribute": "贡献",
-  "discord": "Discord",
-  "github": "GitHub",
+    "contribute": "贡献",
+    "discord": "Discord",
+    "github": "GitHub",
   }
- }
+}

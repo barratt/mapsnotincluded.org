@@ -6,4 +6,4 @@ export default {
   "contribute_link": "贡献",
   "discord_link": "Discord",
   "github_link": "GitHub",
- }
+}

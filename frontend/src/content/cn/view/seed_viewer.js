@@ -4,4 +4,4 @@ export default {
   "description_2": "还在努力寻找中!!!",
   "seed": "种子",
   "submit": "提交",
- }
+}
