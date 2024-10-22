@@ -1,5 +1,5 @@
 export default {
-  "title": "개발",
+  "title": "기여",
   "header": {
     "developer": "개발자",
     "gamer": "게이머",
