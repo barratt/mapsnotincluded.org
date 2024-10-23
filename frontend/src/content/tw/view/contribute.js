@@ -13,7 +13,7 @@ export default {
     "gamer": `請捐贈您的運算能力並上傳已儲存的內容，使這個工具更好地為每個人服務.
 
 為此，請按照以下說明進行操作.
-1. 找到您的 ONI mod 資料夾。它通常位於 C:\Users\USERNAME\Documents\Klei\OxygenNotIncluded\mods 中.
+1. 找到您的 ONI mod 資料夾。它通常位於 C:\\Users\\USERNAME\\Documents\\Klei\\OxygenNotIncluded\\mods 中.
 2. 進入或建立一個名為 "Local" 的資料夾(linux 上區分大小寫).
 3. 從 {githubReleaseLink}下載並解壓縮最新的 mod 版本.
 4. 將檔案放入本機資料夾中.
