@@ -13,7 +13,7 @@ export default {
     "gamer": `Please donate your compute power and upload saves to make this tool better for everyone.
 
 To do this, please follow the instructions below.
-1. Locate your ONI mod folder. It is usually in C:\Users\USERNAME\Documents\Klei\OxygenNotIncluded\mods.
+1. Locate your ONI mod folder. It is usually in C:\\Users\\USERNAME\\Documents\\Klei\\OxygenNotIncluded\\mods.
 2. Go into or create a folder named "Local" (case sensitive on linux).
 3. Download and unzip the latest mod build from the {githubReleaseLink}.
 4. Put the fild in the local folder.

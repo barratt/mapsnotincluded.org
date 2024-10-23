@@ -13,7 +13,7 @@ export default {
     "gamer": `저장된 게임 데이터를 모드를 통해 업로드함으로서 기여하실수 있습니다.
 
 모드를 적용하기 위해선 아래 지침을 따르세요.
-1. ONI 모드 폴더를 찾습니다. 일반적으로 C:\Users\USERNAME\Documents\Klei\OxygenNotIncluded\mods에 있습니다.
+1. ONI 모드 폴더를 찾습니다. 일반적으로 C:\\Users\\USERNAME\\Documents\\Klei\\OxygenNotIncluded\\mods에 있습니다.
 2. "Local"이라는 이름의 폴더로 이동하거나 만듭니다.
 3. {githubReleaseLink}에서 최신 모드 빌드를 다운로드하고 압축을 해제합니다.
 4. 파일을 Local 폴더에 넣습니다.
