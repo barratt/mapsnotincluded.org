@@ -1,4 +1,4 @@
-import koKRContent from './ko-KR'
+import koContent from './ko'
 import enContent from './en'
 import zhCNContent from './zh-CN'
 import zhTWContent from './zh-TW'
@@ -11,14 +11,14 @@ export const i18nConfig = {
     'en': enContent,
     'zh-CN': zhCNContent,
     'zh-TW': zhTWContent,
-    'ko-KR': koKRContent,
+    'ko': koContent,
   },
 };
 
 // Export locale label object
 export const localeLabels = {
   'en': 'English',
-  'ko-KR': '한국어',
+  'ko': '한국어',
   'zh-CN': '简体中文',
   'zh-TW': '繁體中文',
 }
