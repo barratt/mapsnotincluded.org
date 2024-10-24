@@ -423,7 +423,7 @@ namespace _WorldGenStateCapture
 		/// These patches have to run manually or they break translations on certain screens
 		/// </summary>
 		[HarmonyPatch(typeof(Assets), nameof(Assets.OnPrefabInit))]
-		public static class OnASsetPrefabPatch
+		public static class OnAssetPrefabPatch
 		{
 			public static void Postfix()
 			{
