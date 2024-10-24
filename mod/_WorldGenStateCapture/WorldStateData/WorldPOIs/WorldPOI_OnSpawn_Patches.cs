@@ -191,7 +191,16 @@ namespace _WorldGenStateCapture.WorldStateData.WorldPOIs
 
                 //Cryopod
                 yield return typeof(CryoTankConfig).GetMethod(name);
-            }
+
+
+				//Ceres Geothermal Pump
+				yield return typeof(GeothermalControllerConfig).GetMethod(name);
+				//Ceres Geothermal Vent
+				yield return typeof(GeothermalVentConfig).GetMethod(name);
+
+				//BaseGame surface lobby monument
+				yield return typeof(PropFacilityStatueConfig).GetMethod(name);				
+			}
 		}
 	}
 }
