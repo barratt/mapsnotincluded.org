@@ -7,8 +7,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Grant write permission for creating releases
-  
+  actions: write # Permission to delete old workflow runs
+  contents: write # Permission to create releases
+
 jobs:
   export_database:
     runs-on: ubuntu-latest
