@@ -198,6 +198,9 @@ namespace _WorldGenStateCapture.WorldStateData.WorldPOIs
 				//Ceres Geothermal Vent, no idea why that is marked as virtual
 				yield return typeof(GeothermalVentConfig).GetMethod(name);
 
+				//Ceres Hourglass Tech Unlock POI
+				yield return typeof(POICeresTechUnlockConfig).GetMethod(name);
+
 				//BaseGame surface lobby monument
 				yield return typeof(PropFacilityStatueConfig).GetMethod(name);				
 			}
