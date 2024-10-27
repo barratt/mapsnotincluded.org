@@ -41,7 +41,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./data.zip
-          asset_name: data.zip
+          asset_name: data-${{ env.NOW }}.zip
           asset_content_type: application/zip
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
