@@ -38,7 +38,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
                     <li class="nav-item">
                         <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">{{ $t('navbar.github_link') }}</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                       <Menu>
                         <MenuButton class="locale-button">
                           <i class="bi bi-globe nav-link"></i>
@@ -55,7 +55,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
                           </MenuItem>
                         </MenuItems>
                       </Menu>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>

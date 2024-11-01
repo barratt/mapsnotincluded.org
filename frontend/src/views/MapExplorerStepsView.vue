@@ -27,7 +27,9 @@ watch(locale, () => {
 
 onMounted(() => {
   // Store current route's query param
-  queryParams.value = { ...route.query, embedded: 'mni' };
+  const locale = useI18n().locale;
+
+  queryParams.value = { ...route.query, embedded: 'mni', locale };
 
   // Construct iframe url from query param  
   let url = MAPEXPLORER_URL;
