@@ -32,10 +32,12 @@ onMounted(() => {
   // Construct iframe url from query param  
   let url = MAPEXPLORER_URL;
 
+  url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
+  
   if (route.params.seed) {
     url = `${url}#${route.params.seed}`;
   }
-  url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
+  
   iframeUrl.value = url;
 
   // Send locale code to compose

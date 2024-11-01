@@ -17,51 +17,38 @@ defaults:
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
-
-    - uses: actions/checkout@v4     
-  
+    - uses: actions/checkout@v4
     - name: Replace credentials
       run: sed -i 's\7FE9SFM9jdv7CcL\${{ secrets.MNI_API_KEY }}\g' _WorldGenStateCapture\Credentials.cs
-     
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
-
     - name: NuGet Restore
       run: msbuild -t:restore -property:Configuration=Release
-
     - name: Build project
       run: msbuild -t:rebuild -property:Configuration=Release -property:GameLibsFolder="../Lib"
-      
     - name: Create build artifact
       uses: actions/upload-artifact@v4
       with:
         path: mod/Builds/MapsNotIncluded_WorldParser
         name: MapsNotIncludedMod
-
     - name: List all files
       shell: cmd
       run: |
         dir /s /b
-
     - name: Move
       run:  move "Builds\MapsNotIncluded_WorldParser" .
-
     - name: Zip the directory
       run: Compress-Archive -Path "MapsNotIncluded_WorldParser" -DestinationPath MapsNotIncludedMod.zip
-
     - name: List all files
       shell: cmd
       run: |
         dir /s /b
-
     - name: Set SHORT_COMMIT environment variable
       shell: pwsh
       run: |
         $SHORT_COMMIT = git rev-parse --short HEAD
         echo "SHORT_COMMIT=$SHORT_COMMIT" >> $env:GITHUB_ENV
-
     - name: Create GitHub release
       id: create_release
       uses: actions/create-release@v1
@@ -72,7 +59,6 @@ jobs:
         release_name: "Mod binary "
         draft: false
         prerelease: false
-
     - name: Upload MapsNotIncludedMod.zip to release
       uses: actions/upload-release-asset@v1
       env:
@@ -82,12 +68,18 @@ jobs:
         asset_path: mod/MapsNotIncludedMod.zip
         asset_name: MapsNotIncludedMod.zip
         asset_content_type: application/zip
-
     - name: Delete old releases
       uses: dev-drprasad/delete-older-releases@v0.3.4
       with:
         keep_latest: 1
         delete_tag_pattern: mod-*
+        delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        token: ${{ github.token }}
+        repository: ${{ github.repository }}
+        retain_days: 3
+        keep_minimum_runs: 3

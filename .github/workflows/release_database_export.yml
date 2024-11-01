@@ -7,8 +7,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Grant write permission for creating releases
-  
+  actions: write # Permission to delete old workflow runs
+  contents: write # Permission to create releases
+
 jobs:
   export_database:
     runs-on: ubuntu-latest
@@ -40,12 +41,13 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./data.zip
-          asset_name: data.zip
+          asset_name: data-${{ env.NOW }}.zip
           asset_content_type: application/zip
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
-          keep_latest: 2
+          keep_latest: 1
           delete_tag_pattern: data-*
+          delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
