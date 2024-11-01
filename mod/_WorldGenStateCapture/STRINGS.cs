@@ -3,6 +3,31 @@
 	internal class STRINGS
 	{
 		public static LocString STARTPARSING = "Start Collecting Worlds";
+		public class MNI_STATISTICS
+		{
+			public static LocString TITLE = "MNI Statistics";
+
+            public static LocString TOTAL_SHORT = "Seeds Total: {0}";
+            public static LocString DAILY_SHORT = "Seeds Today: {0}";
+            public static LocString SESSION_SHORT = "Seeds this session: {0}";
+            public static LocString SESSION_TIME_SHORT = "Session Runtime: {0} m";
+            public static LocString LASTTIME_SHORT = "Last generation time: {0} s";
+
+			//these are todo/wip:
+
+            public static LocString SEEDS_HIGHSCORE = "The most contributions happened on {0} with a total of {1} seeds.";
+			public static LocString SEEDS_LAST_DATE = "The last time the mod collected seed on {0} with a total of {1} seeds.";
+
+
+			public static LocString SEEDS_TOTAL = "You have collected a total of {0} seeds";
+			public static LocString SEEDS_TODAY = "Today you have collected {0} seeds so far";
+			public static LocString SESSION_TIME = "The current session has run for {0} minutes.";
+			public static LocString SEEDS_SESSION = "The current session has collected {0} seeds so far.";
+			public static LocString SEED_AVG_TIME = "The average time for per seed was {0} seconds.";
+			public static LocString LAST_SEED_TIME = "The last seed took {0} seconds to generate.";
+
+			public static LocString SEED_FAILED_GERMINATING = "This seed failed to germinate!";
+		}
 		public class WORLDPARSERMODCONFIG
 		{
 			public class RANDOMIZEDGEN

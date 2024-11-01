@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write # Grant write permission for creating releases
+  actions: write # Grant write permission to delete old workflow runs
 
 defaults:
   run:
@@ -81,5 +82,5 @@ jobs:
       with:
         token: ${{ github.token }}
         repository: ${{ github.repository }}
-        retain_days: 3
+        retain_days: 1
         keep_minimum_runs: 3
