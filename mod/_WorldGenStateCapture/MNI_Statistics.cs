@@ -1,5 +1,4 @@
-﻿using ClipperLib;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -134,8 +133,8 @@ namespace _WorldGenStateCapture
 			var averageTime = totalTime / SessionCounter;
 
 			Console.WriteLine($"MNI Statistics");
-			TotalContributions();
-			DailyContributions();
+			Console.WriteLine(TotalContributions());
+			Console.WriteLine(DailyContributions());
 			Console.WriteLine($"The last seed took {(int)LastGenerationTimeSeconds} seconds to generate.");
 			if (LastRunMixingRun())
 				Console.WriteLine($"The last seed was a mixed seed.");
@@ -145,10 +144,11 @@ namespace _WorldGenStateCapture
 				Console.WriteLine($"During the last hour {HourCounter} seeds were collected.");
 
 		}
+
 		public void PrintStartStatistics()
 		{
 			Console.WriteLine($"MNI Statistics - Startup");
-			TotalContributions();
+			Console.WriteLine(TotalContributions());
 			if (PastDayCount > 0)
 			{
 				Console.WriteLine($"The last time the mod collected seed on {PastDay.Date:d} with a total of {PastDayCount} seeds.");
@@ -158,13 +158,13 @@ namespace _WorldGenStateCapture
 				Console.WriteLine($"The most contributions were on {HighScoreDay.Date:d} with a total of {HighscoreCount} seeds.");
 			}
 
-			DailyContributions();
+			Console.WriteLine(DailyContributions());
 			Console.WriteLine($"The previous session had collected {SessionCounter} seeds.");
 			var timeToBoot = (System.DateTime.Now - ModInitTime).TotalSeconds;
-			Console.WriteLine($"The game took {(int)timeToBoot} seconds since mod intialisation to start collecting seeds.");				
+			Console.WriteLine($"The game took {(int)timeToBoot} seconds since mod intialisation to start collecting seeds.");
 		}
-		void TotalContributions() => Console.WriteLine($"This contributor has collected a total of {TotalCounter} seeds so far.");
-		void DailyContributions() => Console.WriteLine($"Today you have collected a total of {DailyCounter} seeds so far.");
+		string TotalContributions() => $"This contributor has collected a total of {TotalCounter} seeds so far.";
+		string DailyContributions() => $"Today you have collected a total of {DailyCounter} seeds so far.";
 		
 		public void WriteStatisticsFile()
 		{
@@ -213,6 +213,26 @@ namespace _WorldGenStateCapture
 				}
 			}
 			return new MNI_Statistics();
-		}		
-	}
+		}
+
+        internal string GetMenuText()
+        {
+            var totalTime = (LastSeedGenerated - SessionStart).TotalMinutes;
+            var averageTime = totalTime / SessionCounter;
+
+
+            var sb = new StringBuilder();
+			sb.AppendLine(string.Format(STRINGS.MNI_STATISTICS.TOTAL_SHORT, TotalCounter));
+			sb.AppendLine(string.Format(STRINGS.MNI_STATISTICS.DAILY_SHORT, DailyCounter));
+			sb.AppendLine(string.Format(STRINGS.MNI_STATISTICS.SESSION_SHORT, SessionCounter));
+
+			if(totalTime>0)
+				sb.AppendLine(string.Format(STRINGS.MNI_STATISTICS.SESSION_TIME_SHORT, totalTime.ToString("0.0"), (int)(60 * averageTime)));
+
+            if (LastGenerationTimeSeconds > 0)
+                sb.AppendLine(string.Format(STRINGS.MNI_STATISTICS.LASTTIME_SHORT, (int)LastGenerationTimeSeconds));
+
+            return sb.ToString();
+        }
+    }
 }

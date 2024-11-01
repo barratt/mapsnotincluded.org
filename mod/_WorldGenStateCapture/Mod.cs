@@ -16,6 +16,7 @@ namespace _WorldGenStateCapture
 			harmonyInstance = harmony;
 			Debug.Log($"{mod.staticID} - Mod Version: {mod.packagedModInfo.version} ");
 			MNI_Statistics.OnGameInitialisation();
+			AudioDebug.Get().musicEnabled = false; 
 		}
 		public static Harmony harmonyInstance;
 

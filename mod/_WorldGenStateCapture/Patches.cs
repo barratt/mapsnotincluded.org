@@ -6,6 +6,7 @@ using ProcGenGame;
 using System.Linq;
 using System;
 using static STRINGS.UI.FRONTEND;
+using _WorldGenStateCapture.Statistics;
 
 namespace _WorldGenStateCapture
 {
@@ -93,7 +94,7 @@ namespace _WorldGenStateCapture
 				if(sessionCounter == seedcount)
 				{
 					Debug.LogWarning("Game tried to stop the backend twice, something is broken. Restarting the game...");
-					App.instance.Restart();
+                    ModAssets.RestartAndKillThreads();
 					return false;
 				}
 				seedcount = sessionCounter;
@@ -146,8 +147,9 @@ namespace _WorldGenStateCapture
 			{
 				ModAssets.OnMainMenuLoaded();
 				MNI_Statistics.MainMenuInitialize();
+				MainMenuInfoBox.InitMainMenuBox(__instance);
 
-				autoLoadActive = false;
+                autoLoadActive = false;
 				if (ModAssets.ModDilution)
 				{
 					Debug.LogWarning("other active mods detected, aborting auto world parsing");
@@ -498,7 +500,7 @@ namespace _WorldGenStateCapture
 		{
 			public static void Prefix()
 			{
-				App.instance.Restart();
+				ModAssets.RestartAndKillThreads();
 			}
 		}
 	}

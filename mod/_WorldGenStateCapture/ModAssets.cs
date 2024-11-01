@@ -441,7 +441,7 @@ namespace _WorldGenStateCapture
 				RestartAfterGeneration = true;
 
 			if (RestartAfterGeneration)
-				App.instance.Restart();
+				ModAssets.RestartAndKillThreads();
 			else
 			{
 				StartBackupRestart();
@@ -450,7 +450,7 @@ namespace _WorldGenStateCapture
 					PauseScreen.instance.OnQuitConfirm();
 				}
 				else
-					App.instance.Restart(); //fallback
+                    RestartAndKillThreads(); //fallback
 			}
 		}
 
@@ -478,7 +478,7 @@ namespace _WorldGenStateCapture
 				if (!ct.IsCancellationRequested)
 				{
 					Console.WriteLine($"MNI UnloadedBackend\nThe Backend wasn't unloaded in less than 60 seconds, the application will now restart.");
-					App.instance.Restart();
+                    RestartAndKillThreads();
 				}
 
 			}, ct);
@@ -509,6 +509,12 @@ namespace _WorldGenStateCapture
 		{
 			System.IO.File.Delete(offlineFileName);
 		}
+
+		public static void RestartAndKillThreads()
+        {
+            cancelTokenSource?.Cancel();
+            App.instance.Restart();
+        }
 
 		public static void TrySendingCollected()
 		{
