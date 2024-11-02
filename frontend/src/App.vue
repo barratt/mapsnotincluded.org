@@ -22,13 +22,14 @@ export default {
   },
   mounted() {
     console.log("App mounted");
-    // Check if token is in query params usign route.query
-    if (this.$route.query.token) {
-      // Set the token in the store
-      useUserStore().setToken(this.$route.query.token);
-      // Remove the token from the query params
-      this.$router.replace({ query: {} });
-    }
+
+    this.$router.isReady().then(() => {
+      const token = this.$route.query.token;
+      if (token) {
+        useUserStore().setToken(token);
+        this.$router.replace({ query: {} });
+      }
+    });
   }
 }
 </script>
