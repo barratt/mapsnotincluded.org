@@ -94,7 +94,7 @@ jobs:
           
           if (Test-Path -Path $filePath) {
           
-            $checksum = Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+            $checksum = (Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash).ToLower()
           
             $headers = @{
               "API_KEY" = "$env:API_KEY"
