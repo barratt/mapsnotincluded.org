@@ -40,10 +40,10 @@
           <a href="https://github.com/sponsors/barratt" target="mni_sponsor_hosting">the guy who runs the servers</a>
         </template>
         <template v-slot:donateSeedBrowser>
-          <a href="https://github.com/sponsors/StefanOltmann" target="mni_sponsor_seed_browser">the guy who build the map explorer</a>
+          <a href="https://github.com/sponsors/StefanOltmann" target="mni_sponsor_seed_browser">the guy who built the map explorer</a>
         </template>
         <template v-slot:donateMod>
-          <a href="https://ko-fi.com/sgtimalas" target="mni_sponsor_mod">the guy who made the mod</a>
+          <a href="https://ko-fi.com/sgtimalas" target="mni_sponsor_mod">the guy who developed the mod we are using</a>
         </template>
       </i18n-t>
     </div>  
