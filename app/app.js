@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const discord = require('./lib/discord');
+const mongo   = require('./lib/mongo');
 
 const express = require('express');
 const cors    = require('cors');
@@ -43,6 +44,7 @@ app.get(`${apiPrefix}`, (req, res) => {
 });
 
 app.use(`${apiPrefix}/login`, require('./controllers/Login'));
+app.use(`${apiPrefix}/seed`, require('./controllers/Seed'));
 
 app.use((err, req, res, next) => {
   console.log(`biq Error: ${err}`);
@@ -54,6 +56,12 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
-app.listen(port, interface, () => {
-    console.log(`Server is running on port http://${interface}:${port} with prefix ${apiPrefix}`);
+mongo.connect().then(() => {
+  app.listen(port, interface, () => {
+      console.log(`Server is running on port http://${interface}:${port} with prefix ${apiPrefix}`);
+  });
+}).catch((err) => {
+  console.error('MongoDB connection error:');
+  console.error(err);
+  discord.send(`MongoDB connection error: ${err}`);
 });

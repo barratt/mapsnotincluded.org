@@ -59,16 +59,18 @@ router.get('/verify', async (req, res) => {
     let steamId = identifier.replace('https://steamcommunity.com/openid/id/', '');
 
     // Update steam data
+    let steamData;
+
     try {
-        let summary = await steam.get(`/ISteamUser/GetPlayerSummaries/v2?steamids=${steamId}`)
-        summary = summary.response.players[0];
+        steamData = await steam.get(`/ISteamUser/GetPlayerSummaries/v2?steamids=${steamId}`)
+        steamData = steamData.response.players[0];
     } catch (e) {
         context.log(e);
     }
 
-
     const token = jwt.sign({
-        steamId
+        steamId,
+        steamData,
     }, Buffer.from(process.env.BASE64_JWT_SIGNING_TOKEN, 'base64'), {
         algorithm: 'HS256',
         expiresIn: process.env.JWT_SESSION_EXPIRY || '7d',
@@ -82,7 +84,8 @@ router.get('/verify', async (req, res) => {
     if (!returnUrl || returnUrl === 'undefined' || returnUrl === 'null') {
         // They do not want to be redirected, return the token
         res.json({
-            token
+            token,
+            steamData,
         });
     } else {
         // Updating return URL with token

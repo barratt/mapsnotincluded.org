@@ -56,11 +56,85 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
                         </MenuItems>
                       </Menu>
                     </li> -->
+
+                    <!-- Optionally, add buttons to set or clear token -->
+                     <div class="nav-link my-auto">
+                       <button v-if="isAuthenticated" @click="requestSeed" class="btn btn-sm btn-primary">Request Seed</button>
+                       <a v-else :href="loginUrl">
+                         <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png">
+                       </a>
+                     </div>
                 </ul>
             </div>
         </div>
     </nav>
 </template>
+
+<script>
+const apiUrl = import.meta.env.VITE_API_URL;
+import { useUserStore } from '@/stores';
+import Swal from 'sweetalert2';
+
+export default {
+  data(){
+    return {
+      loginUrl: `${apiUrl}/login?origin=${window.location.origin}`,
+    }
+  },
+  computed: {
+    // Accessing the isAuthenticated getter from the store
+    isAuthenticated() {
+      return useUserStore().isAuthenticated;
+    },
+  },
+  methods: {
+    requestSeed() {
+      // Lets pop up a swal to ask for the seed name and then send it to the backend
+      Swal.fire({
+        title: 'Request Seed',
+        input: 'text',
+        inputLabel: 'Seed Name',
+        inputPlaceholder: 'Enter the seed name',
+        showCancelButton: true,
+        confirmButtonText: 'Request',
+        showLoaderOnConfirm: true,
+        preConfirm: (seedCoordinates) => {
+          return fetch(`${apiUrl}/seed/request/` + seedCoordinates, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${useUserStore().token}`
+            },
+          })
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            if (data.error) {
+              throw new Error(data.error);
+            }
+            return data;
+          })
+
+          .catch(error => {
+            Swal.showValidationMessage(`${error}`);
+          });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Seed Requested',
+            text: result.value.message,
+            icon: 'success'
+          });
+        }
+      });
+
+
+    },
+  },
+}
+</script>
 
 <style scoped>
 .navbar {

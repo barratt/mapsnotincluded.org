@@ -24,6 +24,13 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+      
+  mongodb:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
 
   # rabbitmq:
   #   image: rabbitmq:3-management
@@ -36,3 +43,4 @@ services:
   #     - RABBITMQ_DEFAULT_PASS=mni
 volumes:
   db_data:
+  mongodb_data:
