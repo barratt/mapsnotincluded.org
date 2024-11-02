@@ -23,7 +23,7 @@ Additionally we're looking for feedback on the site, if you have any suggestions
 
 And finally, if you know anything about the world generation process in Oxygen Not Included, we would love to hear from you. We're always looking to improve our understanding of the game and the tools we build around it.`,
     "artist": "We're looking for some graphics for the site, if you have any ideas or would like to contribute, please get in touch.",
-    "donation": "We're not looking for donations at this time, but if you would like to support the project, please consider contributing to the {oniLink} developers. In the future we may look at hosting costs and other expenses, but for now we're just happy to be here.",
+    "donation": "If you like to support our work, you can donate for {donateHosting}, the {donateSeedBrowser} and the {donateMod}.",
     "contributor": {
       "introduction": "Huge thank you to the following people who have contributed to the project, either directly or indirectly (through works that have aided the ideas or development of the project).",
       "item_1": "{RoboPhred} - Thank you for your contributions to parsing and understanding ONI saves",
