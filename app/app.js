@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-const sequelize = require('./lib/database');
-const { Save, File } = require('./models');
 const discord = require('./lib/discord');
 
 const express = require('express');
@@ -44,13 +42,12 @@ app.get(`${apiPrefix}`, (req, res) => {
   });
 });
 
-app.use(`${apiPrefix}/saves`, require('./controllers/Save'));
-app.use(`${apiPrefix}/files`, require('./controllers/File'));
-app.use(`${apiPrefix}/ingest`, require('./controllers/Ingest'));
+app.use(`${apiPrefix}/login`, require('./controllers/Login'));
 
 app.use((err, req, res, next) => {
   console.log(`biq Error: ${err}`);
   console.error(err.stack);
+  console.log(err.message);
 
   discord.send(`[${req.method}] ${req.url} Error: ${err}\r\n\r\n \`\`\`${err.stack}\`\`\``);
 
