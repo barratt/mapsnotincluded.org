@@ -44,7 +44,7 @@ app.get(`${apiPrefix}`, (req, res) => {
 });
 
 app.use(`${apiPrefix}/login`, require('./controllers/Login'));
-app.use(`${apiPrefix}/seed`, require('./controllers/Seed'));
+app.use(`${apiPrefix}/coordinates`, require('./controllers/Coordinates'));
 
 app.use((err, req, res, next) => {
   console.log(`biq Error: ${err}`);

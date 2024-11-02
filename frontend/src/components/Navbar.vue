@@ -59,7 +59,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
                     <!-- Optionally, add buttons to set or clear token -->
                      <div class="nav-link my-auto">
-                       <button v-if="isAuthenticated" @click="requestSeed" class="btn btn-sm btn-primary">Request Seed</button>
+                       <button v-if="isAuthenticated" @click="requestCoordinates" class="btn btn-sm btn-primary">Request Coordinates</button>
                        <a v-else :href="loginUrl">
                          <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png">
                        </a>
@@ -88,18 +88,18 @@ export default {
     },
   },
   methods: {
-    requestSeed() {
+    requestCoordinates() {
       // Lets pop up a swal to ask for the seed name and then send it to the backend
       Swal.fire({
-        title: 'Request Seed',
+        title: 'Request Coordinates',
         input: 'text',
-        inputLabel: 'Seed Name',
-        inputPlaceholder: 'Enter the seed name',
+        inputLabel: 'Coordinates Name',
+        inputPlaceholder: 'Enter the coordinates name',
         showCancelButton: true,
         confirmButtonText: 'Request',
         showLoaderOnConfirm: true,
-        preConfirm: (seedCoordinates) => {
-          return fetch(`${apiUrl}/seed/request/` + seedCoordinates, {
+        preConfirm: (coordinates) => {
+          return fetch(`${apiUrl}/coordinates/request/` + coordinates, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${useUserStore().token}`
