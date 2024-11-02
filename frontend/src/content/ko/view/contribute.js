@@ -23,7 +23,8 @@ export default {
 
 마지막으로, Oxygen Not Included 생성 과정에 대해 알고 계신다면 여러분의 의견을 듣고 싶습니다. 우리는 항상 게임과 그 게임을 기반으로 구축하는 도구에 대한 이해도를 높이기 위해 노력하고 있습니다.`,
     "artist": "사이트 개발에 도움을 주실 그래픽 디자이너를 찾고 있습니다. 아이디어가 있거나 기여하고 싶으시다면 연락해 주세요.",
-    "donation": "현재로서는 기부를 받고 있지 않지만, 따로 프로젝트를 지원하고 싶다면 {oniLink} 개발자에게 기부하는 것을 고려해 주세요.",
+    // "donation": "현재로서는 기부를 받고 있지 않지만, 따로 프로젝트를 지원하고 싶다면 {oniLink} 개발자에게 기부하는 것을 고려해 주세요.",
+    // "donation": "Mapsnotincluded is the work of multiple people. If you would like to support our work with money you can donate to {donateHosting}, the {donateSeedBrowser} and the {donateMod}.",
     "contributor": {
       "introduction": "프로젝트의 아이디어나 개발에 기여한 다음 분들께 진심으로 감사드립니다.",
       "item_1": "{RoboPhred} - ONI 저장을 구문 분석하고 이해하는 데 기여해 주셔서 감사합니다.",
@@ -40,5 +41,8 @@ export default {
     "github": "깃허브",
     "github_release": "깃허브 릴리즈",
     "discord": "디스코드",
+    // "donate_hosting": "the guy who runs the servers",
+    // "donate_seed_browser": "the guy who built the map explorer",
+    // "donate_mod": "the guy who developed the mod we are using",
   }
 }
