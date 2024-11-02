@@ -97,7 +97,7 @@ jobs:
             $checksum = Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
           
             $headers = @{
-              "DATABASE_EXPORT_API_KEY" = "$env:API_KEY"
+              "API_KEY" = "$env:API_KEY"
             }
 
             $response = Invoke-RestMethod -Uri "https://ingest.mapsnotincluded.org/add-mod-binary-checksum" -Method Post -Headers $headers -Body $checksum -ContentType "text/plain"
