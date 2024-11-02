@@ -18,9 +18,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Download data.zip
         env:
-          DATABASE_EXPORT_API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
+          API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
         run: |
-          curl --fail -H "DATABASE_EXPORT_API_KEY: $DATABASE_EXPORT_API_KEY" -o data.zip https://ingest.mapsnotincluded.org/export
+          curl --fail -H "API_KEY: $API_KEY" -o data.zip https://ingest.mapsnotincluded.org/export
       - name: set NOW
         run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Create GitHub release
