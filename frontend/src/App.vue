@@ -21,6 +21,7 @@ export default {
     return {};
   },
   mounted() {
+    console.log("App mounted");
     // Check if token is in query params usign route.query
     if (this.$route.query.token) {
       // Set the token in the store
