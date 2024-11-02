@@ -37,13 +37,13 @@
       <h2 class="text-danger">{{ $t('contribute.header.donation') }}</h2>
       <i18n-t keypath="contribute.description.donation" tag="p">
         <template v-slot:donateHosting>
-          <a href="https://github.com/sponsors/barratt" target="mni_sponsor_hosting">hosting costs</a>
+          <a href="https://github.com/sponsors/barratt" target="mni_sponsor_hosting">the guy who runs the servers</a>
         </template>
         <template v-slot:donateSeedBrowser>
-          <a href="https://github.com/sponsors/StefanOltmann" target="mni_sponsor_seed_browser">seed browser UI</a>
+          <a href="https://github.com/sponsors/StefanOltmann" target="mni_sponsor_seed_browser">the guy who build the map explorer</a>
         </template>
         <template v-slot:donateMod>
-          <a href="https://ko-fi.com/sgtimalas" target="mni_sponsor_mod">mod development</a>
+          <a href="https://ko-fi.com/sgtimalas" target="mni_sponsor_mod">the guy who made the mod</a>
         </template>
       </i18n-t>
     </div>  
