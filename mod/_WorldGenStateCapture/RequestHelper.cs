@@ -43,12 +43,14 @@ namespace _WorldGenStateCapture
 				if (request.result != UnityWebRequest.Result.Success)
 				{
 					Debug.LogWarning(request.error);
-					OnFail(bodyRaw);
+                    ModAssets.ConnectionError();
+                    OnFail(bodyRaw);
 				}
 				else
 				{
 					Debug.Log("Form upload complete!");
-					ModAssets.TrySendingCollected();
+                    ModAssets.ConnectionSuccessful();
+                    ModAssets.TrySendingCollected();
 					OnComplete();
 				}
 			}
