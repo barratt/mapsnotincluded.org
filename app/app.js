@@ -53,7 +53,11 @@ app.use((err, req, res, next) => {
 
   discord.send(`[${req.method}] ${req.url} Error: ${err}\r\n\r\n \`\`\`${err.stack}\`\`\``);
 
-  res.status(500).send('Something broke!');
+  res.status(500)json(
+    {
+      error: 'Something broke!'
+    }
+  );
 });
 
 mongo.connect().then(() => {
