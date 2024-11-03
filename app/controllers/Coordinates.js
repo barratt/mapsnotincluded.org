@@ -21,7 +21,7 @@ router.get('/request/:id', require('../middleware/authentication').authenticate,
 
 
     await mongo.db(process.env.MONGO_DB || 'mni').collection('requestedCoordinates').insertOne({
-        requestedBy: req.user.steamid,
+        requestedBy: req.user.steamId,
         requestedAt: new Date(),
         coordinates: req.params.id,
         status: 'requested',
