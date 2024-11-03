@@ -58,7 +58,7 @@ namespace _WorldGenStateCapture
 			App.instance.StartCoroutine( RequestHelper.TryPostRequest(Credentials.API_URL_REPORT_FAILED, json, 
 			() =>
 			{
-				ClearData();
+                ClearData();
 				App.LoadScene(instance.frontendGameLevel);
 			}, (_) =>
 			{
@@ -67,9 +67,18 @@ namespace _WorldGenStateCapture
 			}));
 		}
 
+		public static bool LastConnectionSuccessful = true;
+        public static void ConnectionSuccessful()
+        {
+            LastConnectionSuccessful = true;
+        }
+        public static void ConnectionError()
+        {
+			Debug.LogWarning("MNI failed to upload to the server!");
+            LastConnectionSuccessful = false;
+        }
 
-
-		internal static void AccumulateSeedData()
+        internal static void AccumulateSeedData()
 		{
 
 			if (ModAssets.ModDilution)
@@ -192,8 +201,9 @@ namespace _WorldGenStateCapture
 			//attach the coroutine to the main game object
 			App.instance.StartCoroutine(RequestHelper.TryPostRequest(Credentials.API_URL_UPLOAD, json, ClearAndRestart, (data) =>
 			{
-				//StoreForLater(data, worldDataItem.coordinate);
-				ClearAndRestart();
+                //StoreForLater(data, worldDataItem.coordinate);
+                ConnectionError();
+                ClearAndRestart();
 			}));
 		}
 
@@ -512,7 +522,8 @@ namespace _WorldGenStateCapture
 
 		public static void RestartAndKillThreads()
         {
-            cancelTokenSource?.Cancel();
+			if(cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
+				cancelTokenSource?.Cancel();
             App.instance.Restart();
         }
 

@@ -188,11 +188,16 @@ namespace _WorldGenStateCapture
 				 //RestartAfterGeneration = true
 
 
+
 				//this is set to true after the first collection of the instance has been completed, skip the 10 second timer for subsequent runs in the same instance
 				//to stop the process, restart the game
 				if (ModAssets.lowMemRestartInitialized)
 				{
-					menuTimer.SetTimer(5);
+					if (!ModAssets.LastConnectionSuccessful)
+					{
+						Dialog(STRINGS.AUTOPARSING.CONNECTIONERROR.TITLE, STRINGS.AUTOPARSING.CONNECTIONERROR.DESC);
+					}
+					menuTimer.SetTimer(ModAssets.LastConnectionSuccessful ? 5 : 60);
 					menuTimer.SetAction(() =>
 					{
 						InitAutoStart(__instance);

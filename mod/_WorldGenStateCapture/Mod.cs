@@ -15,9 +15,12 @@ namespace _WorldGenStateCapture
 			base.OnLoad(harmony);
 			harmonyInstance = harmony;
 			Debug.Log($"{mod.staticID} - Mod Version: {mod.packagedModInfo.version} ");
+
+			Debug.Log("Initializing MNI statistics..");
 			MNI_Statistics.OnGameInitialisation();
-			AudioDebug.Get().musicEnabled = false; 
-		}
+            Debug.Log("MNI statistics initialized.");
+            //AudioDebug.Get().musicEnabled = false; 
+        }
 		public static Harmony harmonyInstance;
 
 		public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<KMod.Mod> mods)

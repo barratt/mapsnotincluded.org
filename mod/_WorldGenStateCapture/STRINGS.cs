@@ -67,8 +67,13 @@
 			public class MODSDETECTED
 			{
 				public static LocString TITLE = "Warning: active mods detected";
-				public static LocString DESC = "There are currently other mods enabled that might invalidate the integrity of the collected world data.\nMap collection will proceed after you have disabled them.";				
-			}
-		}
+				public static LocString DESC = "There are currently other mods enabled that might invalidate the integrity of the collected world data.\nMap collection will proceed after you have disabled them.";
+            }
+            public class CONNECTIONERROR
+            {
+                public static LocString TITLE = "Failed at Uploading";
+                public static LocString DESC = "The last seed upload did not upload due to the mod failing at establishing a connection to the server.\nThe mod will sleep for a minute, then try again.";
+            }
+        }
 	}
 }

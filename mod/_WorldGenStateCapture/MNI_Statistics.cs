@@ -189,29 +189,53 @@ namespace _WorldGenStateCapture
 		}
 		public static MNI_Statistics ReadStatisticsFile()
 		{
-			Directory.CreateDirectory(Paths.ConfigFolder);
+
+			if (!Directory.Exists(Paths.ConfigFolder))
+			{
+				Debug.Log("Creating config path folder...");
+                Directory.CreateDirectory(Paths.ConfigFolder);
+				Debug.Log("Folder " + Paths.ConfigFolder + " initialized");
+            }
 			var idFileName = "MNI_Statistics";
-			var statisticsFile = Path.Combine(Paths.ConfigFolder, idFileName);
+
+            var statisticsFile = Path.Combine(Paths.ConfigFolder, idFileName);
+			Debug.Log("Trying to read statistics file: "+statisticsFile);
 
 			var filePath = new FileInfo(statisticsFile);
 
 			if (filePath.Exists)
-			{
-				try
+            {
+                Debug.Log("File found, trying to parse it.. ");
+                try
 				{
 					FileStream filestream = filePath.OpenRead();
 					using (var sr = new StreamReader(filestream))
 					{
 						string jsonString = sr.ReadToEnd();
-						return JsonConvert.DeserializeObject<MNI_Statistics>(jsonString);
-					}
+
+
+                        var config = JsonConvert.DeserializeObject<MNI_Statistics>(jsonString);
+
+						if (config != null)
+                        {
+                            Debug.Log("MNI config successfully parsed");
+							return config;
+                        }
+                        Debug.LogWarning("Could not successfully parse existing statistics file, object was null!");
+                        return new MNI_Statistics();
+                    }
 				}
 				catch (Exception ex)
 				{
 					Debug.LogWarning("Could not read existing statistics file!");
 					Debug.LogWarning(ex);
-				}
+                    return new MNI_Statistics();
+                }
 			}
+			else
+            {
+                Debug.Log("No statistics file existing, creating a new one");
+            }
 			return new MNI_Statistics();
 		}
 
