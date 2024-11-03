@@ -9,8 +9,8 @@ router.get('/request/:id', require('../middleware/authentication').authenticate,
     // Check if the coordinates is already requested
 
     const coordinates = await mongo.db(process.env.MONGO_DB || 'mni').collection('requestedCoordinates').findOne({
-        coordinates: req.params.id,
-        status: 'requested',
+        coordinate: req.params.id,
+        // status: 'REQUESTED',
     });
     
     if (coordinates) {
@@ -19,13 +19,14 @@ router.get('/request/:id', require('../middleware/authentication').authenticate,
         });
     }
 
-
-    await mongo.db(process.env.MONGO_DB || 'mni').collection('requestedCoordinates').insertOne({
-        requestedBy: req.user.steamid,
-        requestedAt: new Date(),
-        coordinates: req.params.id,
-        status: 'requested',
-    });
+    await mongo.db(process.env.MONGO_DB || 'mni').collection('requestedCoordinates').insertOne(
+        {
+            steamId: req.user.steamId,
+            date: Date.now(),
+            coordinate: req.params.id,
+            status: 'REQUESTED'
+        }
+    );
 
     return res.json({
         message: 'Coordinates requested'

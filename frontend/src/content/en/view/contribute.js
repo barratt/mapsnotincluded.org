@@ -40,5 +40,8 @@ And finally, if you know anything about the world generation process in Oxygen N
     "github": "GitHub",
     "github_release": "Github Release page",
     "discord": "Discord",
+    "donate_hosting": "the guy who runs the servers",
+    "donate_seed_browser": "the guy who built the map explorer",
+    "donate_mod": "the guy who developed the mod we are using",
   }
 }

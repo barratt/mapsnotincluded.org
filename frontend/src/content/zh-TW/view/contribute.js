@@ -23,7 +23,7 @@ export default {
 
 最後，如果您了解《缺氧》中的世界生成過程，我們很樂意聽取您的意見。我們一直在尋求提高對遊戲以及圍繞遊戲構建的工具的理解.`,
     "artist": "我們正在為該網站尋找一些圖片，如果您有任何想法或願意貢獻，請與我們聯繫.",
-    "donation": "我們目前不尋求捐款，但如果您想支持該項目，請考慮向 {oniLink} 開發人員捐款。將來我們可能會考慮託管成本和其他費用，但現在我們很高興你能來到這裡.",
+    "donation": "Mapsnotincluded 是許多人共同努力的成果. 如果您想用金錢支持我們的開發，您可以捐款給 {donateHosting} 或 {donateSeedBrowser} 或是 {donateMod}.",
     "contributor": {
       "introduction": "非常感謝以下直接或間接為該專案做出貢獻的人員（透過幫助專案的想法或開發的工作）.",
       "item_1": "{RoboPhred} - 感謝您對解析與理解 ONI 保存的貢獻",
@@ -40,5 +40,8 @@ export default {
     "github": "GitHub",
     "github_release": "Github 發布頁面",
     "discord": "Discord",
+    "donate_hosting": "伺服器的託管者",
+    "donate_seed_browser": "地圖種子瀏覽器的開發者",
+    "donate_mod": "模組的開發者",
   }
 }
