@@ -9,8 +9,7 @@ router.get('/request/:id', require('../middleware/authentication').authenticate,
     // Check if the coordinates is already requested
 
     const coordinates = await mongo.db(process.env.MONGO_DB || 'mni').collection('requestedCoordinates').findOne({
-        coordinate: req.params.id,
-        // status: 'REQUESTED',
+        coordinate: req.params.id
     });
     
     if (coordinates) {
