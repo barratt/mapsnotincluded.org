@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
 
   discord.send(`[${req.method}] ${req.url} Error: ${err}\r\n\r\n \`\`\`${err.stack}\`\`\``);
 
-  res.status(500)json(
+  res.status(500).json(
     {
       error: 'Something broke!'
     }
