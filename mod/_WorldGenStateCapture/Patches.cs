@@ -143,7 +143,7 @@ namespace _WorldGenStateCapture
             public static void Postfix(MainMenu.ButtonInfo info, KButton __result)
             {
                 if (info.text == global::STRINGS.UI.FRONTEND.MAINMENU.LOADGAME
-                   // || info.text == global::STRINGS.UI.FRONTEND.MAINMENU.NEWGAME
+                   || info.text == global::STRINGS.UI.FRONTEND.MAINMENU.NEWGAME
                    ///is preinitialized, needs to be accessed in other patch
                    // || info.text == global::STRINGS.UI.FRONTEND.MAINMENU.RESUMEGAME 
                    )
