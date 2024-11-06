@@ -14,6 +14,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using MapsNotIncluded_WorldParser.WorldStateData;
+using MapsNotIncluded_WorldParser;
 
 namespace _WorldGenStateCapture
 {
@@ -114,28 +115,11 @@ namespace _WorldGenStateCapture
 			worldDataItem.cluster = clusterData.GetCoordinatePrefix();
 			worldDataItem.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
 
-			var cleanDlcIds = new List<string>();
+			var remappedDlcIdNameThings = BlackBoxInACornerBuriedDeepInMoria.GiveWeirdRemappedDlcIds(SaveLoader.Instance.GameInfo.dlcIds);
 
-			foreach (var dlcId in SaveLoader.Instance.GameInfo.dlcIds)
-			{
-				switch (dlcId)
-				{
-					case "": //base game "dlc" id, skip that
-						break;
-					case "DLC2_ID":
-						cleanDlcIds.Add("FrostyPlanet");
-						break;
-					case "EXPANSION1_ID":
-						cleanDlcIds.Add("SpacedOut");
-						break;
-					default:
-						cleanDlcIds.Add(dlcId); // If it's not a known ID, keep it as is
-						break;
-				}
-			}
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
 
-			worldDataItem.dlcs = cleanDlcIds;
+			worldDataItem.dlcs = remappedDlcIdNameThings;
 
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)

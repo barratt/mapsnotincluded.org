@@ -12,8 +12,7 @@ namespace _WorldGenStateCapture
 		public static string API_URL_UPLOAD = "https://ingest.mapsnotincluded.org/upload";
 		public static string API_URL_REPORT_FAILED = "https://ingest.mapsnotincluded.org/report-worldgen-failure";
 
-		public static string API_URL_REQUEST_SEED_BASEGAME = "https://ingest.mapsnotincluded.org/requested-coordinate-basegame";
-		public static string API_URL_REQUEST_SEED_SPACEDOUT = "https://ingest.mapsnotincluded.org/requested-coordinate-spacedout";
+		public static string API_URL_REQUEST_SEED = "https://ingest.mapsnotincluded.org/requested-coordinate";
     }
 }
  

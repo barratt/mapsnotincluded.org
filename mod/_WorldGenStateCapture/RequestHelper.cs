@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MapsNotIncluded_WorldParser;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +28,9 @@ namespace _WorldGenStateCapture
             if (!Config.Instance.AcceptRequestedSeeds || _hasServerRequestedCoordinate)
                 return;
 
-            System.Action<string> handleSeedResponse = HandleRequestedCoordinateResponse;
-
-            string gameVersionUrl = DlcManager.IsExpansion1Active() ? Credentials.API_URL_REQUEST_SEED_SPACEDOUT: Credentials.API_URL_REQUEST_SEED_BASEGAME;
-
-            App.instance.StartCoroutine(RequestHelper.TryGetRequest(gameVersionUrl, handleSeedResponse, handleSeedResponse));
+            var serverMappedDlcIds = BlackBoxInACornerBuriedDeepInMoria.GiveWeirdRemappedDlcIds(DlcManager.GetActiveDLCIds());
+            string jsonifiedDlcIds = Newtonsoft.Json.JsonConvert.SerializeObject(serverMappedDlcIds);
+            App.instance.StartCoroutine(PostRequestNewServerSeed(Credentials.API_URL_REQUEST_SEED, jsonifiedDlcIds, HandleRequestedCoordinateResponse));
         }
         public static void HandleRequestedCoordinateResponse(string coordinateResponse)
         {
@@ -64,7 +63,7 @@ namespace _WorldGenStateCapture
 		public static bool HasServerRequestedCoordinate(out string coordinate)
         {
             coordinate = ServerRequestedCoordinate;
-            return _hasServerRequestedCoordinate;
+            return _hasServerRequestedCoordinate;            
         }
 
         /// <summary>
@@ -110,6 +109,41 @@ namespace _WorldGenStateCapture
         }
 
 
+        public static IEnumerator PostRequestNewServerSeed(string url, string data, System.Action<string> handleResponse)
+        {
+            //Debug.Log("Calling MNI API: " + url);
+            using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+            {
+                var bodyRaw = Encoding.UTF8.GetBytes(data);
+
+                // Set the request body to the JSON byte array
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+
+                // Set the content type to JSON
+                request.SetRequestHeader("Content-Type", "application/json");
+                // Send the API key
+                request.SetRequestHeader("MNI_API_KEY", API_TOKEN);
+
+                Debug.Log("Trying to POST-Request a new server coordinate...");
+
+                yield return request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogWarning("POST request was not successful!");
+                    Debug.LogWarning(request.error);
+                }
+                else
+                {
+                    Debug.Log("POST request successful complete!");
+                }
+                handleResponse(request.downloadHandler.text);
+            }
+        }
+
+        public static IEnumerator TryPostRequest(string url, string data, System.Action OnComplete, System.Action<byte[]> OnFail) => TryPostRequest(url, Encoding.UTF8.GetBytes(data), OnComplete, OnFail);
+
         public static IEnumerator TryPostRequest(string url, byte[] bodyRaw, System.Action OnComplete, System.Action<byte[]> OnFail)
         {
             //Debug.Log("Calling MNI API: " + url);
@@ -143,9 +177,6 @@ namespace _WorldGenStateCapture
                     OnComplete();
                 }
             }
-        }
-
-        public static IEnumerator TryPostRequest(string url, string data, System.Action OnComplete, System.Action<byte[]> OnFail) => TryPostRequest(url, Encoding.UTF8.GetBytes(data), OnComplete, OnFail);
-
+        }       
     }
 }

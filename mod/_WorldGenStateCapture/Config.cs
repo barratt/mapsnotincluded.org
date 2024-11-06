@@ -121,15 +121,15 @@ namespace _WorldGenStateCapture
 		{
 			if (DlcManager.IsExpansion1Active())
 			{
-				if (!ClusterCoordinates_SO.TryGetValue(Instance.TargetCoordinateDLC, out var prefix))
-					prefix = "SNDST-C";
-				return prefix;
+				if (ClusterCoordinates_SO.TryGetValue(Instance.TargetCoordinateDLC, out var prefix))
+					return prefix;
+				return "SNDST-C";
 			}
 			else
 			{
-				if (!ClusterCoordinates_Base.TryGetValue(Instance.TargetCoordinateBase, out var prefix))
-					prefix = "SNDST-A";
-				return prefix;
+				if (ClusterCoordinates_Base.TryGetValue(Instance.TargetCoordinateBase, out var prefix))
+					return prefix;
+				return "SNDST-A"; 
 			}
 		}
 	}

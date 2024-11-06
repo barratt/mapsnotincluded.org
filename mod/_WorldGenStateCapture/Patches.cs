@@ -253,7 +253,7 @@ namespace _WorldGenStateCapture
 
             public static void InitAutoStart(MainMenu __instance)
             {
-                //Used to generate dictionaries in Config class, uncomment to regenerate them when new dlc releases
+                ///Used to generate dictionaries in Config class, uncomment to regenerate them when new dlc releases
                 //Console.WriteLine("Cluster Dic:");
                 //foreach (string clusterName in SettingsCache.GetClusterNames())
                 //{
@@ -405,52 +405,70 @@ namespace _WorldGenStateCapture
 
                     Debug.Log("Selected cluster: " + Strings.Get(targetLayout.name));
 
-                    //ceres clusters require dlc mixing to be enabled
-                    if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID))
+                    if (!MNI_Statistics.Instance.IsMixingRun())
                     {
-                        if (!MNI_Statistics.Instance.IsMixingRun())
+                        Debug.Log("no mixing active this run");
+                        //if its a ceres cluster, turn off any mixing, otherwise leave them at default (adjust in the future if klei releases a second mixing dlc, rn ceres comes with everything disabled by default)
+                        if (!targetLayout.requiredDlcIds.Contains(DlcManager.DLC2_ID))
                         {
-                            Debug.Log("no mixing active this run");
-                            //if its a ceres cluster, turn off any mixing, otherwise leave them at default (adjust in the future if klei releases a second mixing dlc, rn ceres comes with everything disabled by default)
-                            if (!targetLayout.requiredDlcIds.Contains(DlcManager.DLC2_ID))
-                            {
-                                __instance.newGameSettingsPanel.ConsumeMixingSettingsCode("0");
-                            }
+                            __instance.newGameSettingsPanel.ConsumeMixingSettingsCode("0");
                         }
-                        else
+                    }
+                    else
+                    {
+
+                        Debug.Log("Trying to start a mixing run");
+                        var settingsInstance = CustomGameSettings.Instance;
+
+                        ///turning on all available content pack DLCs
+                        foreach (var setting in CustomGameSettings.Instance.MixingSettings.Values)
                         {
-                            var settingsInstance = CustomGameSettings.Instance;
-                            foreach (var setting in CustomGameSettings.Instance.MixingSettings.Values)
+                            if (setting.coordinate_range == -1) //settings that cannot be configured
                             {
-                                if (setting.coordinate_range == -1) //settings that cannot be configured
-                                {
-                                    continue;
-                                }
-                                if (setting is DlcMixingSettingConfig dlcSetting) //FP setting
+                                continue;
+                            }
+
+                            if (setting is DlcMixingSettingConfig dlcSetting) //FP and future content pack dlcs
+                            {
+                                if(DlcManager.HasAllContentSubscribed(setting.required_content))
                                 {
                                     Debug.Log("Turning on dlc mixing " + setting.id);
                                     settingsInstance.SetMixingSetting(dlcSetting, DlcMixingSettingConfig.EnabledLevelId);
-                                    continue;
                                 }
-                                else if (setting is MixingSettingConfig mixingSetting)
+                                else
                                 {
-                                    //disable if forbidden by cluster
-                                    if (targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
-                                    {
-                                        Debug.Log(setting.id + " is forbidden by the current cluster, disabling it.");
-                                        settingsInstance.SetMixingSetting(mixingSetting, SubworldMixingSettingConfig.DisabledLevelId); //same id for world and subworld mixing setting
-                                    }
-                                    else
-                                    {
-                                        string randomLevel = mixingSetting.levels.GetRandom().id;
-                                        Debug.Log("setting a random value for mixing setting " + setting.id + ": " + randomLevel);
-                                        settingsInstance.SetMixingSetting(mixingSetting, randomLevel);
+                                    settingsInstance.SetMixingSetting(dlcSetting, DlcMixingSettingConfig.DisabledLevelId);
+                                    Debug.Log("content pack for " + setting.id + " not owned, keep disabled");
+                                }
 
-                                    }
+                                continue;
+                            }
+                        }
+
+                        foreach (var setting in CustomGameSettings.Instance.MixingSettings.Values)
+                        {
+                            if (setting.coordinate_range == -1) //settings that cannot be configured
+                            {
+                                continue;
+                            }
+                            if (setting is MixingSettingConfig mixingSetting)
+                            {
+                                //disable if forbidden by cluster or not all dlcs required active
+                                if (!DlcManager.HasAllContentSubscribed(mixingSetting.required_content) || targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
+                                {
+                                    Debug.Log(setting.id + " is forbidden by the current cluster is missing dlcs, disabling it.");
+                                    settingsInstance.SetMixingSetting(mixingSetting, SubworldMixingSettingConfig.DisabledLevelId); //same id for world and subworld mixing setting
+                                }
+                                else
+                                {
+                                    string randomLevel = mixingSetting.levels.GetRandom().id;
+                                    Debug.Log("setting a random value for mixing setting " + setting.id + ": " + randomLevel);
+                                    settingsInstance.SetMixingSetting(mixingSetting, randomLevel);
                                 }
                             }
                         }
                     }
+
 
                     __instance.ShuffleClicked();
                     __instance.LaunchClicked();
