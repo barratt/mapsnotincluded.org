@@ -32,7 +32,11 @@ namespace _WorldGenStateCapture
 		[Limit(0, 100)]
 		public int RandomMixingPercentage { get; set; } = 5;
 
-		public enum ClusterSelection_Base
+        [Option("STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME", "STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC")]
+        [JsonProperty]
+        public bool AcceptRequestedSeeds { get; set; } = true;
+
+        public enum ClusterSelection_Base
 		{
 			The_Badlands,
 			Arboria,

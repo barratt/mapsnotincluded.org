@@ -19,6 +19,9 @@ namespace _WorldGenStateCapture
 			Debug.Log("Initializing MNI statistics..");
 			MNI_Statistics.OnGameInitialisation();
             Debug.Log("MNI statistics initialized.");
+
+			//grab a requested coordinate from the server if not opted out
+			RequestHelper.FetchNewRequestedCoordinate();
             //AudioDebug.Get().musicEnabled = false; 
         }
 		public static Harmony harmonyInstance;
