@@ -14,7 +14,7 @@ import { useUserStore } from '@/stores';
 const { locale } = useI18n();
 const route = useRoute();
 
-const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
+const TRAITFINDER_URL = import.meta.env.VITE_TRAITFINDER_URL || 'https://sgt-imalas.github.io/TraitFinder/';
 
 const iframeUrl = ref(null)
 const iframeRef = ref(null)
@@ -23,7 +23,7 @@ const queryParams = ref({});
 // Whenever locale code changes, send it to compose
 watch(locale, () => {
   if (iframeRef.value && iframeRef.value.contentWindow) {
-    iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
+    iframeRef.value.contentWindow.postMessage(locale.value, TRAITFINDER_URL);
   }
 });
 
@@ -40,7 +40,7 @@ onMounted(() => {
   }
 
   // Construct iframe url from query param  
-  let url = MAPEXPLORER_URL;
+  let url = TRAITFINDER_URL;
 
   url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
   
@@ -54,7 +54,7 @@ onMounted(() => {
   if (iframeRef.value && iframeRef.value.contentWindow) {
     // TODO: Find better way of knowing when compose is ready to accept message
     setTimeout(() => {
-      iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
+      iframeRef.value.contentWindow.postMessage(locale.value, TRAITFINDER_URL);
     }, 200)
   }
 })
