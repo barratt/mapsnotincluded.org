@@ -1,6 +1,6 @@
 <template>
   <div class="iframe-container">
-    <iframe ref="iframeRef" :src="iframeUrl" frameborder="0"></iframe>
+    <iframe ref="iframeRef" :src="iframeUrl" frameborder="0" allow="clipboard-read; clipboard-write"></iframe>
   </div>
 </template>
 
