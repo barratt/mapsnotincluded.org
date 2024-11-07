@@ -8,6 +8,7 @@ import worldTraitFinder from "./view/world_trait_finder.js";
 import seedViewer from "./view/seed_viewer.js";
 import starmapGenerator from "./view/starmap_generator.js";
 import navbar from "./components/navbar.js";
+import coordinateRequestDialog from "./components/coordinate_request_dialog.js";
 
 export default {
   navbar: navbar,
@@ -20,4 +21,5 @@ export default {
   map_explorer: mapExplorer,
   world_trait_finder: worldTraitFinder,
   starmap_generator: starmapGenerator,
+  coordinate_request_dialog: coordinateRequestDialog,
 };

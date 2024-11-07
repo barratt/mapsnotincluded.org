@@ -6,20 +6,11 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
   <!-- Bootstrap 5 navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <router-link to="/" class="navbar-brand"
-        ><img src="@/assets/logo.png" style="max-height: 40px" class="me-2" />{{
-          $t("navbar.title")
-        }}</router-link
-      >
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <router-link to="/" class="navbar-brand"><img src="@/assets/logo.png" style="max-height: 40px" class="me-2" />{{
+        $t("navbar.title")
+      }}</router-link>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -29,11 +20,13 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
               $t("navbar.map_explorer_link")
             }}</router-link>
           </li>
+          <!---
           <li class="nav-item">
             <router-link to="/seed-viewer" class="nav-link">{{
               $t("navbar.seed_viewer_link")
             }}</router-link>
           </li>
+          --->
           <li class="nav-item">
             <router-link to="/trait-finder" class="nav-link">{{
               $t("navbar.world_trait_finder_link")
@@ -57,12 +50,8 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
             }}</a>
           </li>
           <li class="nav-item">
-            <a
-              href="https://github.com/barratt/mapsnotincluded.org"
-              target="mni_disc"
-              class="nav-link"
-              >{{ $t("navbar.github_link") }}</a
-            >
+            <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">{{
+              $t("navbar.github_link") }}</a>
           </li>
           <!-- <li class="nav-item">
                       <Menu>
@@ -85,17 +74,11 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 
           <!-- Optionally, add buttons to set or clear token -->
           <div class="nav-link my-auto">
-            <button
-              v-if="isAuthenticated"
-              @click="requestCoordinate"
-              class="btn btn-sm btn-primary"
-            >
-              {{ $t("navbar.request_coordinate_title") }}
+            <button v-if="isAuthenticated" @click="requestCoordinate" class="btn btn-sm btn-primary">
+              {{ $t("coordinate_request_dialog.request_coordinate_title") }}
             </button>
             <a v-else :href="loginUrl">
-              <img
-                src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png"
-              />
+              <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" />
             </a>
           </div>
         </ul>
@@ -107,7 +90,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 <script>
 const apiUrl = import.meta.env.VITE_API_URL;
 import { useUserStore } from "@/stores";
-import { requestCoordinate} from "./CoordinateRequestDialog";
+import { requestCoordinate } from "./CoordinateRequestDialog";
 export default {
   data() {
     return {
@@ -128,15 +111,18 @@ export default {
 .navbar {
   background-color: #4f5f80;
 }
+
 .nav-item {
   display: flex;
   align-items: center;
   position: relative;
 }
+
 .locale-button {
   background-color: transparent;
   border: none;
 }
+
 .locale-dropdown {
   position: absolute;
   bottom: 0px;
@@ -148,19 +134,23 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
 .locale-dropdown-item {
   padding: 3px 10px;
   margin: 0px;
 }
+
 .locale-dropdown-item:hover {
   cursor: pointer;
   background-color: #43516d;
   border-radius: 4px;
 }
+
 .locale-selected {
   background-color: #43516d;
   border-radius: 4px;
 }
+
 .locale-text {
   font-size: 18px;
   white-space: nowrap;
