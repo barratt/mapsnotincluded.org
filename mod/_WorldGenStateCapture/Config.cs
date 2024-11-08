@@ -32,7 +32,11 @@ namespace _WorldGenStateCapture
 		[Limit(0, 100)]
 		public int RandomMixingPercentage { get; set; } = 5;
 
-		public enum ClusterSelection_Base
+        [Option("STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME", "STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC")]
+        [JsonProperty]
+        public bool AcceptRequestedSeeds { get; set; } = true;
+
+        public enum ClusterSelection_Base
 		{
 			The_Badlands,
 			Arboria,
@@ -117,15 +121,15 @@ namespace _WorldGenStateCapture
 		{
 			if (DlcManager.IsExpansion1Active())
 			{
-				if (!ClusterCoordinates_SO.TryGetValue(Instance.TargetCoordinateDLC, out var prefix))
-					prefix = "SNDST-C";
-				return prefix;
+				if (ClusterCoordinates_SO.TryGetValue(Instance.TargetCoordinateDLC, out var prefix))
+					return prefix;
+				return "SNDST-C";
 			}
 			else
 			{
-				if (!ClusterCoordinates_Base.TryGetValue(Instance.TargetCoordinateBase, out var prefix))
-					prefix = "SNDST-A";
-				return prefix;
+				if (ClusterCoordinates_Base.TryGetValue(Instance.TargetCoordinateBase, out var prefix))
+					return prefix;
+				return "SNDST-A"; 
 			}
 		}
 	}

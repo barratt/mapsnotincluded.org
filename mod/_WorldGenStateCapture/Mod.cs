@@ -19,7 +19,6 @@ namespace _WorldGenStateCapture
 			Debug.Log("Initializing MNI statistics..");
 			MNI_Statistics.OnGameInitialisation();
             Debug.Log("MNI statistics initialized.");
-            //AudioDebug.Get().musicEnabled = false; 
         }
 		public static Harmony harmonyInstance;
 
