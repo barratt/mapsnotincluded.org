@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import { useUserStore } from "@/stores";
 
 export function requestCoordinate() {
   const apiUrl = import.meta.env.VITE_API_URL;
