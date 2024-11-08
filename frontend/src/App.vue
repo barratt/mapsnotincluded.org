@@ -7,6 +7,12 @@
   </div>
 </template>
 
+<style>
+body {
+    overscroll-behavior: none;
+}
+</style>
+
 <script setup>
 import Navbar from '@/components/Navbar.vue'
 import { RouterView } from 'vue-router'
