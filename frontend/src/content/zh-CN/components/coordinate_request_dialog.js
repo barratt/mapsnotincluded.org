@@ -1,7 +1,7 @@
 export default {
-  request_coordinate_title: "Request new Seed",
-  request_coordinate_text: "Request a seed thats not in the database yet",
-  request_coordinate_invalid_syntax: "Not a valid seed!",
-  request_coordinate_already_in_db: "Seed is already in database!",
-  request_coordinate_view_seed: "View in Map Explorer",
+  request_coordinate_title: "请求新的种子",
+  request_coordinate_text: "请求的种子尚未存在资料库中",
+  request_coordinate_invalid_syntax: "不是有效的种子!",
+  request_coordinate_already_in_db: "该种子在资料库中已经存在!",
+  request_coordinate_view_seed: "在地图浏览器中查看",
 };
