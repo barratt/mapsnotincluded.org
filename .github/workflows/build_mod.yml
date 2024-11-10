@@ -97,7 +97,8 @@ jobs:
             $checksum = (Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash).ToLower()
           
             $headers = @{
-              "API_KEY" = "$env:API_KEY"
+              "API_KEY" = "$env:API_KEY",
+              "GIT_TAG" = "$env:SHORT_COMMIT"
             }
 
             $response = Invoke-RestMethod -Uri "https://ingest.mapsnotincluded.org/add-mod-binary-checksum" -Method Post -Headers $headers -Body $checksum -ContentType "text/plain"
