@@ -97,7 +97,7 @@ jobs:
             $checksum = (Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash).ToLower()
           
             $headers = @{
-              "API_KEY" = "$env:API_KEY",
+              "API_KEY" = "$env:API_KEY"
               "GIT_TAG" = "$env:SHORT_COMMIT"
             }
 
