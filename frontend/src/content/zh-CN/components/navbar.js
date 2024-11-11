@@ -2,6 +2,7 @@ export default {
   "title": "MapsNotIncluded",
   "map_explorer_link": "地图种子浏览器",
   "world_trait_finder_link": "星球特质查找器",
+  "seed_viewer_link": "種子探索者",
   "starmap_link": "星图产生器",
   "contribute_link": "帮助",
   "discord_link": "Discord",
