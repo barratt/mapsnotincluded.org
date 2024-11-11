@@ -6,7 +6,7 @@ export default {
   "link_trait_finder": "星球特質查找器",
   "link_starmap_generator": "星圖產生器",
   "link": {
-    "contribute": "加入我們",
+    "contribute": "貢獻",
     "discord": "Discord",
     "github": "GitHub",
   },
