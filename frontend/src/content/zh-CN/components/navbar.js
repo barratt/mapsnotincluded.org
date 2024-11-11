@@ -4,7 +4,7 @@ export default {
   "world_trait_finder_link": "星球特质查找器",
   "seed_viewer_link": "种子探索者",
   "starmap_link": "星图产生器",
-  "contribute_link": "帮助",
+  "contribute_link": "加入我们",
   "discord_link": "Discord",
   "github_link": "GitHub",
-}
+};
