@@ -1,7 +1,9 @@
 <script setup>
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores";
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const apiUrl = import.meta.env.VITE_API_URL;
 
 // Check if given coordinate is of valid format (ex. {cluster}-{seed}-{game setting}-{story trait}-{scramble dlc})
@@ -14,14 +16,18 @@ function isCoordinateValid(coordinate) {
 async function onButtonClick() {
   // Lets pop up a swal to ask for the seed name and then send it to the backend
   let result = await Swal.fire({
-    title: "Request a seed thats not found in the database yet",
+    title: t("coordinate_request_dialog.request_coordinate_text"),
     input: "text",
     inputLabel: "Coordinate:",
     inputPlaceholder: "Enter the Coordinate here...",
     showCancelButton: true,
     confirmButtonText: "Request",
     showLoaderOnConfirm: true,
-    inputValidator: (coordinate) => isCoordinateValid(coordinate),
+    inputValidator: (coordinate) => {
+      if(!isCoordinateValid(coordinate)) {
+        return t("coordinate_request_dialog.request_coordinate_invalid_syntax")
+      }
+    },
     allowOutsideClick: () => !Swal.isLoading(),
     preConfirm: async (coordinates) => {
       try {
@@ -31,7 +37,7 @@ async function onButtonClick() {
             Authorization: `Bearer ${useUserStore().token}`,
           },
         })
-        
+
         const data = response.json()
         if (data.error) {
           throw new Error(data.error);
