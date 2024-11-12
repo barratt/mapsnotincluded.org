@@ -52,9 +52,7 @@
 
           <!-- Optionally, add buttons to set or clear token -->
           <div class="nav-link my-auto">
-            <CoordinateRequestDialog 
-              v-if="isAuthenticated" 
-              class="btn btn-sm btn-primary" />
+            <CoordinateRequestDialog v-if="isAuthenticated" />
             <a v-else :href="loginUrl">
               <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" />
             </a>

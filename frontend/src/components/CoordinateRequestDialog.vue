@@ -61,7 +61,7 @@ async function onButtonClick() {
 </script>
 
 <template>
-  <button @click="onButtonClick" >
+  <button class="btn btn-sm btn-primary" @click="onButtonClick" >
     {{ $t("coordinate_request_dialog.title") }}
   </button>
 </template>
