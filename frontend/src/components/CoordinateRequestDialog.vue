@@ -53,8 +53,9 @@ async function onButtonClick() {
 
   if (result.isConfirmed) {
     Swal.fire({
-      title: "Seed Requested",
+      title: t("coordinate_request_dialog.confirm_title"),
       text: result.value.message,
+      confirmButtonText: t("coordinate_request_dialog.confirm_button"),
       icon: "success",
     });
   }
