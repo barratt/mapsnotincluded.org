@@ -4,6 +4,7 @@ export default {
   label: "시드:",
   placeholder: "시드를 입력해 주세요",
   submit_button: "요청",
+  cancel_button: "취소",
   invalid_syntax: "유효한 시드가 아닙니다",
 
   already_in_db: "시드가 이미 데이터베이스에 있습니다",

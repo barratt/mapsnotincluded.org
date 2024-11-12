@@ -21,6 +21,7 @@ async function onButtonClick() {
     inputLabel: t("coordinate_request_dialog.label"),
     inputPlaceholder: t("coordinate_request_dialog.placeholder"),
     showCancelButton: true,
+    cancelButtonText: t("coordinate_request_dialog.cancel_button"),
     confirmButtonText: t("coordinate_request_dialog.submit_button"),
     showLoaderOnConfirm: true,
     inputValidator: (coordinate) => {
