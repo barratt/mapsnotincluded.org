@@ -1,6 +1,8 @@
-<script setup lang="ts">
+<script setup>
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Check if given coordinate is of valid format (ex. {cluster}-{seed}-{game setting}-{story trait}-{scramble dlc})
 function isCoordinateValid(coordinate) {
@@ -9,40 +11,39 @@ function isCoordinateValid(coordinate) {
   ).test(coordinate)
 }
 
-const apiUrl = import.meta.env.VITE_API_URL;
-// Lets pop up a swal to ask for the seed name and then send it to the backend
-Swal.fire({
-  title: "Request a seed thats not found in the database yet",
-  input: "text",
-  inputLabel: "Coordinate:",
-  inputPlaceholder: "Enter the Coordinate here...",
-  showCancelButton: true,
-  confirmButtonText: "Request",
-  showLoaderOnConfirm: true,
-  inputValidator: (coordinate) => isCoordinateValid(coordinate),
-  preConfirm: (coordinates) => {
-    return fetch(`${apiUrl}/coordinates/request/` + coordinates, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${useUserStore().token}`,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
+async function onButtonClick() {
+  // Lets pop up a swal to ask for the seed name and then send it to the backend
+  let result = await Swal.fire({
+    title: "Request a seed thats not found in the database yet",
+    input: "text",
+    inputLabel: "Coordinate:",
+    inputPlaceholder: "Enter the Coordinate here...",
+    showCancelButton: true,
+    confirmButtonText: "Request",
+    showLoaderOnConfirm: true,
+    inputValidator: (coordinate) => isCoordinateValid(coordinate),
+    allowOutsideClick: () => !Swal.isLoading(),
+    preConfirm: async (coordinates) => {
+      try {
+        const response = await fetch(`${apiUrl}/coordinates/request/` + coordinates, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${useUserStore().token}`,
+          },
+        })
+        
+        const data = response.json()
         if (data.error) {
           throw new Error(data.error);
         }
-        return data;
-      })
 
-      .catch((error) => {
+        return data
+      } catch(error) {
         Swal.showValidationMessage(`${error}`);
-      });
-  },
-  allowOutsideClick: () => !Swal.isLoading(),
-}).then((result) => {
+      }
+    },
+  })
+
   if (result.isConfirmed) {
     Swal.fire({
       title: "Seed Requested",
@@ -50,11 +51,11 @@ Swal.fire({
       icon: "success",
     });
   }
-});
+}
 </script>
 
 <template>
-  <button>
+  <button @click="onButtonClick" >
     {{ $t("coordinate_request_dialog.request_coordinate_title") }}
   </button>
 </template>
