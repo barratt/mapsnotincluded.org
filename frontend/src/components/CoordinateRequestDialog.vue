@@ -62,5 +62,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 </script>
 
 <template>
-
+  <button>
+    {{ $t("coordinate_request_dialog.request_coordinate_title") }}
+  </button>
 </template>

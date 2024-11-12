@@ -1,7 +1,3 @@
-<script setup>
-import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
-</script>
-
 <template>
   <!-- Bootstrap 5 navbar -->
   <nav class="navbar navbar-expand-lg">
@@ -74,9 +70,10 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 
           <!-- Optionally, add buttons to set or clear token -->
           <div class="nav-link my-auto">
-            <button v-if="isAuthenticated" @click="requestCoordinate" class="btn btn-sm btn-primary">
-              {{ $t("coordinate_request_dialog.request_coordinate_title") }}
-            </button>
+            <CoordinateRequestDialog 
+              v-if="isAuthenticated" 
+              @click="requestCoordinate" 
+              class="btn btn-sm btn-primary" />
             <a v-else :href="loginUrl">
               <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" />
             </a>
@@ -87,24 +84,17 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
   </nav>
 </template>
 
-<script>
-const apiUrl = import.meta.env.VITE_API_URL;
+<script setup>
 import { useUserStore } from "@/stores";
 import { requestCoordinate } from "./CoordinateRequestDialog";
-export default {
-  data() {
-    return {
-      loginUrl: `${apiUrl}/login?origin=${window.location.origin}`,
-    };
-  },
-  computed: {
-    // Accessing the isAuthenticated getter from the store
-    isAuthenticated() {
-      return useUserStore().isAuthenticated;
-    },
-  },
-  methods: {},
-};
+import CoordinateRequestDialog from "./CoordinateRequestDialog.vue";
+import { computed } from 'vue';
+
+const apiUrl = import.meta.env.VITE_API_URL;
+const loginUrl = `${apiUrl}/login?origin=${window.location.origin}`
+const isAuthenticated = computed(() => {
+  return useUserStore().isAuthenticated;
+})
 </script>
 
 <style scoped>
