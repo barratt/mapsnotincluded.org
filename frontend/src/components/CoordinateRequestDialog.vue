@@ -16,16 +16,16 @@ function isCoordinateValid(coordinate) {
 async function onButtonClick() {
   // Lets pop up a swal to ask for the seed name and then send it to the backend
   let result = await Swal.fire({
-    title: t("coordinate_request_dialog.request_coordinate_text"),
+    title: t("coordinate_request_dialog.text"),
     input: "text",
-    inputLabel: "Coordinate:",
-    inputPlaceholder: "Enter the Coordinate here...",
+    inputLabel: t("coordinate_request_dialog.label"),
+    inputPlaceholder: t("coordinate_request_dialog.placeholder"),
     showCancelButton: true,
-    confirmButtonText: "Request",
+    confirmButtonText: t("coordinate_request_dialog.submit_button"),
     showLoaderOnConfirm: true,
     inputValidator: (coordinate) => {
       if(!isCoordinateValid(coordinate)) {
-        return t("coordinate_request_dialog.request_coordinate_invalid_syntax")
+        return t("coordinate_request_dialog.invalid_syntax")
       }
     },
     allowOutsideClick: () => !Swal.isLoading(),
@@ -62,6 +62,6 @@ async function onButtonClick() {
 
 <template>
   <button @click="onButtonClick" >
-    {{ $t("coordinate_request_dialog.request_coordinate_title") }}
+    {{ $t("coordinate_request_dialog.title") }}
   </button>
 </template>
