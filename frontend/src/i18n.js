@@ -7,10 +7,9 @@ import zh_TW from "./locales/zh-TW.json";
 function loadLocaleMessages() {
   const locales = [
     { en: en },
-    { ko, ko },
+    { ko: ko },
     { "zh-CN": zh_CN },
     { "zh-TW": zh_TW },
-    { zh: zh_CN }, //fallback
   ];
   const messages = {};
   locales.forEach((lang) => {
