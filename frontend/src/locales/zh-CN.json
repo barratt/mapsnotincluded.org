@@ -1,10 +1,15 @@
 {
     "coordinate_request_dialog": {
-        "title": "提交种子",
-        "text": "提交的种子未在资料库中发现",
+        "title": "请求种子",
+        "text": "请求资料库中没有的种子",
         "invalid_syntax": "无效的种子!",
         "already_in_db": "该种子在资料库中已经存在!",
-        "view_seed": "在地图种子浏览器中查看"
+        "view_seed": "在地图种子浏览器中查看",
+        "request_successful": "请求种子!",
+        "coordinate": "种子码:",
+        "placeholder": "在此输入请求的种子 如:V-SNDST-C-101520169-0-0-0...",
+        "bt_request": "请求",
+        "bt_cancel": "取消"
     },
     "navbar": {
         "title": "MapsNotIncluded",
@@ -12,7 +17,7 @@
         "world_trait_finder_link": "星球特质查找器",
         "seed_viewer_link": "种子探索者",
         "starmap_link": "星图产生器",
-        "contribute_link": "贡献",
+        "contribute_link": "贡献文档",
         "discord_link": "Discord",
         "github_link": "GitHub"
     },
@@ -28,16 +33,16 @@
         },
         "description": {
             "developer": "该专案是开源的,欢迎共同开发. 如果您有功能请求或发现错误,请在 GitHub 储存库上提出问题. 如果您想提供程式码,请分叉储存库并提交拉取请求. 您可以在 {githubLink} 上找到我们.",
-            "gamer": "请使用您的运算能力并上传已储存的种子,使这个工具更好地为每个人服务.\n\n请按照以下说明进行操作.\n1. 找到您的 ONI mod 资料夹. 它通常位于 C:\\Users\\USERNAME\\Documents\\Klei\\OxygenNotIncluded\\mods 中.\n2. 进入或建立一个名称为 \"Local\" 的资料夹(linux 上需要区分大小写).\n3. 从 {githubReleaseLink}下载并解压缩最新的 mod 版本.\n4. 将下载的 mod 档案解压缩并放入 \"Local\" 资料夹中.\n5. 启动\"缺氧\"游戏并启用该模组. ※如果启用该模组又同时启用了其他模组,它将无法正常运作.\n※您可能还需要在\"缺氧\"游戏设定中停用\"默认为云存档\"功能.\n\n我们正在寻求网站的使用反馈,如果您有任何建议或发现错误,请在 {discordLink} 上分享您的想法.\n如果您了解\"缺氧\"中的世界生成过程,我们很乐意听取您的意见. 我们一直在寻求提高对游戏以及围绕游戏构建工具的理解.",
+            "gamer": "请使用您的运算能力并上传已储存的种子,使这个工具更好地为每个人服务.\n\n请按照以下说明进行操作.\n1. 找到您的 ONI mod 资料夹. 它通常位于 C:\\Users\\USERNAME\\Documents\\Klei\\OxygenNotIncluded\\mods 中.\n2. 进入或建立一个名称为 \"Local\" 的资料夹(linux 上需要区分大小写).\n3. 从 {githubReleaseLink}下载并解压缩最新的 mod 版本.\n4. 将下载的 mod 档案解压缩并放入 \"Local\" 资料夹中.\n5. 启动\"缺氧\"游戏并启用该模组. ※如果启用该模组又同时启用了其他模组,它将无法正常运行.\n※您可能还需要在\"缺氧\"游戏设定中停用\"默认为云存档\"功能.\n\n我们正在寻求网站的使用反馈,如果您有任何建议或发现错误,请在 {discordLink} 上分享您的想法.\n如果您了解\"缺氧\"中的世界生成过程,我们很乐意听取您的意见. 我们一直在寻求提高对游戏以及围绕游戏构建工具的理解.",
             "artist": "我们正在为该网站寻找一些图片,如果您有任何想法或愿意帮助,请与我们联系.",
             "donation": "Mapsnotincluded 是许多人共同努力的成果. 如果您想用金钱支持我们的开发,您可以捐款给{donateHosting}或{donateSeedBrowser}或是{donateMod}.",
             "contributor": {
                 "introduction": "非常感谢以下直接或间接为该专案做出帮助的人员(透过帮助专案的想法或开发的工作).",
-                "item_1": "{RoboPhred} - 感谢您对解析与理解 ONI 保存的帮助",
+                "item_1": "{RoboPhred} - 感谢您对 ONI 保存的解析与理解提出帮助",
                 "item_2": "{StefanOltmann} - 感谢您提供完全开源的解析 ONI 保存的 Web 介面",
                 "item_3": "{Sgt_lmalas} - 感谢您建立了一个很棒的世界生成模组,这在很大程度上启发了我们的第一个版本,直到您专门为我们进行了更改,希望我们可以继续让您烦恼很长时间!",
                 "item_4": "{Cairath} - 感谢您多年来为社区提供如此出色的工具,并且不期望捐款. 我们希望有一天能直接合作!也要感谢您对 Discord 群组的管理以及为 ONI 模组编写的指南!",
-                "item_5": "{paradeike} - {harmony}的创建者,该储存库使 ONI 的改装成为可能.",
+                "item_5": "{paradeike} - {harmony}的创建者,该储存库使 ONI 可以修改.",
                 "item_6": "{Magnet_MD} - 对于这个项目的灵感,如果不观看 Magnet 等内容创作者的作品,我(LeCoffee)永远不会发现寻找种子的重要性",
                 "item_7": "{Klei} - 感谢您创造了如此精彩的游戏以及围绕它建立的社区"
             },
@@ -66,14 +71,14 @@
         }
     },
     "not_found": {
-        "title": "404 找不到網頁",
-        "description_1": "抱歉，您要尋找的頁面不存在.",
-        "description_2": "如果您透過點擊來訪問此頁面，則很可能它尚未構建，如果您有技術有頭腦，請使用我們的 {githubLink} 連結進行貢獻，否則請來我們的 {discordLink} 群組找我們."
+        "title": "404 找不到网页",
+        "description_1": "抱歉,您要寻找的页面不存在.",
+        "description_2": "如果您透过点击来访问此页面,则很可能它尚未完成构建. 如果您有技术与头脑,请使用我们的 {githubLink} 进行帮助,或是来我们的 {discordLink} 群组找我们."
     },
     "seed_viewer": {
         "title": "种子探索者",
-        "description_1": "输入种子,看看我们的资料库中有没有!",
-        "description_2": "正在努力寻找中!!!",
+        "description_1": "输入一个种子来查看.如果它不在我们的资料库中,您可以在登入时提交请求.",
+        "description_2": "还在努力寻找中!!!",
         "seed": "种子",
         "submit": "提交"
     },
