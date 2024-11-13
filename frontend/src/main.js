@@ -10,12 +10,10 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import App from "./App.vue";
 import router from "./router";
-import { createI18n } from "vue-i18n";
-import { i18nConfig, localeLabels } from "./content/index";
+import i18n from "./i18n";
 
-const i18n = createI18n(i18nConfig);
-
-const app = createApp(App).use(createPinia()).use(router).use(i18n);
-
-app.config.globalProperties.$localeLabels = localeLabels;
+const app = createApp(App);
+app.use(createPinia());
+app.use(router);
+app.use(i18n);
 app.mount("#app");

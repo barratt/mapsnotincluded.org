@@ -1,16 +1,19 @@
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores";
+import i18n from "@/i18n";
+const { t } = i18n.global;
 
 export function requestCoordinate() {
   const apiUrl = import.meta.env.VITE_API_URL;
   // Lets pop up a swal to ask for the seed name and then send it to the backend
   Swal.fire({
-    title: "Request a seed thats not found in the database yet",
+    title: t("coordinate_request_dialog.text"),
     input: "text",
-    inputLabel: "Coordinate:",
-    inputPlaceholder: "Enter the Coordinate here...",
+    inputLabel: t("coordinate_request_dialog.coordinate"),
+    inputPlaceholder: t("coordinate_request_dialog.placeholder"),
     showCancelButton: true,
-    confirmButtonText: "Request",
+    confirmButtonText: t("coordinate_request_dialog.bt_request"),
+    cancelButtonText: t("coordinate_request_dialog.bt_cancel"),
     showLoaderOnConfirm: true,
     inputValidator: (coordinate) => validateCoordinate(coordinate),
     preConfirm: (coordinates) => {
@@ -38,7 +41,7 @@ export function requestCoordinate() {
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire({
-        title: "Seed Requested",
+        title: t("coordinate_request_dialog.request_successful"),
         text: result.value.message,
         icon: "success",
       });
@@ -54,7 +57,7 @@ export function validateCoordinate(coordinate) {
     console.log(coordinate);
     let coordinateValid = coordinateValidationRegex.test(coordinate);
     if (!coordinateValid) {
-      resolve("Not a valid Coordinate!");
+      resolve(t("coordinate_request_dialog.invalid_syntax"));
     } else {
       resolve();
     }

@@ -75,7 +75,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
           <!-- Optionally, add buttons to set or clear token -->
           <div class="nav-link my-auto">
             <button v-if="isAuthenticated" @click="requestCoordinate" class="btn btn-sm btn-primary">
-              {{ $t("coordinate_request_dialog.request_coordinate_title") }}
+              {{ $t("coordinate_request_dialog.title") }}
             </button>
             <a v-else :href="loginUrl">
               <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" />

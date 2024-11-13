@@ -43,11 +43,11 @@ onMounted(() => {
   let url = TRAITFINDER_URL;
 
   url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
-  
+
   if (route.params.seed) {
     url = `${url}#${route.params.seed}`;
   }
-  
+
   iframeUrl.value = url;
 
   // Send locale code to compose
@@ -63,18 +63,19 @@ onMounted(() => {
 <style scoped>
 main {
   overflow: hidden;
-  height: 100vh; 
+  height: 100vh;
 }
 
 .iframe-container {
   display: flex;
-  width: 100%; 
-  height: calc(100vh - 69px); /* not ideal, but I can't seem to work out how to get the frame to take the remaining space and ignore the navbar*/
-  overflow: hidden; 
+  width: 100%;
+  height: calc(100vh - 69px);
+  /* not ideal, but I can't seem to work out how to get the frame to take the remaining space and ignore the navbar*/
+  overflow: hidden;
 }
 
 iframe {
-  width: 100%; 
+  width: 100%;
   height: 100%;
   border: none;
   overflow: auto;
