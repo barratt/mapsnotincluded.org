@@ -53,6 +53,18 @@
 	  </PackageReference>
 	  <PackageReference Include="PLib" Version="4.16.0" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="ModAssets\translations\zh.po">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="ModAssets\translations\zh_CN.po">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="ModAssets\translations\zh_TW.po">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 	
 	<ItemGroup>
 	  <PackageReference Update="ILRepack.Lib.MSBuild.Task" Version="2.0.34.2">
