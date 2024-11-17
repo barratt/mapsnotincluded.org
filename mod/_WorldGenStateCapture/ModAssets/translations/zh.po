@@ -9,6 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Application: Oxygen Not IncludedPOT Version: 2.0\n"
 "X-Generator: Poedit 3.5\n"
 
@@ -20,7 +21,7 @@ msgid ""
 "The mod will sleep for a minute, then try again."
 msgstr ""
 "由于模组未能建立与伺服器的连线,上一个种子并未上传成功.\n"
-"模组将休眠一分钟,然后重新尝试."
+"模组将休眠一分钟,然后重新尝试连线."
 
 #. _WorldGenStateCapture.STRINGS.AUTOPARSING.CONNECTIONERROR.TITLE
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.CONNECTIONERROR.TITLE"
@@ -39,12 +40,12 @@ msgstr ""
 #. _WorldGenStateCapture.STRINGS.AUTOPARSING.INPROGRESSDIALOG.STARTNOW
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.INPROGRESSDIALOG.STARTNOW"
 msgid "Skip timer"
-msgstr "跳过倒数 直接开始"
+msgstr "直接开始"
 
 #. _WorldGenStateCapture.STRINGS.AUTOPARSING.INPROGRESSDIALOG.TITLE
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.INPROGRESSDIALOG.TITLE"
 msgid "World collecting in progress"
-msgstr "种子收集准备开始"
+msgstr "种子收集 准备开始"
 
 #. _WorldGenStateCapture.STRINGS.AUTOPARSING.MODSDETECTED.DESC
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.MODSDETECTED.DESC"
@@ -53,13 +54,13 @@ msgid ""
 "of the collected world data.\n"
 "Map collection will proceed after you have disabled them."
 msgstr ""
-"你目前启用的其他模组可能会导致所收集种子资料的完整性破坏.\n"
+"你目前使用的其他模组可能会导致所收集种子资料的完整性破坏.\n"
 "禁用它们后,种子收集将可以继续进行."
 
 #. _WorldGenStateCapture.STRINGS.AUTOPARSING.MODSDETECTED.TITLE
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.MODSDETECTED.TITLE"
 msgid "Warning: active mods detected"
-msgstr "警告:侦测到其他启用中的模组"
+msgstr "警告:侦测到其他使用中的模组"
 
 #. _WorldGenStateCapture.STRINGS.FLOWDISABLED_TOOLTIP
 msgctxt "_WorldGenStateCapture.STRINGS.FLOWDISABLED_TOOLTIP"
@@ -67,7 +68,7 @@ msgid ""
 "Regular world loading is disabled while the mod is running.\n"
 "Use the website form to request seeds."
 msgstr ""
-"模组运行时,禁止载入常规世界.\n"
+"本模组运行时,禁止载入常规世界.\n"
 "请使用网站请求种子."
 
 #. _WorldGenStateCapture.STRINGS.MNI_STATISTICS.DAILY_SHORT
@@ -78,12 +79,12 @@ msgstr "今天收集的种子数: {0}"
 #. _WorldGenStateCapture.STRINGS.MNI_STATISTICS.LASTTIME_SHORT
 msgctxt "_WorldGenStateCapture.STRINGS.MNI_STATISTICS.LASTTIME_SHORT"
 msgid "Last generation time: {0} s"
-msgstr "上一次的启动时间: {0} s"
+msgstr "上一次的运行时间: {0} 秒"
 
 #. _WorldGenStateCapture.STRINGS.MNI_STATISTICS.MIXED_SHORT
 msgctxt "_WorldGenStateCapture.STRINGS.MNI_STATISTICS.MIXED_SHORT"
 msgid "Remixed seeds: {0}"
-msgstr "收集混合的种子数: {0}"
+msgstr "收集的混合种子数: {0}"
 
 #. _WorldGenStateCapture.STRINGS.MNI_STATISTICS.OPTED_OUT
 msgctxt "_WorldGenStateCapture.STRINGS.MNI_STATISTICS.OPTED_OUT"
@@ -98,12 +99,12 @@ msgstr "网站请求的种子数: {0}"
 #. _WorldGenStateCapture.STRINGS.MNI_STATISTICS.SESSION_SHORT
 msgctxt "_WorldGenStateCapture.STRINGS.MNI_STATISTICS.SESSION_SHORT"
 msgid "Seeds this session: {0}"
-msgstr "本次启动收集种子: {0}"
+msgstr "本次循环收集种子: {0}"
 
 #. _WorldGenStateCapture.STRINGS.MNI_STATISTICS.SESSION_TIME_SHORT
 msgctxt "_WorldGenStateCapture.STRINGS.MNI_STATISTICS.SESSION_TIME_SHORT"
 msgid "Session runtime: {0} m"
-msgstr "本次启动运行时间: {0} m"
+msgstr "本次循环运行时间: {0} 分钟"
 
 #. _WorldGenStateCapture.STRINGS.MNI_STATISTICS.TITLE
 msgctxt "_WorldGenStateCapture.STRINGS.MNI_STATISTICS.TITLE"
@@ -137,17 +138,17 @@ msgstr "允许解析请求"
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC
 msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC"
 msgid "Selects the cluster to generate at random."
-msgstr "选中这个选项将会随机产生世界."
+msgstr "选中这个选项将会随机生成世界."
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME
 msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME"
 msgid "Generate random Clusters"
-msgstr "随机产生世界"
+msgstr "使用随机生成世界"
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.DESC
 msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.DESC"
 msgid "Percentage of worlds that will be generated with DLC Remixing enabled"
-msgstr "启用 DLC 混合后产生混合星球的百分比机率"
+msgstr "打开 DLC 混合后生成混合星球的百分比机率"
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.NAME
 msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.NAME"
@@ -164,7 +165,7 @@ msgstr "用于分析种子的世界前缀."
 msgctxt ""
 "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME"
 msgid "Target World (Basegame)"
-msgstr "目标世界 (原版游戏)"
+msgstr "目标世界 (本体游戏)"
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC
 msgctxt ""
@@ -181,7 +182,7 @@ msgstr "目标世界 (DLC)"
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.DESC
 msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.DESC"
 msgid "Total number of seeds the mod collects before doing a restart."
-msgstr "模组收集多少个种子后自动重新启动."
+msgstr "模组收集多少个种子后会自动重置系统."
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.NAME
 msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.NAME"
