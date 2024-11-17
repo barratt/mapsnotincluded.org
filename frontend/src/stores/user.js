@@ -1,5 +1,18 @@
 import { defineStore } from 'pinia';
 
+// Lets get the mni_token and check if it is valid
+
+const token = localStorage.getItem('mni_token');
+if (token) {
+  // Check if the token is expired
+  const decodedToken = JSON.parse(atob(token.split('.')[1]));
+  const current_time = new Date().getTime() / 1000;
+  if (decodedToken.exp < current_time) {
+    console.log('Token expired');
+    localStorage.removeItem('mni_token');
+  }
+}
+
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem('mni_token') || null,

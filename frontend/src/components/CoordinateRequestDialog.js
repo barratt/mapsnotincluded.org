@@ -24,6 +24,13 @@ export function requestCoordinate() {
         },
       })
         .then((response) => {
+          if (!response.ok) {
+            if (response.status === 401) {
+              useUserStore().clearToken();
+              throw new Error("Unauthorized, please login again!");
+            }
+          }
+
           return response.json();
         })
         .then((data) => {
