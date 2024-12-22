@@ -28,7 +28,7 @@ jobs:
       - name: Replace credentials
         run: sed -i 's\7FE9SFM9jdv7CcL\${{ secrets.MNI_API_KEY }}\g' _WorldGenStateCapture\Credentials.cs        
       - name: Insert commit version ID
-        run: sed -i 's\REPLACE_SHORT_COMMIT\${{ SHORT_COMMIT }}\g' _WorldGenStateCapture\Credentials.cs
+        run: sed -i 's\REPLACE_SHORT_COMMIT\${{ $SHORT_COMMIT }}\g' _WorldGenStateCapture\Credentials.cs
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
       - name: NuGet Restore
