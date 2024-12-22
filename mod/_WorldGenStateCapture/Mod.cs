@@ -25,6 +25,7 @@ namespace _WorldGenStateCapture
 		public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<KMod.Mod> mods)
 		{
 			base.OnAllModsLoaded(harmony, mods);
+			IntegrityCheck.CheckModVersion();
 			foreach (var mod in mods)
 			{
 				if (mod.IsEnabledForActiveDlc() && mod != this.mod)

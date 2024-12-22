@@ -179,7 +179,16 @@ namespace _WorldGenStateCapture
                         STRINGS.AUTOPARSING.MODSDETECTED.DESC);
                     return;
                 }
-                menuTimer = __instance.gameObject.AddOrGet<MNI_Timer>();
+				if (ModAssets.VersionOutdated)
+				{
+					Debug.LogWarning("mod is outdated, aborting");
+
+					Dialog(STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE,
+						STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC);
+					return;
+				}
+
+				menuTimer = __instance.gameObject.AddOrGet<MNI_Timer>();
                 InitDelayedAutoStart(__instance);
 
                 //always initialized, thus has to be accessed here
@@ -430,7 +439,7 @@ namespace _WorldGenStateCapture
 
                             if (setting is DlcMixingSettingConfig dlcSetting) //FP and future content pack dlcs
                             {
-                                if(DlcManager.HasAllContentSubscribed(setting.required_content))
+                                if(DlcManager.IsAllContentSubscribed(setting.required_content))
                                 {
                                     Debug.Log("Turning on dlc mixing " + setting.id);
                                     settingsInstance.SetMixingSetting(dlcSetting, DlcMixingSettingConfig.EnabledLevelId);
@@ -454,7 +463,7 @@ namespace _WorldGenStateCapture
                             if (setting is MixingSettingConfig mixingSetting)
                             {
                                 //disable if forbidden by cluster or not all dlcs required active
-                                if (!DlcManager.HasAllContentSubscribed(mixingSetting.required_content) || targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
+                                if (!DlcManager.IsAllContentSubscribed(mixingSetting.required_content) || targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
                                 {
                                     Debug.Log(setting.id + " is forbidden by the current cluster is missing dlcs, disabling it.");
                                     settingsInstance.SetMixingSetting(mixingSetting, SubworldMixingSettingConfig.DisabledLevelId); //same id for world and subworld mixing setting

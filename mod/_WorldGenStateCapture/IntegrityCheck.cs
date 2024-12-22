@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace _WorldGenStateCapture
 {
@@ -62,17 +63,17 @@ namespace _WorldGenStateCapture
 		public static void AddFileToDic(string kleiPath, ref Dictionary<string, string> dict, string notWorldgen = "")
 		{
 			string fullFilePath = SettingsCache.RewriteWorldgenPathYaml(kleiPath);
-			if(notWorldgen.Length> 0)
+			if (notWorldgen.Length > 0)
 			{
 				fullFilePath = fullFilePath.Replace("worldgen", notWorldgen);
 			}
 			//normalize
-			fullFilePath = System.IO.Path.GetFullPath(fullFilePath); 
+			fullFilePath = System.IO.Path.GetFullPath(fullFilePath);
 			string gameFolderPath = System.IO.Path.GetFullPath(Paths.GameFolder);
 			string pathKey = fullFilePath
 				.Replace(gameFolderPath, string.Empty)
 				.Replace("\\OxygenNotIncluded_Data\\StreamingAssets\\", string.Empty)
-				.Replace("\\","/");
+				.Replace("\\", "/");
 
 
 			if (!dict.ContainsKey(pathKey))
@@ -91,7 +92,7 @@ namespace _WorldGenStateCapture
 			using var hasher = SHA256.Create();
 			using var stream = System.IO.File.OpenRead(filename);
 			//Console.WriteLine("Hashing: " + filename);
-			return BitConverter.ToString(hasher.ComputeHash(stream)).Replace("-",string.Empty).ToLowerInvariant();
+			return BitConverter.ToString(hasher.ComputeHash(stream)).Replace("-", string.Empty).ToLowerInvariant();
 		}
 		public static string GetUserId()
 		{
@@ -113,6 +114,27 @@ namespace _WorldGenStateCapture
 			else
 				GUID = File.ReadAllText(filepath);
 			return GUID;
+		}
+
+		internal static void CheckModVersion()
+		{
+			Debug.Log("MNI: Checking mod version..");
+			Global.Instance.StartCoroutine(RequestHelper.TryGetRequest(Credentials.API_URL_GET_VERSION, HandleVersionCheck, HandleVersionCheck));
+		}
+		static void HandleVersionCheck(string serverVersion)
+		{
+			Debug.Log("MNI: Mod version received");
+			Debug.Log("Version string received from server: " + serverVersion);
+			Debug.Log("Internal Version: " + Credentials.RELEASE_VERSION_ID);
+			if (serverVersion != Credentials.RELEASE_VERSION_ID)
+			{
+				ModAssets.VersionOutdated = true;
+				Debug.LogWarning("MNI: Mod version mismatch detected. Please update your mod.");
+			}
+			else
+			{
+				Debug.Log("MNI: Mod version is up to date.");
+			}
 		}
 	}
 }

@@ -126,6 +126,8 @@ namespace _WorldGenStateCapture
             Blasted_Ceres_Cluster,
             [Option("STRINGS.CLUSTER_NAMES.CERES_SPACEDOUT_CLUSTER.NAME")]
             Ceres_Minor_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.CERES_SPACEDOUT_SHATTERED_CLUSTER.NAME")]
+			Ceres_Shattered_Cluster,
 		}
 		public static Dictionary<ClusterSelection_SO, string> ClusterCoordinates_SO = new()
 		{
@@ -151,6 +153,8 @@ namespace _WorldGenStateCapture
 			{ClusterSelection_SO.Ceres_Cluster, "V-CER-C"},
 			{ClusterSelection_SO.Blasted_Ceres_Cluster, "V-CERS-C"},
 			{ClusterSelection_SO.Ceres_Minor_Cluster, "CER-C"},
+			{ClusterSelection_SO.Ceres_Shattered_Cluster, "M-CERS-C"},
+
 		};
 
 		internal static string TargetClusterPrefix()

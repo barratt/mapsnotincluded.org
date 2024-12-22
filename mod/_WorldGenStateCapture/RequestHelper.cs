@@ -30,7 +30,7 @@ namespace _WorldGenStateCapture
 
             var serverMappedDlcIds = BlackBoxInACornerBuriedDeepInMoria.GiveWeirdRemappedDlcIds(DlcManager.GetActiveDLCIds());
             string jsonifiedDlcIds = Newtonsoft.Json.JsonConvert.SerializeObject(serverMappedDlcIds);
-            App.instance.StartCoroutine(PostRequestNewServerSeed(Credentials.API_URL_REQUEST_SEED, jsonifiedDlcIds, HandleRequestedCoordinateResponse));
+            Global.Instance.StartCoroutine(PostRequestNewServerSeed(Credentials.API_URL_REQUEST_SEED, jsonifiedDlcIds, HandleRequestedCoordinateResponse));
         }
         public static void HandleRequestedCoordinateResponse(string coordinateResponse)
         {

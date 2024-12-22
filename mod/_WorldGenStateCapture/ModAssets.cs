@@ -22,6 +22,8 @@ namespace _WorldGenStateCapture
 	{
 		//if any other mods are installed
 		public static bool ModDilution = false;
+		//when the mod is outdated
+		public static bool VersionOutdated = false;
 		public static string ModPath => System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		public static Dictionary<WorldContainer, List<MapGeyser>> currentGeysers = new();
 		public static Dictionary<WorldContainer, List<MapPOI>> currentPOIs = new();
@@ -34,6 +36,11 @@ namespace _WorldGenStateCapture
 			if (ModAssets.ModDilution)
 			{
 				Debug.LogError("Other active mods detected, aborting world parsing.");
+				return;
+			}
+			if (ModAssets.VersionOutdated)
+			{
+				Debug.LogError("Mod is outdated, aborting world parsing.");
 				return;
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();
@@ -85,6 +92,11 @@ namespace _WorldGenStateCapture
 			if (ModAssets.ModDilution)
 			{
 				Debug.LogError("Other active mods detected, aborting world parsing.");
+				return;
+			}
+			if (ModAssets.VersionOutdated)
+			{
+				Debug.LogError("Mod is outdated, aborting world parsing.");
 				return;
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();
@@ -187,7 +199,7 @@ namespace _WorldGenStateCapture
 
 			//Console.WriteLine(json);
 			//attach the coroutine to the main game object
-			App.instance.StartCoroutine(RequestHelper.TryPostRequest(Credentials.API_URL_UPLOAD, json, ClearAndRestart, (data) =>
+			Global.Instance.StartCoroutine(RequestHelper.TryPostRequest(Credentials.API_URL_UPLOAD, json, ClearAndRestart, (data) =>
 			{
                 //StoreForLater(data, worldDataItem.coordinate);
                 ConnectionError();
@@ -447,7 +459,7 @@ namespace _WorldGenStateCapture
 				StartBackupRestart();
 				if (PauseScreen.instance != null)
 				{
-					PauseScreen.instance.OnQuitConfirm();
+					PauseScreen.instance.OnQuitConfirm(false);
 				}
 				else
                     RestartAndKillThreads(); //fallback
