@@ -26,8 +26,8 @@ namespace MapsNotIncluded_WorldParser
             {
                 switch (semiConsistentKleiDlcId)
                 {
-                    case DlcManager.VANILLA_ID://Server assumes base game to be an absence of "SpacedOut"
-                                               //weirdIdNameThings.Add("BaseGame");
+                    case DlcManager.VANILLA_ID:
+                        weirdIdNameThings.Add("BaseGame");
                         break;
                     case DlcManager.EXPANSION1_ID:
                         weirdIdNameThings.Add("SpacedOut");
@@ -35,7 +35,9 @@ namespace MapsNotIncluded_WorldParser
                     case DlcManager.DLC2_ID:
                         weirdIdNameThings.Add("FrostyPlanet");
                         break;
-                    default:
+					case DlcManager.DLC3_ID: //bionic booster pack doesnt have any form of woldgen manipulation and isnt part of the backend
+						break;
+					default:
                         weirdIdNameThings.Add(semiConsistentKleiDlcId); // If it's not a known ID, keep it as is
                         break;
                 }

@@ -30,7 +30,7 @@ namespace _WorldGenStateCapture
 		[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.DESC")]
 		[JsonProperty]
 		[Limit(0, 100)]
-		public int RandomMixingPercentage { get; set; } = 5;
+		public int RandomMixingPercentage { get; set; } = 10;
 
         [Option("STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME", "STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC")]
         [JsonProperty]
