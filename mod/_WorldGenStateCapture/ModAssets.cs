@@ -35,12 +35,12 @@ namespace _WorldGenStateCapture
 		{
 			if (ModAssets.ModDilution)
 			{
-				Debug.LogError("Other active mods detected, aborting world parsing.");
+				Debug.LogWarning("Other active mods detected, aborting world parsing.");
 				return;
 			}
 			if (ModAssets.VersionOutdated)
 			{
-				Debug.LogError("Mod is outdated, aborting world parsing.");
+				Debug.LogWarning("Mod is outdated, aborting world parsing.");
 				return;
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();
@@ -91,12 +91,12 @@ namespace _WorldGenStateCapture
 
 			if (ModAssets.ModDilution)
 			{
-				Debug.LogError("Other active mods detected, aborting world parsing.");
+				Debug.LogWarning("Other active mods detected, aborting world parsing.");
 				return;
 			}
 			if (ModAssets.VersionOutdated)
 			{
-				Debug.LogError("Mod is outdated, aborting world parsing.");
+				Debug.LogWarning("Mod is outdated, aborting world parsing.");
 				return;
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();
@@ -107,7 +107,7 @@ namespace _WorldGenStateCapture
 			SettingLevel layoutQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.ClusterLayout);
 			if (layoutQualitySetting == null)
 			{
-				Debug.LogError("Clusterlayout was null");
+				Debug.LogWarning("Clusterlayout was null");
 				return;
 			}
 
