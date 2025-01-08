@@ -11,7 +11,6 @@ import { useRoute } from 'vue-router';
 
 import { useUserStore } from '@/stores';
 
-const { locale } = useI18n();
 const route = useRoute();
 
 const MAPEXPLORER_URL = import.meta.env.VITE_MAPEXPLORER_URL || 'https://stefan-oltmann.de/oni-seed-browser';
@@ -20,18 +19,9 @@ const iframeUrl = ref(null)
 const iframeRef = ref(null)
 const queryParams = ref({});
 
-// Whenever locale code changes, send it to compose
-watch(locale, () => {
-  if (iframeRef.value && iframeRef.value.contentWindow) {
-    iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
-  }
-});
-
 onMounted(() => {
-  // Store current route's query param
-  const locale = useI18n().locale;
 
-  queryParams.value = { ...route.query, embedded: 'mni', locale };
+  queryParams.value = { ...route.query, embedded: 'mni' };
 
   // add token to query params if it exists
   const token = useUserStore().token;
@@ -49,14 +39,6 @@ onMounted(() => {
   }
   
   iframeUrl.value = url;
-
-  // Send locale code to compose
-  if (iframeRef.value && iframeRef.value.contentWindow) {
-    // TODO: Find better way of knowing when compose is ready to accept message
-    setTimeout(() => {
-      iframeRef.value.contentWindow.postMessage(locale.value, MAPEXPLORER_URL);
-    }, 200)
-  }
 })
 </script>
 
