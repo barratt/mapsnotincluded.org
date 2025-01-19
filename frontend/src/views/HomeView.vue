@@ -19,10 +19,12 @@
     </i18n-t>
 
     <div class="d-flex gap-3 mt-5 flex-column flex-md-row">
-      <router-link to="/map-explorer" class="btn btn-lg btn-outline-warning flex-grow-1">{{ $t('home.link_map_explorer') }}</router-link>
+      <router-link to="/map-explorer" class="btn btn-lg btn-outline-warning flex-grow-1">{{ $t('home.link_map_explorer')
+        }}</router-link>
       <!--<router-link to="/seed-viewer" class="btn btn-lg btn-outline-primary flex-grow-1">Seed Viewer</router-link>-->
-      <router-link to="/trait-finder" class="btn btn-lg btn-outline-success flex-grow-1">{{ $t('home.link_trait_finder') }}</router-link>
-      <router-link to="/starmap-generator" class="btn btn-lg btn-outline-info flex-grow-1">{{ $t('home.link_starmap_generator') }}</router-link>
+      <router-link to="/trait-finder" class="btn btn-lg btn-outline-success flex-grow-1">{{
+        $t('home.link_trait_finder') }} & {{ $t('home.link_starmap_generator') }}</router-link>
+      <!--<router-link to="/starmap-generator" class="btn btn-lg btn-outline-info flex-grow-1">{{ $t('home.link_starmap_generator') }}</router-link>-->
     </div>
   </main>
 </template>
