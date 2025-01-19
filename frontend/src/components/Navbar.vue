@@ -30,13 +30,15 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
           <li class="nav-item">
             <router-link to="/trait-finder" class="nav-link">{{
               $t("navbar.world_trait_finder_link")
-            }}</router-link>
+            }} & {{
+                $t("navbar.starmap_link")
+              }}</router-link>
           </li>
-          <li class="nav-item">
+          <!--<li class="nav-item">
             <router-link to="/starmap-generator" class="nav-link">{{
               $t("navbar.starmap_link")
             }}</router-link>
-          </li>
+          </li>-->
         </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
