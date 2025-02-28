@@ -35,11 +35,11 @@ The mod is installed into the ONI game which generates new saves and uploads the
 ## Funding 
 This project is completely open source and free, there is no expected payment or donations. In future donations may be accepted to support server costs but the full functionality will be unrestricted forever. 
 
-## How will we know the service wont shut down?
+## How will we know the service won't shut down?
 It might! My plan is to be fully open and transparent, all of the services will be deployable via Docker and periodic exports of the database will be automatically shared on the discord, and the website, we hope to share them in more places too as it becomes more valuable
 
 ## Coding Standards and Best Practices
-This is a hubby project, so anything goes at this stage. Please just ensure your code is somewhat readable, please go for more lines over single lines for readability. Please use widely accepted libraries where possible to maximise those who can contribute, please try to avoid complex logic flows. This is not enterprise. 
+This is a hobby project, so anything goes at this stage. Please just ensure your code is somewhat readable, please go for more lines over single lines for readability. Please use widely accepted libraries where possible to maximise those who can contribute, and please try to avoid complex logic flows. This is not enterprise. 
 
 Please ensure all code remains cross-platform for as long as possible. 
 
