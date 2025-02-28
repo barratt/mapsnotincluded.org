@@ -16,8 +16,7 @@ msgstr ""
 #. _WorldGenStateCapture.STRINGS.AUTOPARSING.CONNECTIONERROR.DESC
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.CONNECTIONERROR.DESC"
 msgid ""
-"The last seed upload did not upload due to the mod failing at establishing a "
-"connection to the server.\n"
+"The last seed upload did not upload due to the mod failing at establishing a connection to the server.\n"
 "The mod will sleep for a minute, then try again."
 msgstr ""
 "由於模組未能建立與伺服器的連線,上一個種子並未上傳成功.\n"
@@ -50,8 +49,7 @@ msgstr "種子收集 準備開始"
 #. _WorldGenStateCapture.STRINGS.AUTOPARSING.MODSDETECTED.DESC
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.MODSDETECTED.DESC"
 msgid ""
-"There are currently other mods enabled that might invalidate the integrity "
-"of the collected world data.\n"
+"There are currently other mods enabled that might invalidate the integrity of the collected world data.\n"
 "Map collection will proceed after you have disabled them."
 msgstr ""
 "你目前使用的其他模組可能會導致所收集種子資料的完整性破壞.\n"
@@ -61,6 +59,20 @@ msgstr ""
 msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.MODSDETECTED.TITLE"
 msgid "Warning: active mods detected"
 msgstr "警告:偵測到其他使用中的模組"
+
+#. _WorldGenStateCapture.STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC
+msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC"
+msgid ""
+"Your version of the MNI Parser mod is outdated and might not work correctly with the current game version.\n"
+"Please update the mod."
+msgstr ""
+"你的 MNI Parser mod 版本已過時,可能無法在當前遊戲版本中正常運作.\n"
+"請更新模組."
+
+#. _WorldGenStateCapture.STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE
+msgctxt "_WorldGenStateCapture.STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE"
+msgid "Warning: mod version outdated"
+msgstr "警告: mod 版本已過時"
 
 #. _WorldGenStateCapture.STRINGS.FLOWDISABLED_TOOLTIP
 msgctxt "_WorldGenStateCapture.STRINGS.FLOWDISABLED_TOOLTIP"
@@ -122,16 +134,12 @@ msgid "Start Collecting Worlds"
 msgstr "開始收集種子"
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC
-msgctxt ""
-"_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC"
-msgid ""
-"Fetch and parse seeds that were requested from users on the website. Disable "
-"to opt out of this."
+msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC"
+msgid "Fetch and parse seeds that were requested from users on the website. Disable to opt out of this."
 msgstr "選中這個選項將會取得並解析網站上使用者請求的種子."
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME
-msgctxt ""
-"_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME"
+msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME"
 msgid "Allow Parsing Requested"
 msgstr "允許解析請求"
 
@@ -156,26 +164,22 @@ msgid "Mixing Percentage"
 msgstr "混合比例"
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.DESC
-msgctxt ""
-"_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.DESC"
+msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.DESC"
 msgid "Coordinate prefix of the world to parse seeds from."
 msgstr "用於分析種子的世界前綴."
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME
-msgctxt ""
-"_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME"
+msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME"
 msgid "Target World (Basegame)"
 msgstr "目標世界 (本體遊戲)"
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC
-msgctxt ""
-"_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC"
+msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC"
 msgid "Coordinate prefix of the cluster to parse seeds from."
 msgstr "用於分析種子的世界前綴."
 
 #. _WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.NAME
-msgctxt ""
-"_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.NAME"
+msgctxt "_WorldGenStateCapture.STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.NAME"
 msgid "Target Cluster (DLC)"
 msgstr "目標世界 (DLC)"
 
