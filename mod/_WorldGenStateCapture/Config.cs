@@ -36,6 +36,11 @@ namespace _WorldGenStateCapture
         [JsonProperty]
         public bool AcceptRequestedSeeds { get; set; } = true;
 
+		[Option("STRINGS.WORLDPARSERMODCONFIG.MODSTARTDELAY.NAME", "STRINGS.WORLDPARSERMODCONFIG.MODSTARTDELAY.DESC")]
+		[JsonProperty]
+		[Limit(5, 100)] // Allow up to 100 seconds of delay, with a minimum of 5 to prevent soft-locking (but configurable in JSON directly to entirely skip the delay for power users)
+		public int ModStartDelay { get; set; } = 10;
+
         public enum ClusterSelection_Base
 		{
 			[Option("STRINGS.WORLDS.BADLANDS.NAME")]
