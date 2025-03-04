@@ -50,14 +50,18 @@
                 public static LocString NAME = "Allow Parsing Requested";
                 public static LocString DESC = "Fetch and parse seeds that were requested from users on the website. Disable to opt out of this.";
             }
+            public class MODSTARTDELAY {
+				public static LocString NAME = "Mod Start Delay";
+				public static LocString DESC = "Time in seconds the mod will wait before starting the world parsing.";
+			}
         }
 		public class AUTOPARSING
 		{
 			public class INPROGRESSDIALOG
 			{
 				public static LocString TITLE = "World collecting in progress";
-				public static LocString DESC = "World parsing is in progress and will start in 10 seconds.\nclick below to cancel";
-				public static LocString STARTNOW = "Skip timer";
+				public static LocString DESC = "World parsing is in progress and will start in {0} seconds.\nClick below to cancel (ALT+F4, SHIFT+CMD+W, or close the game to force stop).";
+				public static LocString STARTNOW = "Skip timer and start generating now";
 			}
 			public class MODSDETECTED
 			{

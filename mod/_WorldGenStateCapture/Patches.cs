@@ -246,7 +246,7 @@ namespace _WorldGenStateCapture
 
 				if (menuTimer != null)
 					menuTimer.Abort();
-				menuTimer.SetTimer(10);
+				menuTimer.SetTimer(Config.Instance.ModStartDelay);
 				menuTimer.SetAction(() =>
 				{
 					CloseDialogue();
@@ -254,7 +254,7 @@ namespace _WorldGenStateCapture
 				});
 
 				Dialog(STRINGS.AUTOPARSING.INPROGRESSDIALOG.TITLE,
-					STRINGS.AUTOPARSING.INPROGRESSDIALOG.DESC,
+					string.Format(STRINGS.AUTOPARSING.INPROGRESSDIALOG.DESC, Config.Instance.ModStartDelay),
 					STRINGS.AUTOPARSING.INPROGRESSDIALOG.STARTNOW,
 					() => { CancelAutoParsing(); InitAutoStart(__instance); },
 					NEWGAMESETTINGS.BUTTONS.CANCEL, CancelAutoParsing);
