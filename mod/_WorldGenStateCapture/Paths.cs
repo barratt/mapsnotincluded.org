@@ -11,6 +11,7 @@ namespace _WorldGenStateCapture
 		public static string GameFolder => Path.GetDirectoryName(UnityEngine.Application.dataPath);
 		public static string ModsFolder => Path.GetFullPath(Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName).ToString());
 		public static string ConfigFolder => Path.Combine(ModsFolder, "config");
-		public static string WorldsFolder => Path.Combine(Paths.ConfigFolder, "OfflineWorlds");
+		public static string ExportFolder => Path.Combine(ModsFolder, "export");
+        public static string WorldsFolder => Path.Combine(Paths.ConfigFolder, "OfflineWorlds");
 	}
 }
