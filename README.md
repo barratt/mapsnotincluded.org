@@ -12,15 +12,34 @@ A fully opensource alternative to [ToolsNotIncluded.net](https://ToolsNotInclude
 
 # Getting Started
 
-This project is still in its infantsy, if you'd like to contribute please either: Raise an issue, submit a PR or join our [Discord](https://discord.gg/3vhCpp6PNq)
+This project is still in its infantsy, if you'd like to contribute please either: Raise an issue, submit a PR or join our [Discord](https://discord.gg/3vhCpp6PNq).
+
+There is a docker-compose.yml file that should allow you to get up and running quickly, note it may be out of date at times, ping us on Discord if this is the case!
+
+If you've never used docker before, simply install and run the following command in your favourite flavour of terminal, and you should have a full copy of MapsNotIncluded. You are advised to check out the docker-compose.yml file to see what environment variables are required, and 
+
+```
+docker compose up
+```
 
 ## Structure
-There are 3 main projects ongoing here: 
+The main parts ongoing here are: 
  - Frontend
  - App
  - Mod
+ - Ingest Service
+ - Hash Service
 
- At present none are started, but here is the general idea. This readme will be updated with time.
+The 'Frontend' is the 'main' front end that acts currently acts as parent to Steps' and Sgt's work which are iframed in. I would recommend implmenting UI changes here if possible, but if not you are welcome to create a project in your own framework flavour which if opensource, we can iframe in.
+
+The 'App' is a general NodeJS api, and is for day-to-day api calls such as requesting a seed.
+
+The 'Mod' is what you run on your PC, on Discord we have a few dedicated contributors that run this mod 24/7, it is responsible for automating the OxygenNotIncluded worldgen and submitting the resuts to the Ingest Server
+
+The 'Ingest Service' is again hosted over on Steps' github, but it is the URL endpoint the Mod will call to submit seeds. This service also currently hosts some APIs for Steps' own user interface. You may find reminants of ingest in the app code that hasn't been removed just yet. 
+
+The 'Hash Service' is used to automate the process of getting OxygenNotIncluded hash files, we use this to verify the integrity of the worldgen files with the latest game updates. 
+
 
 ### Frontend
 This is the web interface we all interact with, written in VueJS 3 (with Vite) and using Bootstrap as a base framework. 

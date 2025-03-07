@@ -1,0 +1,132 @@
+version: '3.7'
+services:
+  balancer:
+    image: nginx:alpine
+    ports:
+      - "${BALANCER_HOST:-127.0.0.1}:${BALANCER_PORT:-7483}:80"
+    restart: always
+    volumes:
+      - ${NGINX_CONF_PATH:-/root/mni/nginx.conf}:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+    networks:
+      - mni_network
+
+  app:
+    image: ghcr.io/barratt/mni:latest
+    networks:
+      - mni_network
+    restart: always
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${APP_PORT:-3000}
+      
+      - DB_NAME=${DB_NAME:-mapsnotincluded}
+      - DB_USER=${DB_USER:-mapsnotincluded}
+      - DB_PASS=${DB_PASS:-password}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-5432}
+      
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID:-default_access_key}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY:-default_secret}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - S3_ENDPOINT=${S3_ENDPOINT:-https://s3.amazonaws.com}
+      - S3_BUCKET=${S3_BUCKET:-mni-bucket}
+      
+      - API_URL=${API_URL:-https://api.mapsnotincluded.org}
+      - INTERFACE=${INTERFACE:-0.0.0.0}
+      
+      - DISCORD_WEBHOOK=${DISCORD_WEBHOOK:-https://discord.com/api/webhooks/your-webhook-url}
+      - AUTH_SECRET=${AUTH_SECRET:-your-secret-key}
+      - ALLOWED_DOMAINS=${ALLOWED_DOMAINS:-https://mapsnotincluded.org,https://example.com}
+      - BASE64_JWT_SIGNING_TOKEN=${BASE64_JWT_SIGNING_TOKEN:-your-base64-signing-token}
+      - STEAM_API_KEY=${STEAM_API_KEY:-your-steam-api-key}
+      - JWT_AUDIENCE=${JWT_AUDIENCE:-mapsnotincluded}
+      - JWT_ISSUER=${JWT_ISSUER:-mapsnotincluded}
+      - MONGO_URI=${MONGO_URI:-mongodb://mni:password@mongo:27017/mapsnotincluded}
+      - MONGO_DB=${MONGO_DB:-mapsnotincluded}
+    depends_on:
+      - db
+    deploy:
+      replicas: ${APP_REPLICAS:-4}
+      resources:
+        limits:
+          cpus: '${APP_CPUS:-1}'
+          memory: ${APP_MEMORY_LIMIT:-512M}
+    mem_limit: ${APP_MEMORY_LIMIT:-512M}
+    cpus: ${APP_CPUS:-1}
+
+  hashservice:
+    image: ghcr.io/barratt/mnihashservice:latest
+    restart: always
+    ports:
+      - "${HASH_SERVICE_HOST:-127.0.0.1}:${HASH_SERVICE_PORT:-9820}:3000"
+    environment:
+      STEAM_USERNAME: ${STEAM_USERNAME:-default_username}
+    volumes:
+      - config:/root  # Persist config data for SteamCMD
+      - oni:/oni      # Persist the game data to prevent constant redownloading
+      - publichashes:/app/public  # Persist generated hashes
+    networks:
+      - mni_network
+
+# Old DB service
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mni}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mni}
+      POSTGRES_DB: ${POSTGRES_DB:-mni}
+    ports:
+      - "${DB_HOST_BIND:-127.0.0.1}:${DB_PORT_BIND:-5442}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - mni_network
+
+# New DB service
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "127.0.0.1:27017:27017"
+    logging:
+      options:
+        max-size: 1g
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-mongoadmin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-password}
+    command: >
+      mongod --bind_ip_all --auth --config /etc/mongod.conf
+    volumes:
+      - mongo_data:/data/db
+      - ./mongod.conf:/etc/mongod.conf
+      - ./mongo.key:/mongo.key
+    networks:
+      - mni_network
+
+  backend:
+    image: ghcr.io/stefanoltmann/oni-seed-browser-backend:latest
+    restart: always
+    networks:
+      - mni_network
+    environment:
+      - MONGO_DB_CONNECTION_STRING=${MONGO_DB_CONNECTION_STRING:-mongodb://mni:password@mongo:27017/oni}
+      - MNI_API_KEY=${MNI_API_KEY:-your-api-key}
+      - DATABASE_EXPORT_API_KEY=${DATABASE_EXPORT_API_KEY:-export-api-key}
+      - SESSION_SIGNING_KEY=${SESSION_SIGNING_KEY:-session-signing-key}
+      - SESSION_ENCRYPTION_KEY=${SESSION_ENCRYPTION_KEY:-session-encryption-key}
+    ports:
+      - "${BACKEND_HOST_BIND:-127.0.0.1}:${BACKEND_PORT_BIND:-3732}:8080"
+
+volumes:
+  db_data:
+  oni:
+  config:
+  publichashes:
+  mongo_data:
+
+networks:
+  mni_network:
+    external: true
