@@ -40,17 +40,6 @@ The 'Ingest Service' is again hosted over on Steps' github, but it is the URL en
 
 The 'Hash Service' is used to automate the process of getting OxygenNotIncluded hash files, we use this to verify the integrity of the worldgen files with the latest game updates. 
 
-
-### Frontend
-This is the web interface we all interact with, written in VueJS 3 (with Vite) and using Bootstrap as a base framework. 
-
-### App
-The app supports the frontend, it allows querying between the UI and the database. The app also supports the data storage of the saves.
-
-### Mod
-The mod is installed into the ONI game which generates new saves and uploads them for processing. 
-
-
 ## Funding 
 This project is completely open source and free, there is no expected payment or donations. In future donations may be accepted to support server costs but the full functionality will be unrestricted forever. 
 
