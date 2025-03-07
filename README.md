@@ -30,7 +30,7 @@ The main parts ongoing here are:
  - Ingest Service
  - Hash Service
 
-The 'Frontend' is the 'main' front end that acts currently acts as parent to Steps' and Sgt's work which are iframed in. I would recommend implmenting UI changes here if possible, but if not you are welcome to create a project in your own framework flavour which if opensource, we can iframe in.
+The 'Frontend' is the 'main' user interface that currently acts as parent to Steps' and Sgt's work - these are currently iframed in. I would recommend implmenting UI changes here if possible, but if not you are welcome to create a project in your own framework flavour which if opensource, we can iframe in as a separate 'module'.
 
 The 'App' is a general NodeJS api, and is for day-to-day api calls such as requesting a seed.
 
