@@ -15,10 +15,15 @@ using System.Threading.Tasks;
 using System.Threading;
 using MapsNotIncluded_WorldParser.WorldStateData;
 using MapsNotIncluded_WorldParser;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using static _WorldGenStateCapture.WorldExporter;
 
 namespace _WorldGenStateCapture
 {
-	internal class ModAssets
+
+
+    internal class ModAssets
 	{
 		//if any other mods are installed
 		public static bool ModDilution = false;
@@ -86,7 +91,7 @@ namespace _WorldGenStateCapture
             LastConnectionSuccessful = false;
         }
 
-        internal static void AccumulateSeedData()
+		internal static void AccumulateSeedData()
 		{
 
 			if (ModAssets.ModDilution)
@@ -114,12 +119,12 @@ namespace _WorldGenStateCapture
 			ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(layoutQualitySetting.id);
 			SettingLevel seedQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.WorldgenSeed);
 
-            if(!int.TryParse(seedQualitySetting.id, out int seed))
+			if (!int.TryParse(seedQualitySetting.id, out int seed))
 			{
 				Debug.LogError("Seed Quality Setting was not a valid integer?!?!?");
 			}
 
-            MNI_Statistics.Instance.SetMixingRunActive(CustomGameSettings.Instance.GetMixingSettingsCode() != "0");
+			MNI_Statistics.Instance.SetMixingRunActive(CustomGameSettings.Instance.GetMixingSettingsCode() != "0");
 
 
 			// DataItem.seed = seed;
@@ -187,8 +192,22 @@ namespace _WorldGenStateCapture
 			}
 			data.cluster = worldDataItem;
 
+			string world_save_path = System.IO.Path.Combine(Paths.ExportFolder, CustomGameSettings.Instance.GetSettingsCoordinate());
+			Debug.Log("Trying to save to " + world_save_path);
+            if (!Directory.Exists(world_save_path))
+            {
+                Debug.Log("Creating config path folder...");
+                Directory.CreateDirectory(world_save_path);
+                Debug.Log("Folder " + world_save_path + " initialized");
+            }
+            WorldExporter.SaveElementIdxAsPNG8(System.IO.Path.Combine(world_save_path, "elementIdx8.png"));
+            WorldExporter.SaveTemperatureAsPNG8(System.IO.Path.Combine(world_save_path, "temperature8.png"));
+            WorldExporter.SaveMassAsPNG8(System.IO.Path.Combine(world_save_path, "mass8.png"));
+            WorldExporter.SaveTemperatureAsPNG32(System.IO.Path.Combine(world_save_path, "temperature32.png"));
+            WorldExporter.SaveMassAsPNG32(System.IO.Path.Combine(world_save_path, "mass32.png"));
+            //WorldExporter.SaveGridAsJSON(Path.Combine(world_save_path, "world_data.json"));
 
-			MNI_Statistics.Instance.OnSeedGenerated();
+            MNI_Statistics.Instance.OnSeedGenerated();
 
 			Debug.Log("Serializing data...");
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
@@ -417,8 +436,8 @@ namespace _WorldGenStateCapture
 				cachedRenderData = World.Instance.GetComponent<SubworldZoneRenderData>();
 			}
 
-			// Biomes: Get the original color for the biome
-			Color color = cachedRenderData.zoneColours[(int)type];
+            // Biomes: Get the original color for the biome
+            Color color = cachedRenderData.zoneColours[(int)type];
 
 			// Reset the alpha value so it can be shown nicely both in the map and the legend
 			color.a = 1f;
