@@ -4,18 +4,36 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using _WorldGenStateCapture;
 using Newtonsoft.Json;
-using static _WorldGenStateCapture.ImageSave;
+using static MapsNotIncluded_WorldParser.Export.ImageSave;
 using static Rendering.BlockTileRenderer;
 
-namespace _WorldGenStateCapture
+namespace MapsNotIncluded_WorldParser.Export
 {
     class WorldExporter
     {
+        public static void ExportAll()
+        {
+            string world_save_path = Path.Combine(Paths.ExportFolder, CustomGameSettings.Instance.GetSettingsCoordinate());
+
+            Debug.Log("Trying to save to " + world_save_path);
+            if (!Directory.Exists(world_save_path))
+            {
+                Debug.Log("Creating config path folder...");
+                Directory.CreateDirectory(world_save_path);
+                Debug.Log("Folder " + world_save_path + " initialized");
+            }
+            SaveElementIdxAsPNG8(Path.Combine(world_save_path, "elementIdx8.png"));
+            SaveTemperatureAsPNG8(Path.Combine(world_save_path, "temperature8.png"));
+            SaveMassAsPNG8(Path.Combine(world_save_path, "mass8.png"));
+            SaveTemperatureAsPNG32(Path.Combine(world_save_path, "temperature32.png"));
+            SaveMassAsPNG32(Path.Combine(world_save_path, "mass32.png"));
+            //WorldExporter.SaveGridAsJSON(Path.Combine(world_save_path, "world_data.json"));
+        }
         public static unsafe void SaveElementIdxAsPNG8(string filePath)
         {
-            ImageSave.Save2dUint8ArrayAsPNG(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.elementIdx);
+            Save2dUint8ArrayAsPNG(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.elementIdx);
         }
 
         public static unsafe void SaveTemperatureAsPNG8(string filePath)
@@ -33,12 +51,12 @@ namespace _WorldGenStateCapture
                 Tuple.Create(1400.5, 2000.5, 10.0)
             };
 
-            ImageSave.Save2dFloat32ArrayAsPNG8(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.temperature, bins, -273.15);
+            Save2dFloat32ArrayAsPNG8(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.temperature, bins, -273.15);
         }
 
         public static unsafe void SaveTemperatureAsPNG32(string filePath)
         {
-            ImageSave.Save2dFloat32ArrayAsPNG32(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.temperature);
+            Save2dFloat32ArrayAsPNG32(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.temperature);
         }
 
         public static unsafe void SaveMassAsPNG8(string filePath)
@@ -51,12 +69,12 @@ namespace _WorldGenStateCapture
                 Tuple.Create(105.5, 2005.5, 20.0),
                 Tuple.Create(2005.5, 20005.5, 100.0)
             };
-            ImageSave.Save2dFloat32ArrayAsPNG8(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.mass, bins, 0);
+            Save2dFloat32ArrayAsPNG8(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.mass, bins, 0);
         }
 
         public static unsafe void SaveMassAsPNG32(string filePath)
         {
-            ImageSave.Save2dFloat32ArrayAsPNG32(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.mass);
+            Save2dFloat32ArrayAsPNG32(filePath, Grid.WidthInCells, Grid.HeightInCells, Grid.mass);
         }
 
         public static void SaveGridAsJSON(string filePath)

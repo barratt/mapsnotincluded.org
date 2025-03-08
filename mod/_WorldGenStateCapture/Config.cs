@@ -32,44 +32,52 @@ namespace _WorldGenStateCapture
 		[Limit(0, 100)]
 		public int RandomMixingPercentage { get; set; } = 10;
 
-        [Option("STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME", "STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC")]
-        [JsonProperty]
-        public bool AcceptRequestedSeeds { get; set; } = true;
+		[Option("STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME", "STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC")]
+		[JsonProperty]
+		public bool AcceptRequestedSeeds { get; set; } = true;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.MODSTARTDELAY.NAME", "STRINGS.WORLDPARSERMODCONFIG.MODSTARTDELAY.DESC")]
 		[JsonProperty]
 		[Limit(5, 100)] // Allow up to 100 seconds of delay, with a minimum of 5 to prevent soft-locking (but configurable in JSON directly to entirely skip the delay for power users)
 		public int ModStartDelay { get; set; } = 10;
 
-        public enum ClusterSelection_Base
+		[Option("STRINGS.WORLDPARSERMODCONFIG.ASKBETWEENRUNSDIALOG.NAME", "STRINGS.WORLDPARSERMODCONFIG.ASKBETWEENRUNSDIALOG.DESC")]
+		[JsonProperty]
+		public bool AskBetweenRunsDialog { get; set; } = false;
+
+		[Option("STRINGS.WORLDPARSERMODCONFIG.WORLDSTATISTICSEXPORT.NAME", "STRINGS.WORLDPARSERMODCONFIG.WORLDSTATISTICSEXPORT.DESC")]
+		[JsonProperty]
+		public bool WorldStatisticsExport { get; set; } = false;
+
+		public enum ClusterSelection_Base
 		{
 			[Option("STRINGS.WORLDS.BADLANDS.NAME")]
 			The_Badlands,
 
-            [Option("STRINGS.WORLDS.FOREST_DEFAULT.NAME")]
-            Arboria,
-            [Option("STRINGS.WORLDS.FOREST_HOT.NAME")]
-            Aridio,
-            [Option("STRINGS.WORLDS.FOREST_LUSH.NAME")]
-            Verdante,
-            //Skewed_Asteroid, //only 1 seed available
+			[Option("STRINGS.WORLDS.FOREST_DEFAULT.NAME")]
+			Arboria,
+			[Option("STRINGS.WORLDS.FOREST_HOT.NAME")]
+			Aridio,
+			[Option("STRINGS.WORLDS.FOREST_LUSH.NAME")]
+			Verdante,
+			//Skewed_Asteroid, //only 1 seed available
 
-            [Option("STRINGS.WORLDS.OASIS.NAME")]
-            Oasisse,
+			[Option("STRINGS.WORLDS.OASIS.NAME")]
+			Oasisse,
 
-            [Option("STRINGS.WORLDS.OCEANIA.NAME")]
-            Oceania,
+			[Option("STRINGS.WORLDS.OCEANIA.NAME")]
+			Oceania,
 
-            [Option("STRINGS.WORLDS.SANDSTONE_DEFAULT.NAME")]
-            Terra,
-            [Option("STRINGS.WORLDS.SANDSTONE_FROZEN.NAME")]
-            Rime,
-            [Option("STRINGS.WORLDS.VOLCANIC.NAME")]
-            Volcanea,
-            [Option("STRINGS.WORLDS.CERESBASEGAME.NAME")]
-            Ceres,
-            [Option("STRINGS.WORLDS.CERESBASEGAMESHATTERED.NAME")]
-            Blasted_Ceres,
+			[Option("STRINGS.WORLDS.SANDSTONE_DEFAULT.NAME")]
+			Terra,
+			[Option("STRINGS.WORLDS.SANDSTONE_FROZEN.NAME")]
+			Rime,
+			[Option("STRINGS.WORLDS.VOLCANIC.NAME")]
+			Volcanea,
+			[Option("STRINGS.WORLDS.CERESBASEGAME.NAME")]
+			Ceres,
+			[Option("STRINGS.WORLDS.CERESBASEGAMESHATTERED.NAME")]
+			Blasted_Ceres,
 		}
 		public static Dictionary<ClusterSelection_Base, string> ClusterCoordinates_Base = new()
 		{
@@ -87,50 +95,50 @@ namespace _WorldGenStateCapture
 			{ClusterSelection_Base.Blasted_Ceres, "CERS-A"},
 		};
 		public enum ClusterSelection_SO
-        {
-            [Option("STRINGS.CLUSTER_NAMES.FOREST_START_CLUSTER.NAME")]
-            Folia_Cluster,
-            //Skewed_Asteroid, //only 1 seed available
-            [Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_BADLANDSSTART.NAME")]
-            Moonlet_Cluster_The_Desolands,
-            [Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_FLIPPEDSTART.NAME")]
-            Moonlet_Cluster_Flipped,
-            [Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_FORESTFROZENSTART.NAME")]
-            Moonlet_Cluster_Frozen_Forest,
-            [Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_METALLICSWAMPYSTART.NAME")]
-            Moonlet_Cluster_Metallic_Swampy,
-            [Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_RADIOACTIVEOCEANSTART.NAME")]
-            Moonlet_Cluster_Radioactive_Ocean,
-            [Option("STRINGS.CLUSTER_NAMES.SANDSTONE_START_CLUSTER.NAME")]
-            Terrania_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.SWAMP_START_CLUSTER.NAME")]
-            Quagmiris_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.FOREST_START_CLUSTER.NAME")]
-            Arboria_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_ARIDIO_CLUSTER.NAME")]
-            Aridio_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_BADLANDS_CLUSTER.NAME")]
-            The_Badlands_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_FOREST_CLUSTER.NAME")]
-            Verdante_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_OASIS_CLUSTER.NAME")]
-            Oasisse_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_OCEANIA_CLUSTER.NAME")]
-            Oceania_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_SANDSTONE_CLUSTER.NAME")]
-            Terra_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_SANDSTONE_FROZEN_CLUSTER.NAME")]
-            Rime_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_SWAMP_CLUSTER.NAME")]
-            Squelchy_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.VANILLA_VOLCANIC_CLUSTER.NAME")]
-            Volcanea_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.CERES_CLASSIC_CLUSTER.NAME")]
-            Ceres_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.CERES_CLASSIC_SHATTERED_CLUSTER.NAME")]
-            Blasted_Ceres_Cluster,
-            [Option("STRINGS.CLUSTER_NAMES.CERES_SPACEDOUT_CLUSTER.NAME")]
-            Ceres_Minor_Cluster,
+		{
+			[Option("STRINGS.CLUSTER_NAMES.FOREST_START_CLUSTER.NAME")]
+			Folia_Cluster,
+			//Skewed_Asteroid, //only 1 seed available
+			[Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_BADLANDSSTART.NAME")]
+			Moonlet_Cluster_The_Desolands,
+			[Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_FLIPPEDSTART.NAME")]
+			Moonlet_Cluster_Flipped,
+			[Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_FORESTFROZENSTART.NAME")]
+			Moonlet_Cluster_Frozen_Forest,
+			[Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_METALLICSWAMPYSTART.NAME")]
+			Moonlet_Cluster_Metallic_Swampy,
+			[Option("STRINGS.CLUSTER_NAMES.MINICLUSTER_RADIOACTIVEOCEANSTART.NAME")]
+			Moonlet_Cluster_Radioactive_Ocean,
+			[Option("STRINGS.CLUSTER_NAMES.SANDSTONE_START_CLUSTER.NAME")]
+			Terrania_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.SWAMP_START_CLUSTER.NAME")]
+			Quagmiris_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.FOREST_START_CLUSTER.NAME")]
+			Arboria_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_ARIDIO_CLUSTER.NAME")]
+			Aridio_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_BADLANDS_CLUSTER.NAME")]
+			The_Badlands_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_FOREST_CLUSTER.NAME")]
+			Verdante_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_OASIS_CLUSTER.NAME")]
+			Oasisse_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_OCEANIA_CLUSTER.NAME")]
+			Oceania_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_SANDSTONE_CLUSTER.NAME")]
+			Terra_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_SANDSTONE_FROZEN_CLUSTER.NAME")]
+			Rime_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_SWAMP_CLUSTER.NAME")]
+			Squelchy_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.VANILLA_VOLCANIC_CLUSTER.NAME")]
+			Volcanea_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.CERES_CLASSIC_CLUSTER.NAME")]
+			Ceres_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.CERES_CLASSIC_SHATTERED_CLUSTER.NAME")]
+			Blasted_Ceres_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.CERES_SPACEDOUT_CLUSTER.NAME")]
+			Ceres_Minor_Cluster,
 			[Option("STRINGS.CLUSTER_NAMES.CERES_SPACEDOUT_SHATTERED_CLUSTER.NAME")]
 			Ceres_Shattered_Cluster,
 		}
@@ -174,7 +182,7 @@ namespace _WorldGenStateCapture
 			{
 				if (ClusterCoordinates_Base.TryGetValue(Instance.TargetCoordinateBase, out var prefix))
 					return prefix;
-				return "SNDST-A"; 
+				return "SNDST-A";
 			}
 		}
 	}

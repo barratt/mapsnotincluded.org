@@ -17,7 +17,8 @@ using MapsNotIncluded_WorldParser.WorldStateData;
 using MapsNotIncluded_WorldParser;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
-using static _WorldGenStateCapture.WorldExporter;
+using static MapsNotIncluded_WorldParser.Export.WorldExporter;
+using MapsNotIncluded_WorldParser.Export;
 
 namespace _WorldGenStateCapture
 {
@@ -54,10 +55,10 @@ namespace _WorldGenStateCapture
 			ClusterLayout clusterData = SettingsCache.clusterLayouts.GetClusterData(layoutQualitySetting.id);
 
 			SettingLevel seedQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.WorldgenSeed);
-            //string otherSettingsCode = CustomGameSettings.Instance.GetOtherSettingsCode();
-            MNI_Statistics.Instance.SetMixingRunActive(CustomGameSettings.Instance.GetMixingSettingsCode() != "0");
+			//string otherSettingsCode = CustomGameSettings.Instance.GetOtherSettingsCode();
+			MNI_Statistics.Instance.SetMixingRunActive(CustomGameSettings.Instance.GetMixingSettingsCode() != "0");
 
-            int.TryParse(seedQualitySetting.id, out int seed);
+			int.TryParse(seedQualitySetting.id, out int seed);
 
 			// DataItem.seed = seed;
 
@@ -68,10 +69,10 @@ namespace _WorldGenStateCapture
 
 			MNI_Statistics.Instance.OnFailedSeedGenerated();
 
-			App.instance.StartCoroutine( RequestHelper.TryPostRequest(Credentials.API_URL_REPORT_FAILED, json, 
+			App.instance.StartCoroutine(RequestHelper.TryPostRequest(Credentials.API_URL_REPORT_FAILED, json,
 			() =>
 			{
-                ClearData();
+				ClearData();
 				App.LoadScene(instance.frontendGameLevel);
 			}, (_) =>
 			{
@@ -81,15 +82,15 @@ namespace _WorldGenStateCapture
 		}
 
 		public static bool LastConnectionSuccessful = true;
-        public static void ConnectionSuccessful()
-        {
-            LastConnectionSuccessful = true;
-        }
-        public static void ConnectionError()
-        {
+		public static void ConnectionSuccessful()
+		{
+			LastConnectionSuccessful = true;
+		}
+		public static void ConnectionError()
+		{
 			Debug.LogWarning("MNI failed to upload to the server!");
-            LastConnectionSuccessful = false;
-        }
+			LastConnectionSuccessful = false;
+		}
 
 		internal static void AccumulateSeedData()
 		{
@@ -192,22 +193,12 @@ namespace _WorldGenStateCapture
 			}
 			data.cluster = worldDataItem;
 
-			string world_save_path = System.IO.Path.Combine(Paths.ExportFolder, CustomGameSettings.Instance.GetSettingsCoordinate());
-			Debug.Log("Trying to save to " + world_save_path);
-            if (!Directory.Exists(world_save_path))
-            {
-                Debug.Log("Creating config path folder...");
-                Directory.CreateDirectory(world_save_path);
-                Debug.Log("Folder " + world_save_path + " initialized");
-            }
-            WorldExporter.SaveElementIdxAsPNG8(System.IO.Path.Combine(world_save_path, "elementIdx8.png"));
-            WorldExporter.SaveTemperatureAsPNG8(System.IO.Path.Combine(world_save_path, "temperature8.png"));
-            WorldExporter.SaveMassAsPNG8(System.IO.Path.Combine(world_save_path, "mass8.png"));
-            WorldExporter.SaveTemperatureAsPNG32(System.IO.Path.Combine(world_save_path, "temperature32.png"));
-            WorldExporter.SaveMassAsPNG32(System.IO.Path.Combine(world_save_path, "mass32.png"));
-            //WorldExporter.SaveGridAsJSON(Path.Combine(world_save_path, "world_data.json"));
+			if (Config.Instance.WorldStatisticsExport)
+			{
+				WorldExporter.ExportAll();
+			}
 
-            MNI_Statistics.Instance.OnSeedGenerated();
+			MNI_Statistics.Instance.OnSeedGenerated();
 
 			Debug.Log("Serializing data...");
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
@@ -220,9 +211,9 @@ namespace _WorldGenStateCapture
 			//attach the coroutine to the main game object
 			Global.Instance.StartCoroutine(RequestHelper.TryPostRequest(Credentials.API_URL_UPLOAD, json, ClearAndRestart, (data) =>
 			{
-                //StoreForLater(data, worldDataItem.coordinate);
-                ConnectionError();
-                ClearAndRestart();
+				//StoreForLater(data, worldDataItem.coordinate);
+				ConnectionError();
+				ClearAndRestart();
 			}));
 		}
 
@@ -436,8 +427,8 @@ namespace _WorldGenStateCapture
 				cachedRenderData = World.Instance.GetComponent<SubworldZoneRenderData>();
 			}
 
-            // Biomes: Get the original color for the biome
-            Color color = cachedRenderData.zoneColours[(int)type];
+			// Biomes: Get the original color for the biome
+			Color color = cachedRenderData.zoneColours[(int)type];
 
 			// Reset the alpha value so it can be shown nicely both in the map and the legend
 			color.a = 1f;
@@ -456,7 +447,7 @@ namespace _WorldGenStateCapture
 			dlcStarmapItems.Clear();
 			baseStarmapItems.Clear();
 
-            RequestHelper.OnMapGenerated();
+			RequestHelper.OnMapGenerated();
 		}
 
 		public static bool lowMemRestartInitialized = false, RestartAfterGeneration = false;
@@ -481,7 +472,7 @@ namespace _WorldGenStateCapture
 					PauseScreen.instance.OnQuitConfirm(false);
 				}
 				else
-                    RestartAndKillThreads(); //fallback
+					RestartAndKillThreads(); //fallback
 			}
 		}
 
@@ -499,7 +490,7 @@ namespace _WorldGenStateCapture
 				{
 					if (ct.IsCancellationRequested)
 					{
-                        MNI_Statistics.Instance.OnBackendUnloaded(true, i);
+						MNI_Statistics.Instance.OnBackendUnloaded(true, i);
 						break;
 					}
 					Thread.Sleep(1000);
@@ -507,10 +498,10 @@ namespace _WorldGenStateCapture
 				}
 				//if this thread wasnt canceled after 60 seconds, restart app (sth has crashed in the bg)
 				if (!ct.IsCancellationRequested)
-                {
-                    MNI_Statistics.Instance.OnBackendUnloaded(false, 60);
-                    
-                    RestartAndKillThreads();
+				{
+					MNI_Statistics.Instance.OnBackendUnloaded(false, 60);
+
+					RestartAndKillThreads();
 				}
 
 			}, ct);
@@ -543,11 +534,11 @@ namespace _WorldGenStateCapture
 		}
 
 		public static void RestartAndKillThreads()
-        {
-			if(cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
+		{
+			if (cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
 				cancelTokenSource?.Cancel();
-            App.instance.Restart();
-        }
+			App.instance.Restart();
+		}
 
 		public static void TrySendingCollected()
 		{

@@ -234,10 +234,24 @@ namespace _WorldGenStateCapture
 					if (!ModAssets.LastConnectionSuccessful)
 					{
 						Dialog(STRINGS.AUTOPARSING.CONNECTIONERROR.TITLE, STRINGS.AUTOPARSING.CONNECTIONERROR.DESC);
+						menuTimer.SetTimer(60);
 					}
-					menuTimer.SetTimer(ModAssets.LastConnectionSuccessful ? 5 : 60);
+					else if (Config.Instance.AskBetweenRunsDialog)
+					{
+						menuTimer.SetTimer(Config.Instance.ModStartDelay);
+						Dialog(STRINGS.AUTOPARSING.INPROGRESSDIALOG.TITLE,
+					string.Format(STRINGS.AUTOPARSING.INPROGRESSDIALOG.DESC, Config.Instance.ModStartDelay),
+					STRINGS.AUTOPARSING.INPROGRESSDIALOG.STARTNOW,
+					() => { CancelAutoParsing(); InitAutoStart(__instance); },
+					NEWGAMESETTINGS.BUTTONS.CANCEL, CancelAutoParsing);
+					}
+					else
+					{
+						menuTimer.SetTimer(5);
+					}
 					menuTimer.SetAction(() =>
 					{
+						CloseDialogue();
 						InitAutoStart(__instance);
 					});
 					return;
