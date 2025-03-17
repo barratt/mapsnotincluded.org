@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!--Generates the mod yaml files in the output folder-->
-	<Target Name="GenerateYAML" BeforeTargets="Build" Condition="'$(GenerateMetadata)' == 'true'">
-		<GenerateMetadataFiles
-			OutputPath="$(TargetDir)"
-
-			Title="$(ModName)"
-			Description="$(ModDescription)"
-			StaticID="$(AssemblyName)"
-      
-			SupportedContent="$(SupportedContent)"
-			MinimumSupportedBuild="$(MinimumSupportedBuild)"
-			Version="$(FileVersion)"
-			APIVersion="$(APIVersion)"
-        />
+	<!--Generates the mod yaml files in the output folder-->
+	<!--Write mod.yaml file-->
+	<Target Name="GenerateModYaml" BeforeTargets="Build">
+		<ItemGroup>
+			<ModLines Include="title: '$(ModName)'"/>
+			<ModLines Include="description: '$(ModDescription)'"/>
+			<ModLines Include="staticID: $(AssemblyName)"/>
+		</ItemGroup>
+		<WriteLinesToFile File="$(TargetDir)/mod.yaml" Overwrite="true" Lines="@(ModLines)"/>
+	</Target>
+	<!--Write mod_info.yaml file-->
+	<Target Name="GenerateModInfoYaml" BeforeTargets="Build">
+		<ItemGroup>
+			<ModInfoLines Include="minimumSupportedBuild: $(TargetGameVersion)"/>
+			<ModInfoLines Include="version: $(Version)"/>
+			<ModInfoLines Include="APIVersion: 2"/>
+			<ModInfoLines Include="requiredDlcIds:" Condition="'$(RequiredDlcIds)' != ''"/>
+			<ModInfoLines Include="$([System.String]::Copy('$(RequiredDlcIds)').Insert(0,' - ').Replace(',','%0a- '))" Condition="'$(RequiredDlcIds)' != ''"/>
+			<ModInfoLines Include="forbiddenDlcIds:" Condition="'$(ForbiddenDlcIds)' != ''"/>
+			<ModInfoLines Include="$([System.String]::Copy('$(ForbiddenDlcIds)').Insert(0,' - ').Replace(',','%0a- '))" Condition="'$(ForbiddenDlcIds)' != ''"/>
+		</ItemGroup>
+		<WriteLinesToFile File="$(TargetDir)/mod_info.yaml" Overwrite="true" Lines="@(ModInfoLines)"/>
 	</Target>
 
-  <!--Merges all dlls in the output folder into a single dll-->
+	<!--Merges all dlls in the output folder into a single dll-->
 	<Target Name="ILRepack" AfterTargets="Build" Condition="'$(IsPacked)' == 'true'">
 		<ItemGroup>
-      <InputAssemblies Include="$(TargetPath)" />
-      <InputAssemblies
-			  Include="$(TargetDir)\*.dll"
-			  Exclude="$(TargetPath); **/0Harmony.dll; **_public.dll ;**Newtonsoft.Json;**/System.*; **/Microsoft.*" />
+			<InputAssemblies Include="$(TargetPath)" />
+			<InputAssemblies
+					Include="$(TargetDir)\*.dll"
+					Exclude="$(TargetPath); **/0Harmony.dll; **_public.dll ;**Newtonsoft.Json;**/System.*; **/Microsoft.*" />
 		</ItemGroup>
 
 		<ILRepack
@@ -35,58 +43,58 @@
 		  Parallel="true"
 		  OutputFile="$(TargetPath)"/>
 	</Target>
-  
-  <PropertyGroup>
-    <TargetFolder Condition="'$(GameLibsFolder)' != '../Lib'">$(ModFolder)\$(TargetName)_dev\</TargetFolder>
-    <TargetFolder Condition="'$(GameLibsFolder)' == '../Lib'">../Builds\$(TargetName)</TargetFolder>
-  </PropertyGroup>
-  
-  <!--Copies the mod dll, the two yaml files and everything inside the ModAssets folder to the target mod folder-->
-  <Target Name="CopyModsToDevFolder" AfterTargets="ILRepack" Condition="'$(AssemblyName)' != 'UtilLibs' and '$(AssemblyName)' != 'Util_TwitchIntegrationLib'">
 
-    <Message Text="Executing CopyDLLs task" Importance="High" />
+	<PropertyGroup>
+		<TargetFolder Condition="'$(GameLibsFolder)' != '../Lib'">$(ModFolder)\$(TargetName)_dev\</TargetFolder>
+		<TargetFolder Condition="'$(GameLibsFolder)' == '../Lib'">../Builds\$(TargetName)</TargetFolder>
+	</PropertyGroup>
 
-    <ItemGroup>
-      <ModAssets Include="$(TargetDir)\ModAssets\**\*.*" />
-    </ItemGroup>
+	<!--Copies the mod dll, the two yaml files and everything inside the ModAssets folder to the target mod folder-->
+	<Target Name="CopyModsToDevFolder" AfterTargets="ILRepack" Condition="'$(AssemblyName)' != 'UtilLibs' and '$(AssemblyName)' != 'Util_TwitchIntegrationLib'">
 
-    <Copy
-		  SourceFiles="
+		<Message Text="Executing CopyDLLs task" Importance="High" />
+
+		<ItemGroup>
+			<ModAssets Include="$(TargetDir)\ModAssets\**\*.*" />
+		</ItemGroup>
+
+		<Copy
+			  SourceFiles="
 			$(TargetDir)$(TargetName).dll;
 			$(TargetDir)mod.yaml;
 			$(TargetDir)mod_info.yaml;"
 		  
-		  DestinationFolder="$(TargetFolder)"/>
-    <Message Text="Copy ModAssets to $(TargetFolder)\" Importance="High"></Message>
+			  DestinationFolder="$(TargetFolder)"/>
+		<Message Text="Copy ModAssets to $(TargetFolder)\" Importance="High"></Message>
 
-    <Copy SourceFiles="@(ModAssets)" DestinationFolder="$(TargetFolder)\%(RecursiveDir)" SkipUnchangedFiles="false" />
+		<Copy SourceFiles="@(ModAssets)" DestinationFolder="$(TargetFolder)\%(RecursiveDir)" SkipUnchangedFiles="false" />
 
-    <Message Text="Copied build files" Importance="High" />
-  </Target>
+		<Message Text="Copied build files" Importance="High" />
+	</Target>
 
-  <!--Create folder for publicized dlls if not existing-->
-  <Target Name="PubliciseMKDIR" BeforeTargets ="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
-    <MakeDir
-            Directories="$(SolutionDir)\PublicisedAssembly"/>
-  </Target>
+	<!--Create folder for publicized dlls if not existing-->
+	<Target Name="PubliciseMKDIR" BeforeTargets ="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
+		<MakeDir
+				Directories="$(SolutionDir)\PublicisedAssembly"/>
+	</Target>
 
-  <!--Creates publicized dlls from the game dlls-->
-  <Target Name="Publicise" AfterTargets="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
-    <ItemGroup>
-      <PubliciseInputAssemblies
-			   Include="
+	<!--Creates publicized dlls from the game dlls-->
+	<Target Name="Publicise" AfterTargets="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
+		<ItemGroup>
+			<PubliciseInputAssemblies
+					 Include="
 				$(GameLibsFolder)/Assembly-CSharp.dll;
 				$(GameLibsFolder)/Assembly-CSharp-firstpass.dll;
          "/>
-    </ItemGroup>
+		</ItemGroup>
 
-    <Publicise
-		   InputAssemblies="@(PubliciseInputAssemblies)"
-		   OutputPath="$(SolutionDir)\PublicisedAssembly"
-		   PubliciseCompilerGenerated="false"/>
-  </Target>
-  <Target Name="GenerateRefAssemblies" AfterTargets="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
-    <Exec Command="Refasmer -v -O ../Lib --all -c ../PublicisedAssembly/Assembly-CSharp_public.dll ../PublicisedAssembly/Assembly-CSharp-firstpass_public.dll ^
+		<Publicise
+			   InputAssemblies="@(PubliciseInputAssemblies)"
+			   OutputPath="$(SolutionDir)\PublicisedAssembly"
+			   PubliciseCompilerGenerated="false"/>
+	</Target>
+	<Target Name="GenerateRefAssemblies" AfterTargets="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
+		<Exec Command="Refasmer -v -O ../Lib --all -c ../PublicisedAssembly/Assembly-CSharp_public.dll ../PublicisedAssembly/Assembly-CSharp-firstpass_public.dll ^
     $(GameLibsFolder)/Assembly-CSharp.dll $(GameLibsFolder)/Assembly-CSharp-firstpass.dll $(GameLibsFolder)/0Harmony.dll ^
     $(GameLibsFolder)/FMODUnity.dll $(GameLibsFolder)/Newtonsoft.Json.dll $(GameLibsFolder)/UnityEngine.dll ^
     $(GameLibsFolder)/UnityEngine.CoreModule.dll $(GameLibsFolder)/UnityEngine.ImageConversionModule.dll ^
@@ -97,5 +105,5 @@
     $(GameLibsFolder)/UnityEngine.UIModule.dll $(GameLibsFolder)/UnityEngine.UnityWebRequestModule.dll ^
     $(GameLibsFolder)/Ionic.Zip.dll $(GameLibsFolder)/Newtonsoft.Json.dll $(GameLibsFolder)/com.rlabrecque.steamworks.net.dll ^
 	$(GameLibsFolder)/netstandard.dll" />
-  </Target>
+	</Target>
 </Project>
