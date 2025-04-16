@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+	
 	<!--Generates the mod yaml files in the output folder-->
 	<!--Write mod.yaml file-->
 	<Target Name="GenerateModYaml" BeforeTargets="Build">

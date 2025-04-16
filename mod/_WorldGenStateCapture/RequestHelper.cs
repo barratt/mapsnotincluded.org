@@ -32,7 +32,43 @@ namespace _WorldGenStateCapture
             string jsonifiedDlcIds = Newtonsoft.Json.JsonConvert.SerializeObject(serverMappedDlcIds);
             Global.Instance.StartCoroutine(PostRequestNewServerSeed(Credentials.API_URL_REQUEST_SEED, jsonifiedDlcIds, HandleRequestedCoordinateResponse));
         }
-        public static void HandleRequestedCoordinateResponse(string coordinateResponse)
+
+        public static void CheckIfCoordinateExists(string coordinate, System.Action OnExist, System.Action OnNotExist)
+		{
+            Debug.Log("Checking if coordinate exists on the server: " + coordinate);
+			if (string.IsNullOrEmpty(coordinate))
+			{
+				OnNotExist();
+				return;
+			}
+			Global.Instance.StartCoroutine(GetRequestCoordinateExists(coordinate,OnExist,OnNotExist));
+		}
+
+        static IEnumerator GetRequestCoordinateExists(string coordinate, System.Action OnExist, System.Action OnNotExist)
+		{
+			using (UnityWebRequest request = new UnityWebRequest(string.Format(Credentials.API_URL_CHECK_MAP_EXISTS, coordinate), "GET"))
+			{
+				Debug.Log("Trying to send GET Request to check if coordinate exists already in db ...");
+
+				yield return request.SendWebRequest();
+
+				switch (request.result)
+				{
+					case UnityWebRequest.Result.ConnectionError:
+					case UnityWebRequest.Result.DataProcessingError:
+					case UnityWebRequest.Result.ProtocolError:
+                        Debug.Log("map not on server; " + request.error);
+						OnNotExist();
+						break;
+					case UnityWebRequest.Result.Success:
+						Debug.Log("map exists on server");
+						OnExist();
+						break;
+				}
+			}
+		}
+
+		public static void HandleRequestedCoordinateResponse(string coordinateResponse)
         {
             Debug.Log("Requested Coordinate received: "+coordinateResponse);
 

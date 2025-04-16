@@ -11,17 +11,14 @@ namespace _WorldGenStateCapture
 	[ModInfo("World Parser")]
 	public class Config : SingletonOptions<Config>
 	{
-		[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC")]
-		[JsonProperty]
-		public bool RandomizedClusterGen { get; set; } = true;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.DESC")]
 		[JsonProperty]
-		public ClusterSelection_Base TargetCoordinateBase { get; set; } = ClusterSelection_Base.Terra;
+		public ClusterSelection_Base ClusterSelection_BaseGame { get; set; } = ClusterSelection_Base.Random;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC")]
 		[JsonProperty]
-		public ClusterSelection_SO TargetCoordinateDLC { get; set; } = ClusterSelection_SO.Terrania_Cluster;
+		public ClusterSelection_SO ClusterSelection_SpacedOut { get; set; } = ClusterSelection_SO.Random;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.DESC")]
 		[JsonProperty]
@@ -51,6 +48,9 @@ namespace _WorldGenStateCapture
 
 		public enum ClusterSelection_Base
 		{
+			[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC")]
+			Random = -1,
+
 			[Option("STRINGS.WORLDS.BADLANDS.NAME")]
 			The_Badlands,
 
@@ -96,6 +96,8 @@ namespace _WorldGenStateCapture
 		};
 		public enum ClusterSelection_SO
 		{
+			[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC")]
+			Random = -1,
 			[Option("STRINGS.CLUSTER_NAMES.FOREST_START_CLUSTER.NAME")]
 			Folia_Cluster,
 			//Skewed_Asteroid, //only 1 seed available
@@ -170,19 +172,19 @@ namespace _WorldGenStateCapture
 
 		};
 
-		internal static string TargetClusterPrefix()
+		internal static bool TryGetTargetClusterPrefix(out string targetPrefix)
 		{
 			if (DlcManager.IsExpansion1Active())
 			{
-				if (ClusterCoordinates_SO.TryGetValue(Instance.TargetCoordinateDLC, out var prefix))
-					return prefix;
-				return "SNDST-C";
+				if (ClusterCoordinates_SO.TryGetValue(Instance.ClusterSelection_SpacedOut, out targetPrefix))
+					return true;
+				return false;
 			}
 			else
 			{
-				if (ClusterCoordinates_Base.TryGetValue(Instance.TargetCoordinateBase, out var prefix))
-					return prefix;
-				return "SNDST-A";
+				if (ClusterCoordinates_Base.TryGetValue(Instance.ClusterSelection_BaseGame, out targetPrefix))
+					return true;
+				return false;
 			}
 		}
 	}

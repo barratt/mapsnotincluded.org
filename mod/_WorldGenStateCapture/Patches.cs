@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using static STRINGS.UI.FRONTEND;
 using _WorldGenStateCapture.Statistics;
+using MapsNotIncluded_WorldParser.Test;
 
 namespace _WorldGenStateCapture
 {
@@ -166,6 +167,8 @@ namespace _WorldGenStateCapture
 			[HarmonyPriority(Priority.Low)]
 			public static void Postfix(MainMenu __instance)
 			{
+				//CheckIfCoordinateExistsTest.RunTest();
+
 				ModAssets.OnMainMenuLoaded();
 				MNI_Statistics.MainMenuInitialize();
 				MainMenuInfoBox.InitMainMenuBox(__instance);
@@ -291,7 +294,7 @@ namespace _WorldGenStateCapture
 				//}
 
 				autoLoadActive = false;
-				var clusterPrefix = Config.TargetClusterPrefix();
+				bool specificClusterSelected = Config.TryGetTargetClusterPrefix(out string clusterPrefix);
 
 				targetLayout = null;
 				Debug.Log("autostarting...");
@@ -308,7 +311,7 @@ namespace _WorldGenStateCapture
 						clusterPrefix = array[1];
 				}
 
-				if (!Config.Instance.RandomizedClusterGen || ServerSeed)
+				if (specificClusterSelected || ServerSeed)
 				{
 					foreach (string clusterName in SettingsCache.GetClusterNames())
 					{
@@ -491,11 +494,14 @@ namespace _WorldGenStateCapture
 							}
 						}
 					}
-
-
-					__instance.ShuffleClicked();
-					__instance.LaunchClicked();
+					ReshuffleCoordinateAndStart(__instance);
 				}
+			}
+			static void ReshuffleCoordinateAndStart(ColonyDestinationSelectScreen __instance)
+			{
+				__instance.ShuffleClicked();
+				string settingsCoordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
+				RequestHelper.CheckIfCoordinateExists(settingsCoordinate, () => ReshuffleCoordinateAndStart(__instance), () => __instance.LaunchClicked());
 			}
 		}
 		//[HarmonyPatch(typeof(WorldGen), nameof(WorldGen.ReportWorldGenError))]

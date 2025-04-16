@@ -17,7 +17,6 @@ namespace MapsNotIncluded_WorldParser.Export
 	{
 		public static unsafe void Save2dUint8ArrayAsPNG(string filePath, int width, int height, ushort* array)
 		{
-
 			using (Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format8bppIndexed))
 			{
 				// Set grayscale palette (Required for Format8bppIndexed)
