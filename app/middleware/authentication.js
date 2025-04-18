@@ -16,11 +16,11 @@ const authenticate = (req, res, next) => {
         return next();
     }
 
-    if (process.env.BASE64_JWT_SIGNING_TOKEN) {
+    if (process.env.MNI_JWT_PUBLIC_KEY) {
         try {
             let token = authorization.split(' ')[1];
 
-            const decoded = jwt.verify(token, Buffer.from(process.env.BASE64_JWT_SIGNING_TOKEN, 'base64'));
+            const decoded = jwt.verify(token, Buffer.from(process.env.MNI_JWT_PUBLIC_KEY, 'base64'));
             req.user = decoded;
             return next();
         } catch (e) {

@@ -20,26 +20,27 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=${APP_PORT:-3000}
-      
+
       - DB_NAME=${DB_NAME:-mapsnotincluded}
       - DB_USER=${DB_USER:-mapsnotincluded}
       - DB_PASS=${DB_PASS:-password}
       - DB_HOST=${DB_HOST:-db}
       - DB_PORT=${DB_PORT:-5432}
-      
+
       - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID:-default_access_key}
       - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY:-default_secret}
       - S3_REGION=${S3_REGION:-us-east-1}
       - S3_ENDPOINT=${S3_ENDPOINT:-https://s3.amazonaws.com}
       - S3_BUCKET=${S3_BUCKET:-mni-bucket}
-      
+
       - API_URL=${API_URL:-https://api.mapsnotincluded.org}
       - INTERFACE=${INTERFACE:-0.0.0.0}
-      
+
       - DISCORD_WEBHOOK=${DISCORD_WEBHOOK:-https://discord.com/api/webhooks/your-webhook-url}
       - AUTH_SECRET=${AUTH_SECRET:-your-secret-key}
       - ALLOWED_DOMAINS=${ALLOWED_DOMAINS:-https://mapsnotincluded.org,https://example.com}
-      - BASE64_JWT_SIGNING_TOKEN=${BASE64_JWT_SIGNING_TOKEN:-your-base64-signing-token}
+      - MNI_JWT_PRIVATE_KEY=${MNI_JWT_PRIVATE_KEY:-your-base64-private-key}
+      - MNI_JWT_PUBLIC_KEY=${MNI_JWT_PUBLIC_KEY:-your-base64-public-key}
       - STEAM_API_KEY=${STEAM_API_KEY:-your-steam-api-key}
       - JWT_AUDIENCE=${JWT_AUDIENCE:-mapsnotincluded}
       - JWT_ISSUER=${JWT_ISSUER:-mapsnotincluded}

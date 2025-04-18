@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
 
 router.get('/verify', async (req, res) => {
     const verifyURL = new URL(process.env.API_URL + '/login/verify');
-    
+
     const origin = req.query.origin;
     const rememberMe = req.query.rememberMe;
 
@@ -71,9 +71,9 @@ router.get('/verify', async (req, res) => {
     const token = jwt.sign({
         steamId,
         steamData,
-    }, Buffer.from(process.env.BASE64_JWT_SIGNING_TOKEN, 'base64'), {
-        algorithm: 'HS256',
-        expiresIn: process.env.JWT_SESSION_EXPIRY || '7d',
+    }, Buffer.from(process.env.MNI_JWT_PRIVATE_KEY, 'base64'), {
+        algorithm: 'RS256',
+        expiresIn: process.env.JWT_SESSION_EXPIRY || '90d',
         audience: process.env.JWT_AUDIENCE, 
         issuer: process.env.JWT_ISSUER,
     });
