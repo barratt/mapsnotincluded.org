@@ -42,8 +42,6 @@ services:
       - MNI_JWT_PRIVATE_KEY=${MNI_JWT_PRIVATE_KEY:-your-base64-private-key}
       - MNI_JWT_PUBLIC_KEY=${MNI_JWT_PUBLIC_KEY:-your-base64-public-key}
       - STEAM_API_KEY=${STEAM_API_KEY:-your-steam-api-key}
-      - JWT_AUDIENCE=${JWT_AUDIENCE:-mapsnotincluded}
-      - JWT_ISSUER=${JWT_ISSUER:-mapsnotincluded}
       - MONGO_URI=${MONGO_URI:-mongodb://mni:password@mongo:27017/mapsnotincluded}
       - MONGO_DB=${MONGO_DB:-mapsnotincluded}
     depends_on:

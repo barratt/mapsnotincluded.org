@@ -99,7 +99,7 @@ router.get('/verify', async (req, res) => {
 
     // Add PEM headers if they don't exist
     const formattedPrivateKey = privateKey.includes('-----BEGIN') ? privateKey :
-        `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+        `-----BEGIN PRIVATE KEY-----\n${privateKeyBase64}\n-----END PRIVATE KEY-----`;
 
     const token = jwt.sign(
         {
@@ -108,9 +108,8 @@ router.get('/verify', async (req, res) => {
         formattedPrivateKey,
         {
             algorithm: 'RS256',
-            expiresIn: process.env.JWT_SESSION_EXPIRY || '90d',
-            audience: process.env.JWT_AUDIENCE,
-            issuer: process.env.JWT_ISSUER,
+            audience: 'mapsnotincluded',
+            issuer: 'mapsnotincluded'
         }
     );
 
