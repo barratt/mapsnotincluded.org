@@ -2,11 +2,8 @@ const openid = require('openid');
 const express = require('express');
 
 const jwt = require('jsonwebtoken');
-const SteamAPI = require('steamapi');
 
 const router = express.Router();
-
-const steam = new SteamAPI(process.env.STEAM_API_KEY);
 
 router.get('/', async (req, res) => {
 
@@ -91,39 +88,31 @@ router.get('/verify', async (req, res) => {
 
         console.error('Error during OpenID verification:', error.message || error);
 
-        return res.status(400).json({ error: 'Authentication failed', details: error.message || 'Unknown error' });
+        return res.status(400).json({error: 'Authentication failed', details: error.message || 'Unknown error'});
     }
 
     let steamId = identifier.replace('https://steamcommunity.com/openid/id/', '');
-
-    // Update steam data
-    let steamData;
-
-    try {
-        steamData = await steam.get(`/ISteamUser/GetPlayerSummaries/v2?steamids=${steamId}`)
-        steamData = steamData.response.players[0];
-    } catch (e) {
-        console.error('Error fetching Steam data:', e);
-        // Continue with null steamData, as this is not critical for authentication
-    }
 
     // Decode the base64 private key and format it as PEM
     const privateKeyBase64 = process.env.MNI_JWT_PRIVATE_KEY;
     const privateKey = Buffer.from(privateKeyBase64, 'base64').toString('utf8');
 
     // Add PEM headers if they don't exist
-    const formattedPrivateKey = privateKey.includes('-----BEGIN') ? privateKey : 
+    const formattedPrivateKey = privateKey.includes('-----BEGIN') ? privateKey :
         `-----BEGIN PRIVATE KEY-----\n${privateKeyBase64}\n-----END PRIVATE KEY-----`;
 
-    const token = jwt.sign({
-        steamId,
-        steamData,
-    }, formattedPrivateKey, {
-        algorithm: 'RS256',
-        expiresIn: process.env.JWT_SESSION_EXPIRY || '90d',
-        audience: process.env.JWT_AUDIENCE, 
-        issuer: process.env.JWT_ISSUER,
-    });
+    const token = jwt.sign(
+        {
+            steamId
+        },
+        formattedPrivateKey,
+        {
+            algorithm: 'RS256',
+            expiresIn: process.env.JWT_SESSION_EXPIRY || '90d',
+            audience: process.env.JWT_AUDIENCE,
+            issuer: process.env.JWT_ISSUER,
+        }
+    );
 
     console.log('Origin:', origin);
 
@@ -134,10 +123,7 @@ router.get('/verify', async (req, res) => {
     if (!returnUrl || returnUrl === 'undefined' || returnUrl === 'null') {
         console.log('No valid return URL, returning JSON response');
         // They do not want to be redirected, return the token
-        return res.json({
-            token,
-            steamData,
-        });
+        return res.json({ token });
     }
 
     try {
@@ -170,13 +156,11 @@ router.get('/verify', async (req, res) => {
 
         console.error('Invalid return URL format:', returnUrl, error);
 
-        return res.status(400).json({ 
-            error: 'Invalid return URL format', 
-            token,
-            steamData 
+        return res.status(400).json({
+            error: 'Invalid return URL format',
+            token
         });
     }
 });
-
 
 module.exports = router;
