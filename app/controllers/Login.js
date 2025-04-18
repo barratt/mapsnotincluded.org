@@ -99,7 +99,7 @@ router.get('/verify', async (req, res) => {
 
     // Add PEM headers if they don't exist
     const formattedPrivateKey = privateKey.includes('-----BEGIN') ? privateKey :
-        `-----BEGIN PRIVATE KEY-----\n${privateKeyBase64}\n-----END PRIVATE KEY-----`;
+        `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
 
     const token = jwt.sign(
         {

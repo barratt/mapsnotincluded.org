@@ -30,7 +30,7 @@ const authenticate = (req, res, next) => {
 
             // Add PEM headers if they don't exist
             const formattedPublicKey = publicKey.includes('-----BEGIN') ? publicKey : 
-                `-----BEGIN PUBLIC KEY-----\n${publicKeyBase64}\n-----END PUBLIC KEY-----`;
+                `-----BEGIN PUBLIC KEY-----\n${publicKey}\n-----END PUBLIC KEY-----`;
 
             const decoded = jwt.verify(token, formattedPublicKey);
 
