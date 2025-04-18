@@ -23,8 +23,11 @@ onMounted(() => {
   // Store current route's query param
   queryParams.value = { ...route.query, embedded: 'mni' };
 
-  // add token to query params if it exists
-  const token = useUserStore().token;
+  // add token to query params if it exists and is valid
+  const userStore = useUserStore();
+
+  const token = userStore.getValidToken();
+
   if (token) {
     queryParams.value.token = token;
   }

@@ -17,10 +17,18 @@ export function requestCoordinate() {
     showLoaderOnConfirm: true,
     inputValidator: (coordinate) => validateCoordinate(coordinate),
     preConfirm: (coordinates) => {
+
+      const userStore = useUserStore();
+      const token = userStore.getValidToken();
+
+      if (!token) {
+        throw new Error("Authentication required. Please login.");
+      }
+
       return fetch(`${apiUrl}/coordinates/request/` + coordinates, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${useUserStore().token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((response) => {

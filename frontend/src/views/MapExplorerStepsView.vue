@@ -23,8 +23,11 @@ onMounted(() => {
 
   queryParams.value = { ...route.query, embedded: 'mni' };
 
-  // add token to query params if it exists
-  const token = useUserStore().token;
+  // add token to query params if it exists and is valid
+  const userStore = useUserStore()
+
+  const token = userStore.getValidToken();
+
   if (token) {
     queryParams.value.token = token;
   }
@@ -33,11 +36,11 @@ onMounted(() => {
   let url = MAPEXPLORER_URL;
 
   url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
-  
+
   if (route.params.seed) {
     url = `${url}#${route.params.seed}`;
   }
-  
+
   iframeUrl.value = url;
 })
 </script>
