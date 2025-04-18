@@ -107,10 +107,18 @@ router.get('/verify', async (req, res) => {
         // Continue with null steamData, as this is not critical for authentication
     }
 
+    // Decode the base64 private key and format it as PEM
+    const privateKeyBase64 = process.env.MNI_JWT_PRIVATE_KEY;
+    const privateKey = Buffer.from(privateKeyBase64, 'base64').toString('utf8');
+
+    // Add PEM headers if they don't exist
+    const formattedPrivateKey = privateKey.includes('-----BEGIN') ? privateKey : 
+        `-----BEGIN PRIVATE KEY-----\n${privateKeyBase64}\n-----END PRIVATE KEY-----`;
+
     const token = jwt.sign({
         steamId,
         steamData,
-    }, Buffer.from(process.env.MNI_JWT_PRIVATE_KEY, 'base64'), {
+    }, formattedPrivateKey, {
         algorithm: 'RS256',
         expiresIn: process.env.JWT_SESSION_EXPIRY || '90d',
         audience: process.env.JWT_AUDIENCE, 

@@ -24,7 +24,15 @@ const authenticate = (req, res, next) => {
 
             let token = authorization.split(' ')[1];
 
-            const decoded = jwt.verify(token, Buffer.from(process.env.MNI_JWT_PUBLIC_KEY, 'base64'));
+            // Decode the base64 public key and format it as PEM
+            const publicKeyBase64 = process.env.MNI_JWT_PUBLIC_KEY;
+            const publicKey = Buffer.from(publicKeyBase64, 'base64').toString('utf8');
+
+            // Add PEM headers if they don't exist
+            const formattedPublicKey = publicKey.includes('-----BEGIN') ? publicKey : 
+                `-----BEGIN PUBLIC KEY-----\n${publicKeyBase64}\n-----END PUBLIC KEY-----`;
+
+            const decoded = jwt.verify(token, formattedPublicKey);
 
             req.user = decoded;
 
