@@ -14,6 +14,11 @@ jobs:
   release_all_clusters:
     runs-on: ubuntu-latest
     steps:
+
+      # For GH CLI
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Set NOW
         id: set_now
         run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
