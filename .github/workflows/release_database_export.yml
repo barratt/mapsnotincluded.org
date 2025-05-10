@@ -11,38 +11,89 @@ permissions:
   contents: write # Permission to create releases
 
 jobs:
-  export_database:
+  prepare_release:
     runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      now: ${{ steps.set_now.outputs.now }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Download data.zip
-        env:
-          API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
-        run: |
-          curl --fail -H "API_KEY: $API_KEY" -o data.zip https://ingest.mapsnotincluded.org/export
-      - name: set NOW
-        run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      - name: Set NOW
+        id: set_now
+        run: echo "now=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "data-${{ env.NOW }}"
-          release_name: "Data ${{ env.NOW }} "
-          body: "Automated export of collected seed data in JSON format."
+          tag_name: "data-${{ steps.set_now.outputs.now }}"
+          release_name: "Data export ${{ steps.set_now.outputs.now }}"
+          body: "Automated export of all cluster seed data."
           draft: false
           prerelease: false
-      - name: Upload data.zip to release
+
+  export_database:
+    needs: prepare_release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cluster:
+          - SNDST-A
+          - CER-A
+          - CERS-A
+          - OCAN-A
+          - S-FRZ
+          - LUSH-A
+          - FRST-A
+          - VOLCA
+          - BAD-A
+          - HTFST-A
+          - OASIS-A
+          - V-SNDST-C
+          - V-CER-C
+          - V-CERS-C
+          - V-OCAN-C
+          - V-SWMP-C
+          - V-SFRZ-C
+          - V-LUSH-C
+          - V-FRST-C
+          - V-VOLCA-C
+          - V-BAD-C
+          - V-HTFST-C
+          - V-OASIS-C
+          - SNDST-C
+          - CER-C
+          - FRST-C
+          - SWMP-C
+          - M-SWMP-C
+          - M-BAD-C
+          - M-FRZ-C
+          - M-FLIP-C
+          - M-RAD-C
+          - M-CERS-C
+    steps:
+      - name: Download ${{ matrix.cluster }}-data.zip
+        env:
+          API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
+        run: |
+          curl --fail -H "API_KEY: $API_KEY" \
+               -o ${{ matrix.cluster }}-data.zip \
+               https://ingest.mapsnotincluded.org/export/${{ matrix.cluster }}
+
+      - name: Upload ${{ matrix.cluster }}-data.zip to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./data.zip
-          asset_name: data-${{ env.NOW }}.zip
+          upload_url: ${{ needs.prepare_release.outputs.upload_url }}
+          asset_path: ./${{ matrix.cluster }}-data.zip
+          asset_name: ${{ matrix.cluster }}-data-${{ needs.prepare_release.outputs.now }}.zip
           asset_content_type: application/zip
+
+  cleanup_old_releases:
+    needs: prepare_release
+    runs-on: ubuntu-latest
+    steps:
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
