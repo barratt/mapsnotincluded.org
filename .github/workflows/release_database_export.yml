@@ -11,18 +11,19 @@ permissions:
   contents: write # Permission to create releases
 
 jobs:
-  release_all_clusters:
+  export_database:
     runs-on: ubuntu-latest
     steps:
-
-      # For GH CLI
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set NOW
-        id: set_now
+      - name: Download data
+        env:
+          API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
+        run: |
+          curl --fail -H "API_KEY: $API_KEY" -o basegame-data.zip https://ingest.mapsnotincluded.org/export/basegame
+          curl --fail -H "API_KEY: $API_KEY" -o spacedout-data.zip https://ingest.mapsnotincluded.org/export/spacedout
+          curl --fail -H "API_KEY: $API_KEY" -o spacedout-classic-data.zip https://ingest.mapsnotincluded.org/export/spacedout-classic
+          curl --fail -H "API_KEY: $API_KEY" -o frostyplanet-data.zip https://ingest.mapsnotincluded.org/export/frostyplanet
+      - name: set NOW
         run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
@@ -30,42 +31,51 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "data-${{ env.NOW }}"
-          release_name: "Data export ${{ env.NOW }}"
-          body: "Automated export of all cluster seed data."
+          release_name: "Data ${{ env.NOW }} "
+          body: "Automated export of collected seed data in JSON format."
           draft: false
           prerelease: false
-
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gh
-
-      - name: Download and upload cluster data sequentially
+      # Basegame
+      - name: Upload basegame-data.zip to release
+        uses: actions/upload-release-asset@v1
         env:
-          API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          UPLOAD_URL="${{ steps.create_release.outputs.upload_url }}"
-
-          CLUSTERS=(
-            SNDST-A CER-A CERS-A OCAN-A S-FRZ LUSH-A FRST-A VOLCA BAD-A HTFST-A OASIS-A
-            V-SNDST-C V-CER-C V-CERS-C V-OCAN-C V-SWMP-C V-SFRZ-C V-LUSH-C V-FRST-C
-            V-VOLCA-C V-BAD-C V-HTFST-C V-OASIS-C SNDST-C CER-C FRST-C SWMP-C
-            M-SWMP-C M-BAD-C M-FRZ-C M-FLIP-C M-RAD-C M-CERS-C
-          )
-
-          for CLUSTER in "${CLUSTERS[@]}"; do
-            echo "Processing $CLUSTER..."
-            FILE_NAME="${CLUSTER}-data-${NOW}.zip"
-
-            curl --fail -H "API_KEY: $API_KEY" \
-              -o "$FILE_NAME" \
-              "https://ingest.mapsnotincluded.org/export/$CLUSTER"
-
-            echo "Uploading $FILE_NAME..."
-            gh release upload "data-${NOW}" "$FILE_NAME" --clobber
-          done
-
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./basegame-data.zip
+          asset_name: basegame-data-${{ env.NOW }}.zip
+          asset_content_type: application/zip
+      # Spaced Out
+      - name: Upload spacedout-data.zip to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./spacedout-data.zip
+          asset_name: spacedout-data-${{ env.NOW }}.zip
+          asset_content_type: application/zip
+      # Spaced Out Classic
+      - name: Upload spacedout-classic-data.zip to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./spacedout-classic-data.zip
+          asset_name: spacedout-classic-data-${{ env.NOW }}.zip
+          asset_content_type: application/zip
+      # Frosty Planet
+      - name: Upload frostyplanet-data.zip to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./frostyplanet-data.zip
+          asset_name: frostyplanet-data-${{ env.NOW }}.zip
+          asset_content_type: application/zip
+      # Clean up
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
