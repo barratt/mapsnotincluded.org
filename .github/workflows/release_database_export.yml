@@ -30,6 +30,11 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+
       - name: Download and upload cluster data sequentially
         env:
           API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
@@ -55,10 +60,6 @@ jobs:
             echo "Uploading $FILE_NAME..."
             gh release upload "data-${NOW}" "$FILE_NAME" --clobber
           done
-
-        # `gh` CLI is needed for uploads inside loop
-      - name: Install GitHub CLI
-        uses: cli/cli@v2
 
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
