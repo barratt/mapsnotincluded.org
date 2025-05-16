@@ -2,30 +2,34 @@ Welcome to MapsNotIncluded.org
 
 A fully opensource alternative to [ToolsNotIncluded.net](https://ToolsNotIncluded.net) by [Cairath](https://github.com/Cairath)
 
+Feel free to join us on [Discord](https://discord.gg/3vhCpp6PNq).
+
 ## Special thanks to: 
+
  - [RoboPhred](https://github.com/RoboPhred/oni-save-parser#readme) - Thank you for your  contributions to parsing and understanding ONI saves
  - [Stefan Oltmann](https://stefan-oltmann.de) - Thank you for the web interface to parse ONI saves that was made fully open source, and directly contributing to this project in support and development. 
  - [Sgt_lmalas](https://github.com/Sgt-Imalas/) - Thank you for building an awesome world generation mod, which largely inspired our first version, until you made changes specifically for us, hope we can keep annoying you for more for a long time!
  - [Cairath](https://github.com/Cairath) - Thank you for giving the community such a wonderful tool for years and years with no expectation of payment. We hope one day to collaborate directly together! Also thank you for your administration of the Discord server and for the guides written for modding ONI!
- - To [@pardeike](https://github.com/pardeike), creator of [Harmony](https://github.com/pardeike/Harmony), the library that made modding ONI possible. 
+ - To [@pardeike](https://github.com/pardeike), creator of [Harmony](https://github.com/pardeike/Harmony), the library that made modding ONI possible.
 
-# Getting Started
+## Mod download
 
-This project is still in its infantsy, if you'd like to contribute please either: Raise an issue, submit a PR or join our [Discord](https://discord.gg/3vhCpp6PNq).
+You can collect & contribute seeds to the database by downloading and running the mod.
 
-There is a docker-compose.yml file that should allow you to get up and running quickly, note it may be out of date at times, ping us on Discord if this is the case!
-
-If you've never used docker before, simply install and run the following command in your favourite flavour of terminal, and you should have a full copy of MapsNotIncluded. You are advised to check out the docker-compose.yml file to see what environment variables are required, and 
-
-```
-docker compose up
-```
+The latest release can be downloaded [here](https://github.com/barratt/mapsnotincluded.org/releases/latest/download/MapsNotIncludedMod.zip).
 
 ## Data exports
 
 The database is exported every day at midnight UTC and is available for download [here](https://github.com/StefanOltmann/oni-seed-browser-data/releases).
 
+## Funding
+
+This project is fully open source and free to use, with no restrictions on functionality — now or in the future.
+
+While there's no expectation of payment or donations, we’d love it if you’d consider [contributing](https://mapsnotincluded.org/contribute).
+
 ## Structure
+
 The main parts ongoing here are: 
  - Frontend
  - App
@@ -43,18 +47,17 @@ The 'Ingest Service' is again hosted over on Steps' github, but it is the URL en
 
 The 'Hash Service' is used to automate the process of getting OxygenNotIncluded hash files, we use this to verify the integrity of the worldgen files with the latest game updates. 
 
-## Funding
-This project is fully open source and free to use, with no restrictions on functionality — now or in the future.
-While there's no expectation of payment or donations, we’d love it if you’d consider [contributing](https://mapsnotincluded.org/contribute).
-
 ## How will we know the service won't shut down?
+
 It might! My plan is to be fully open and transparent, all of the services will be deployable via Docker and periodic exports of the database will be automatically shared on the discord, and the website, we hope to share them in more places too as it becomes more valuable
 
 ## Coding Standards and Best Practices
+
 This is a hobby project, so anything goes at this stage. Please just ensure your code is somewhat readable, please go for more lines over single lines for readability. Please use widely accepted libraries where possible to maximise those who can contribute, and please try to avoid complex logic flows. This is not enterprise. 
 
 Please ensure all code remains cross-platform for as long as possible. 
 
 ### Useful tools
+
 - https://stefan-oltmann.de/oni-save-parser/
 - https://stefan-oltmann.de/oni-seed-browser/
