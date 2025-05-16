@@ -2,7 +2,6 @@ Welcome to MapsNotIncluded.org
 
 A fully opensource alternative to [ToolsNotIncluded.net](https://ToolsNotIncluded.net) by [Cairath](https://github.com/Cairath)
 
-
 ## Special thanks to: 
  - [RoboPhred](https://github.com/RoboPhred/oni-save-parser#readme) - Thank you for your  contributions to parsing and understanding ONI saves
  - [Stefan Oltmann](https://stefan-oltmann.de) - Thank you for the web interface to parse ONI saves that was made fully open source, and directly contributing to this project in support and development. 
@@ -22,6 +21,10 @@ If you've never used docker before, simply install and run the following command
 docker compose up
 ```
 
+## Data exports
+
+The database is exported every day at midnight UTC and is available for download [here](https://github.com/StefanOltmann/oni-seed-browser-data/releases).
+
 ## Structure
 The main parts ongoing here are: 
  - Frontend
@@ -40,8 +43,9 @@ The 'Ingest Service' is again hosted over on Steps' github, but it is the URL en
 
 The 'Hash Service' is used to automate the process of getting OxygenNotIncluded hash files, we use this to verify the integrity of the worldgen files with the latest game updates. 
 
-## Funding 
-This project is completely open source and free, there is no expected payment or donations. In future donations may be accepted to support server costs but the full functionality will be unrestricted forever. 
+## Funding
+This project is fully open source and free to use, with no restrictions on functionality — now or in the future.
+While there's no expectation of payment or donations, we’d love it if you’d consider [contributing](https://mapsnotincluded.org/contribute).
 
 ## How will we know the service won't shut down?
 It might! My plan is to be fully open and transparent, all of the services will be deployable via Docker and periodic exports of the database will be automatically shared on the discord, and the website, we hope to share them in more places too as it becomes more valuable
