@@ -8,6 +8,7 @@ const worldgenPaths = [
     { id: "vanilla", path: `${gamePath}\\OxygenNotIncluded_Data\\StreamingAssets\\worldgen`, traitsPrefix: "traits/" },
     { id: "SpacedOut", path: `${gamePath}\\OxygenNotIncluded_Data\\StreamingAssets\\dlc\\expansion1\\worldgen`, traitsPrefix: "expansion1::traits/"},
     { id: "FrostyPlanet", path: `${gamePath}\\OxygenNotIncluded_Data\\StreamingAssets\\dlc\\dlc2\\worldgen`, traitsPrefix: "dlc2::traits/"},
+    { id: "Prehistoric", path: `${gamePath}\\OxygenNotIncluded_Data\\StreamingAssets\\dlc\\dlc4\\worldgen`, traitsPrefix: "dlc4::traits/"},
 ];
 
 function compileYamlToJson() {

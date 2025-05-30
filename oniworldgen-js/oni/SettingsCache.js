@@ -5,6 +5,7 @@
 const KRandom = require('./KRandom');
 const TagSet = require('./TagSet');
 const WorldTrait = require('./WorldTrait');
+const Tag = require("./Tag");
 
 const SettingsCache = {
   IsInSpacedOutMode: true,
@@ -70,9 +71,35 @@ const SettingsCache = {
       this.clusters[key] = { ...cluster, id: key };
     }
 
-    console.log(`Worlds initialized, ${Object.keys(this.worlds).length} entries`);
-    console.log(`Traits initialized, ${Object.keys(this.worldTraits).length} entries`);
-    console.log(`Clusters initialized, ${Object.keys(this.clusters).length} entries`);
+    // Populate worlds and traits for Prehistoric
+    for (const [key, world] of Object.entries(data.Prehistoric.worlds)) {
+      this.worlds[key] = { ...world, id: key };
+    }
+
+    for (const [key, trait] of Object.entries(data.Prehistoric.traits)) {
+      if (
+        trait.forbiddenDLCIds.includes(
+          this.IsInSpacedOutMode ? this.SpacedOutId : this.BaseGameId,
+        )
+      ) {
+        continue;
+      }
+      this.worldTraits[key] = { ...trait, filePath: key };
+    }
+
+    for (const [key, cluster] of Object.entries(data.Prehistoric.clusters)) {
+      this.clusters[key] = { ...cluster, id: key };
+    }
+
+    console.log(
+      `Worlds initialized, ${Object.keys(this.worlds).length} entries`,
+    );
+    console.log(
+      `Traits initialized, ${Object.keys(this.worldTraits).length} entries`,
+    );
+    console.log(
+      `Clusters initialized, ${Object.keys(this.clusters).length} entries`,
+    );
   },
 
   getRandomWorld() {
@@ -174,7 +201,7 @@ const SettingsCache = {
           traitList.splice(traitList.indexOf(worldTrait), 1);
 
           for (const tag of worldTrait.exclusiveWithTags) {
-            tagSet.add(tag);
+            tagSet.add(new Tag(tag));
           }
         }
       }
