@@ -13,7 +13,7 @@ import { useUserStore } from '@/stores';
 
 const route = useRoute();
 
-const TRAITFINDER_URL = import.meta.env.VITE_TRAITFINDER_URL || 'https://sgt-imalas.github.io/TraitFinder/';
+const TRAITFINDER_URL = import.meta.env.VITE_TRAITFINDER_URL || 'https://mapsnotincluded.github.io/ONITraitFinder/';
 
 const iframeUrl = ref(null)
 const iframeRef = ref(null)
