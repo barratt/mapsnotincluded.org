@@ -15,6 +15,7 @@ namespace MapsNotIncluded_WorldParser.WorldStateData
 		public string gameVersion;
 		public Dictionary<string, string> fileHashes;
 		public string coordinate;
+		public List<string> mixingIds;
 		public Upload_FailedGeneration()
 		{
 			userId = IntegrityCheck.GetUserId();
