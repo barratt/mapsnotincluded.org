@@ -115,7 +115,7 @@ jobs:
         with:
           tag_name: "MNI_Mod_Automatic_Release"
           release_name: "Mod Binary"
-          body_path: "./Desc.md"
+          body_path: "/mod/Desc.md"
           draft: false
           prerelease: false
 
@@ -123,7 +123,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: BuildsZipped/*.*
+          file: mod/BuildsZipped/*.*
           file_glob: true
           tag: MNI_Mod_Automatic_Release
           prerelease: false
