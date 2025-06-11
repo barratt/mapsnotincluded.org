@@ -5,7 +5,7 @@
 		<PackageId>MapsNotIncluded_WorldParser</PackageId>
 		<Version>1.9.0</Version>
 		<Authors>Sgt_Imalas</Authors>
-    <Copyright>$(AssemblyCopyright)</Copyright>
+		<Copyright>$(AssemblyCopyright)</Copyright>
 		<RepositoryUrl>https://github.com/barratt/mapsnotincluded.org</RepositoryUrl>
 	</PropertyGroup>
 
@@ -26,7 +26,7 @@
 		<ModName>MapsNotIncluded Seed Collector</ModName>
 		<ModDescription></ModDescription>
 		<SupportedContent>ALL</SupportedContent> <!-- Use "EXPANSION1_ID" for dlc only -->
-		<MinimumSupportedBuild>663500</MinimumSupportedBuild>
+		<MinimumSupportedBuild>$(LatestVersion)</MinimumSupportedBuild>
 		<APIVersion>2</APIVersion>
 	</PropertyGroup>
 

@@ -16,8 +16,12 @@
 		<QoL2024Feb>596100</QoL2024Feb>
 		<FrostyPlanetBeta>616718</FrostyPlanetBeta>
 		<FrostyPlanetRelease>622222</FrostyPlanetRelease>
+		<PrehistoricPlanetPackRelease>674040</PrehistoricPlanetPackRelease>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<LatestVersion>$(PrehistoricPlanetPackRelease)</LatestVersion>
+	</PropertyGroup>
 
 	<!--Copyright notice-->
 	<PropertyGroup>
