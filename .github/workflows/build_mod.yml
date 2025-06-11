@@ -53,7 +53,7 @@ jobs:
             Install-Module powershell-yaml -Force
             # start creation of release desc. file
             echo "The latest version of the seed collector mod." >> Desc.md
-            echo "latest change -> ${{ env.SHORT_COMMIT }}" >> Desc.md
+            echo "latest change -> $env.SHORT_COMMIT" >> Desc.md
             
             #create version info json file
             echo "[" >> ./BuildsZipped/_ReleaseVersionInfoData.json
