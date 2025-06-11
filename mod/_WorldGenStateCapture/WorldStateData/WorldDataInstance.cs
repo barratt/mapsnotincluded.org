@@ -14,7 +14,7 @@ namespace _WorldGenStateCapture.WorldStateData
 		public List<AsteroidData> asteroids = new List<AsteroidData>();
 		public List<VanillaMap_Entry> starMapEntriesVanilla = null;
 		public List<HexMap_Entry> starMapEntriesSpacedOut = null;
-		public List<string> mixingIds;
+		//public List<string> mixingIds;
 
 		public WorldDataInstance()
 		{

@@ -64,7 +64,7 @@ namespace _WorldGenStateCapture
 
 			data.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
-			data.mixingIds = GetActiveMixingSettingIds();
+			//data.mixingIds = GetActiveMixingSettingIds();
 
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 
@@ -152,7 +152,7 @@ namespace _WorldGenStateCapture
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
 
 			worldDataItem.dlcs = remappedDlcIdNameThings;
-			worldDataItem.mixingIds = GetActiveMixingSettingIds();
+			//worldDataItem.mixingIds = GetActiveMixingSettingIds();
 
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)

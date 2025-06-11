@@ -148,7 +148,7 @@ jobs:
           API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
         run: |
           
-          $filePath = "./mod\Builds\MapsNotIncluded_WorldParser\MapsNotIncluded_WorldParser.dll"
+          $filePath = "Builds/MapsNotIncluded_WorldParser/MapsNotIncluded_WorldParser.dll"
           
           if (Test-Path -Path $filePath) {
           
