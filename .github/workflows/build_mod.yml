@@ -53,7 +53,7 @@ jobs:
             Install-Module powershell-yaml -Force
             # start creation of release desc. file
             echo "The latest version of the seed collector mod." >> ./Desc.md
-            echo "latest change -> $env.SHORT_COMMIT" >> ./Desc.md
+            echo "latest change -> ${{env.SHORT_COMMIT}}" >> ./Desc.md
             
             #create version info json file
             echo "[" >> ./BuildsZipped/_ReleaseVersionInfoData.json
@@ -80,7 +80,10 @@ jobs:
             
             echo "Latest Version: $modVersion" >> ./Desc.md     
 
-            echo "{`"staticId`":`"$modId`",`"version`":`"$modVersion`",`"minimumSupportedBuild`":`"$minGameVersion`"},">> ./BuildsZipped/_ReleaseVersionInfoData.json
+            $ModNameCleaned = $ModName.Replace('''','').Replace('"','')
+            $ModDescCleaned = $ModDesc.Replace('''','').Replace('"','')
+            
+            echo "{`"staticID`":`"$modId`",`"version`":`"$modVersion`",`"minimumSupportedBuild`":`"$minGameVersion`",`"modName`":`"$ModNameCleaned`",`"modDesc`":`"$ModDescCleaned`"},">> ./BuildsZipped/_ReleaseVersionInfoData.json
             
             #create zip file
             Compress-Archive `
@@ -145,7 +148,7 @@ jobs:
           API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
         run: |
           
-          $filePath = "MapsNotIncluded_WorldParser\MapsNotIncluded_WorldParser.dll"
+          $filePath = "./mod/Builds/MapsNotIncluded_WorldParser/MapsNotIncluded_WorldParser.dll"
           
           if (Test-Path -Path $filePath) {
           
