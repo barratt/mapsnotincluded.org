@@ -43,7 +43,8 @@ jobs:
         run: msbuild -t:rebuild -property:Configuration=Release -property:GameLibsFolder="../Lib"
 
       - name: Create Zip target directory
-        run: mkdir BuildZipped
+        run: mkdir BuildsZipped
+
 
       - name: Create individual mod zips and description
         id: buildtext
