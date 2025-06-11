@@ -36,6 +36,10 @@ namespace MapsNotIncluded_WorldParser
                         weirdIdNameThings.Add("FrostyPlanet");
                         break;
 					case DlcManager.DLC3_ID: //bionic booster pack doesnt have any form of woldgen manipulation and isnt part of the backend
+						weirdIdNameThings.Add("BionicBooster");
+						break;
+					case DlcManager.DLC4_ID:
+						weirdIdNameThings.Add("PrehistoricPlanet");
 						break;
 					default:
                         weirdIdNameThings.Add(semiConsistentKleiDlcId); // If it's not a known ID, keep it as is
