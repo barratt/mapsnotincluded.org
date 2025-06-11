@@ -20,65 +20,108 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+  
       - name: Set SHORT_COMMIT environment variable
         shell: pwsh
         run: |
           $SHORT_COMMIT = git rev-parse --short HEAD
           echo "SHORT_COMMIT=$SHORT_COMMIT" >> $env:GITHUB_ENV
+
       - name: Replace credentials
-        run: sed -i 's\7FE9SFM9jdv7CcL\${{ secrets.MNI_API_KEY }}\g' _WorldGenStateCapture\Credentials.cs        
+        run: sed -i 's\7FE9SFM9jdv7CcL\${{ secrets.MNI_API_KEY }}\g' _WorldGenStateCapture\Credentials.cs    
+        
       - name: Insert commit version ID
         run: sed -i 's\REPLACE_SHORT_COMMIT\${{ env.SHORT_COMMIT }}\g' _WorldGenStateCapture\Credentials.cs
+
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
+
       - name: NuGet Restore
         run: msbuild -t:restore -property:Configuration=Release
+
       - name: Build project
         run: msbuild -t:rebuild -property:Configuration=Release -property:GameLibsFolder="../Lib"
-      - name: Create build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          path: mod/Builds/MapsNotIncluded_WorldParser
-          name: MapsNotIncludedMod
-      - name: List all files
-        shell: cmd
-        run: |
-          dir /s /b
-      - name: Move
-        run: move "Builds\MapsNotIncluded_WorldParser" .
-      - name: Zip the directory
-        run: Compress-Archive -Path "MapsNotIncluded_WorldParser" -DestinationPath MapsNotIncludedMod.zip
-      - name: List all files
-        shell: cmd
-        run: |
-          dir /s /b
-      - name: Create GitHub release
-        id: create_release
-        uses: actions/create-release@v1
+
+      - name: Create Zip target directory
+        run: mkdir BuildZipped
+
+      - name: Create individual mod zips and description
+        id: buildtext
+        run: |    
+            # install yaml parser for mod info files
+            Install-Module powershell-yaml -Force
+            # start creation of release desc. file
+            echo "The latest version of the seed collector mod." >> Desc.md
+            echo "latest change -> ${{ env.SHORT_COMMIT }}" >> Desc.md
+            
+            #create version info json file
+            echo "[" >> ./BuildsZipped/_ReleaseVersionInfoData.json
+
+            #iterate through the built mod folders to individually zip them and grep their info
+            $source = './Builds'
+            $destination = './BuildsZipped'
+            $subfolders = Get-ChildItem $source -Directory
+            foreach ($s in $subfolders) { 
+            $folderpath = $s.FullName
+            
+            #parse the mod info files
+            $modInfoData = ConvertFrom-Yaml -Yaml $(Get-Content -Raw "$folderpath/mod_info.yaml") -AllDocuments
+            $modData = ConvertFrom-Yaml -Yaml $(Get-Content -Raw "$folderpath/mod.yaml") -AllDocuments
+            
+            #grep data from mod.yaml file
+            $modId= $modData."staticID"
+            $ModName = $modData."title"
+            $ModDesc = $modData."description"            
+
+            #write version data to version json file
+            $minGameVersion= $modInfoData."minimumSupportedBuild"
+            $modVersion= $modInfoData."version"
+            echo "{`"staticId`":`"$modId`",`"version`":`"$modVersion`",`"minimumSupportedBuild`":`"$minGameVersion`"},">> ./BuildsZipped/_ReleaseVersionInfoData.json
+            
+            #create zip file
+            Compress-Archive `
+            -Path $folderpath/* `
+            -DestinationPath $destination\MapsNotIncludedMod}   
+            #-DestinationPath $destination\$modId}    <- usually here, but there is only one mod, so we can override that
+                        
+            #finalize version info json file
+            echo "]" >> ./BuildsZipped/_ReleaseVersionInfoData.json
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: "mod-${{ env.SHORT_COMMIT }}"
-          release_name: "Mod binary "
-          draft: false
-          prerelease: false
-      - name: Upload MapsNotIncludedMod.zip to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: mod/MapsNotIncludedMod.zip
-          asset_name: MapsNotIncludedMod.zip
-          asset_content_type: application/zip
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
-          keep_latest: 1
-          delete_tag_pattern: mod-*
+          keep_latest: 0
+          delete_tag_pattern: MNI_Mod_Automatic_Release
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "MNI_Mod_Automatic_Release"
+          release_name: "Mod Binary"
+          body_path: "Desc.md"
+          draft: false
+          prerelease: false
+
+      - name: Upload files to github release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: BuildsZipped/*.*
+          file_glob: true
+          tag: MNI_Mod_Automatic_Release
+          prerelease: false
+          overwrite: true
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                      
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2
         with:
@@ -86,6 +129,7 @@ jobs:
           repository: ${{ github.repository }}
           retain_days: 1
           keep_minimum_runs: 3
+
       - name: Compute SHA-256 checksum and send to server
         shell: powershell
         env:

@@ -3,7 +3,7 @@
 	<!-- General Package Properties -->
 	<PropertyGroup>
 		<PackageId>MapsNotIncluded_WorldParser</PackageId>
-		<Version>1.9.0</Version>
+		<Version>2.0.0</Version>
 		<Authors>Sgt_Imalas</Authors>
 		<Copyright>$(AssemblyCopyright)</Copyright>
 		<RepositoryUrl>https://github.com/barratt/mapsnotincluded.org</RepositoryUrl>
@@ -11,7 +11,7 @@
 
 	<!-- Build Properties -->
 	<PropertyGroup>
-		<TargetFramework>net471</TargetFramework>
+		<TargetFramework>net48</TargetFramework>
 		<Configurations>Debug;Release</Configurations>
 		<AssemblyName>MapsNotIncluded_WorldParser</AssemblyName>
 		<RootNamespace>MapsNotIncluded_WorldParser</RootNamespace>
@@ -24,8 +24,7 @@
 	<!-- Mod Info -->
 	<PropertyGroup>
 		<ModName>MapsNotIncluded Seed Collector</ModName>
-		<ModDescription></ModDescription>
-		<SupportedContent>ALL</SupportedContent> <!-- Use "EXPANSION1_ID" for dlc only -->
+		<ModDescription>Automatically collects world seeds for MapsNotIncluded.net</ModDescription>
 		<MinimumSupportedBuild>$(LatestVersion)</MinimumSupportedBuild>
 		<APIVersion>2</APIVersion>
 	</PropertyGroup>
