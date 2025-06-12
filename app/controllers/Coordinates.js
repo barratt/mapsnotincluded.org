@@ -6,6 +6,7 @@ const mongo = require('../lib/mongo');
 
 // /coordinates/request/:id
 router.get('/request/:id', require('../middleware/authentication').authenticate, async (req, res) => {
+
     // Check if the coordinates is already requested
 
     const coordinates = await mongo.db(process.env.MONGO_DB || 'mni').collection('requestedCoordinates').findOne({

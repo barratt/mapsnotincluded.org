@@ -59,4 +59,42 @@ describe("WorldTrait", function () {
         });
     });
   });
+
+  describe("SpaceOut Prehistoric Beta - V-PRE-C-34860057-0-D3-J3ET5", function () {
+    const seed = 34860057;
+    let clusterInfo = SettingsCache.getCluster("PrehistoricClassicCluster");
+    let worldsToGenerate = clusterInfo.worldPlacements;
+
+    let expectedTraits = [
+      // PrehistoricClassicAsteroid
+      [
+        "traits/GlaciersLarge",
+        "expansion1::traits/Volcanoes",
+        "traits/BouldersSmall",
+        "traits/MetalRich",
+      ],
+      ["expansion1::traits/MetalCaves", "traits/SlimeSplats"], // MediumSwampy
+      ["traits/MetalRich"], // TundraMoonlet
+      ["expansion1::traits/CrashedSatellites"], // MarshyMoonlet
+      [], // NiobiumMoonlet
+      [], // MooMoonlet
+      [], // WaterMoonlet
+      [], // MiniRegolithMoonlet
+    ];
+    worldsToGenerate.forEach((worldPlacement, i) => {
+      let worldName = worldPlacement.world.split("/")[1];
+      // let index = worldPlacement.index;
+      console.log(
+        "Generating world: " + worldName +
+          " with seed: " + seed + i + " and index: " + i,
+      );
+      let world = SettingsCache.getWorld(worldName);
+      let traits = SettingsCache.getRandomTraits(seed + i, world);
+
+      let predictedTraits = expectedTraits[i];
+      it(`${worldName} should have ${predictedTraits.join(",")}`, function () {
+        assert.deepStrictEqual(traits, predictedTraits);
+      });
+    });
+  });
 });

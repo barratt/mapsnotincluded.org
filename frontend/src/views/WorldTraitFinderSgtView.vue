@@ -13,7 +13,7 @@ import { useUserStore } from '@/stores';
 
 const route = useRoute();
 
-const TRAITFINDER_URL = import.meta.env.VITE_TRAITFINDER_URL || 'https://sgt-imalas.github.io/TraitFinder/';
+const TRAITFINDER_URL = import.meta.env.VITE_TRAITFINDER_URL || 'https://mapsnotincluded.github.io/ONITraitFinder/';
 
 const iframeUrl = ref(null)
 const iframeRef = ref(null)
@@ -23,8 +23,11 @@ onMounted(() => {
   // Store current route's query param
   queryParams.value = { ...route.query, embedded: 'mni' };
 
-  // add token to query params if it exists
-  const token = useUserStore().token;
+  // add token to query params if it exists and is valid
+  const userStore = useUserStore();
+
+  const token = userStore.getValidToken();
+
   if (token) {
     queryParams.value.token = token;
   }

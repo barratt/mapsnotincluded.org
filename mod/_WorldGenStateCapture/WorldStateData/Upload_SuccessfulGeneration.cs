@@ -13,7 +13,7 @@ namespace _WorldGenStateCapture.WorldStateData
 		public string installationId;
 		public string gameVersion;
 		public Dictionary<string, string> fileHashes;
-		public WorldDataInstance cluster; 
+		public WorldDataInstance cluster;
 		public Upload_SuccessfulGeneration()
 		{
 			userId = IntegrityCheck.GetUserId();

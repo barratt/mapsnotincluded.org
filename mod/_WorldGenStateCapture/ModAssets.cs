@@ -64,6 +64,7 @@ namespace _WorldGenStateCapture
 
 			data.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
+			//data.mixingIds = GetActiveMixingSettingIds();
 
 			string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 
@@ -79,6 +80,19 @@ namespace _WorldGenStateCapture
 				ClearData();
 				App.LoadScene(instance.frontendGameLevel);
 			}));
+		}
+
+		public static List<string> GetActiveMixingSettingIds()
+		{
+			var entries = new List<string>();
+			foreach (var setting in CustomGameSettings.Instance.MixingSettings.Values)
+			{
+				if(CustomGameSettings.Instance.GetCurrentMixingSettingLevel(setting.id).id != "Disabled")
+				{
+					entries.Add(setting.id);
+				}
+			}
+			return BlackBoxInACornerBuriedDeepInMoria.GiveWeirdRemappedDlcIds(entries);
 		}
 
 		public static bool LastConnectionSuccessful = true;
@@ -138,6 +152,7 @@ namespace _WorldGenStateCapture
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
 
 			worldDataItem.dlcs = remappedDlcIdNameThings;
+			//worldDataItem.mixingIds = GetActiveMixingSettingIds();
 
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)

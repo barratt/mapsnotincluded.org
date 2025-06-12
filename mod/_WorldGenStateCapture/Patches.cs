@@ -430,21 +430,25 @@ namespace _WorldGenStateCapture
 					__instance.newGameSettingsPanel.SetSetting((SettingConfig)CustomGameSettingConfigs.ClusterLayout, targetLayout.filePath);
 
 					Debug.Log("Selected cluster: " + Strings.Get(targetLayout.name));
+					var settingsInstance = CustomGameSettings.Instance;
 
 					if (!MNI_Statistics.Instance.IsMixingRun())
 					{
 						Debug.Log("no mixing active this run");
-						//if its a ceres cluster, turn off any mixing, otherwise leave them at default (adjust in the future if klei releases a second mixing dlc, rn ceres comes with everything disabled by default)
-						if (!targetLayout.requiredDlcIds.Contains(DlcManager.DLC2_ID))
+
+						__instance.newGameSettingsPanel.ConsumeMixingSettingsCode("0");
+
+						foreach (var setting in CustomGameSettings.Instance.MixingSettings.Values)
 						{
-							__instance.newGameSettingsPanel.ConsumeMixingSettingsCode("0");
+							if (setting is DlcMixingSettingConfig dlcSetting && targetLayout.requiredDlcIds.Contains(dlcSetting.id))
+							{
+								settingsInstance.SetMixingSetting(dlcSetting, DlcMixingSettingConfig.EnabledLevelId);
+							}
 						}
 					}
 					else
 					{
-
 						Debug.Log("Trying to start a mixing run");
-						var settingsInstance = CustomGameSettings.Instance;
 
 						///turning on all available content pack DLCs
 						foreach (var setting in CustomGameSettings.Instance.MixingSettings.Values)
@@ -466,7 +470,6 @@ namespace _WorldGenStateCapture
 									settingsInstance.SetMixingSetting(dlcSetting, DlcMixingSettingConfig.DisabledLevelId);
 									Debug.Log("content pack for " + setting.id + " not owned, keep disabled");
 								}
-
 								continue;
 							}
 						}
