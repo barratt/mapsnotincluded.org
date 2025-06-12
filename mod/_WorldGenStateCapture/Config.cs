@@ -27,7 +27,7 @@ namespace _WorldGenStateCapture
 		[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMMIXING.DESC")]
 		[JsonProperty]
 		[Limit(0, 100)]
-		public int RandomMixingPercentage { get; set; } = 10;
+		public int RandomMixingPercentage { get; set; } = 50;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.NAME", "STRINGS.WORLDPARSERMODCONFIG.ACCEPTREQUESTED.DESC")]
 		[JsonProperty]
@@ -78,6 +78,8 @@ namespace _WorldGenStateCapture
 			Ceres,
 			[Option("STRINGS.WORLDS.CERESBASEGAMESHATTERED.NAME")]
 			Blasted_Ceres,
+			[Option("STRINGS.CLUSTER_NAMES.PREHISTORIC_BASE_CLUSTER.NAME")]
+			Relica,
 		}
 		public static Dictionary<ClusterSelection_Base, string> ClusterCoordinates_Base = new()
 		{
@@ -93,6 +95,7 @@ namespace _WorldGenStateCapture
 			{ClusterSelection_Base.Volcanea, "VOLCA"},
 			{ClusterSelection_Base.Ceres, "CER-A"},
 			{ClusterSelection_Base.Blasted_Ceres, "CERS-A"},
+			{ClusterSelection_Base.Relica, "PRE-A"},
 		};
 		public enum ClusterSelection_SO
 		{
@@ -143,6 +146,10 @@ namespace _WorldGenStateCapture
 			Ceres_Minor_Cluster,
 			[Option("STRINGS.CLUSTER_NAMES.CERES_SPACEDOUT_SHATTERED_CLUSTER.NAME")]
 			Ceres_Shattered_Cluster,
+			[Option("STRINGS.CLUSTER_NAMES.PREHISTORIC_CLASSIC_CLUSTER.NAME")]
+			Relica,
+			[Option("STRINGS.CLUSTER_NAMES.PREHISTORIC_SPACEDOUT_CLUSTER.NAME")]
+			Relica_Minor,
 		}
 		public static Dictionary<ClusterSelection_SO, string> ClusterCoordinates_SO = new()
 		{
@@ -169,6 +176,8 @@ namespace _WorldGenStateCapture
 			{ClusterSelection_SO.Blasted_Ceres_Cluster, "V-CERS-C"},
 			{ClusterSelection_SO.Ceres_Minor_Cluster, "CER-C"},
 			{ClusterSelection_SO.Ceres_Shattered_Cluster, "M-CERS-C"},
+			{ClusterSelection_SO.Relica, "V-PRE-C"},
+			{ClusterSelection_SO.Relica_Minor, "PRE-C"},
 
 		};
 
