@@ -15,10 +15,22 @@ namespace _WorldGenStateCapture
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.DESC")]
 		[JsonProperty]
 		public ClusterSelection_Base ClusterSelection_BaseGame { get; set; } = ClusterSelection_Base.Random;
+		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE2.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE2.DESC")]
+		[JsonProperty]
+		public ClusterSelection_Base ClusterSelection_BaseGame2 { get; set; } = ClusterSelection_Base.Random;
+		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE3.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE3.DESC")]
+		[JsonProperty]
+		public ClusterSelection_Base ClusterSelection_BaseGame3 { get; set; } = ClusterSelection_Base.Random;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC")]
 		[JsonProperty]
 		public ClusterSelection_SO ClusterSelection_SpacedOut { get; set; } = ClusterSelection_SO.Random;
+		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC2.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC2.DESC")]
+		[JsonProperty]
+		public ClusterSelection_SO ClusterSelection_SpacedOut2 { get; set; } = ClusterSelection_SO.Random; 
+		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC3.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC3.DESC")]
+		[JsonProperty]
+		public ClusterSelection_SO ClusterSelection_SpacedOut3 { get; set; } = ClusterSelection_SO.Random;
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETNUMBER.DESC")]
 		[JsonProperty]
@@ -83,23 +95,6 @@ namespace _WorldGenStateCapture
 			[Option("STRINGS.WORLDS.PREHISTORICSHATTERED.NAME")]
 			Blasted_Relica,
 		}
-		public static Dictionary<ClusterSelection_Base, string> ClusterCoordinates_Base = new()
-		{
-			{ClusterSelection_Base.The_Badlands, "BAD-A"},
-			{ClusterSelection_Base.Arboria, "FRST-A"},
-			{ClusterSelection_Base.Aridio, "HTFST-A"},
-			{ClusterSelection_Base.Verdante, "LUSH-A"},
-			//{ClusterSelection_Base.Skewed_Asteroid, "KF23-A"}, //only 1 seed available
-			{ClusterSelection_Base.Oasisse, "OASIS-A"},
-			{ClusterSelection_Base.Oceania, "OCAN-A"},
-			{ClusterSelection_Base.Terra, "SNDST-A"},
-			{ClusterSelection_Base.Rime, "S-FRZ"},
-			{ClusterSelection_Base.Volcanea, "VOLCA"},
-			{ClusterSelection_Base.Ceres, "CER-A"},
-			{ClusterSelection_Base.Blasted_Ceres, "CERS-A"},
-			{ClusterSelection_Base.Relica, "PRE-A"},
-			{ClusterSelection_Base.Blasted_Relica, "PRES-A"},
-		};
 		public enum ClusterSelection_SO
 		{
 			[Option("STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.RANDOMIZEDGEN.DESC")]
@@ -156,6 +151,24 @@ namespace _WorldGenStateCapture
 			[Option("STRINGS.CLUSTER_NAMES.PREHISTORIC_SHATTERED_CLUSTER.NAME")]
 			Blasted_Relica,
 		}
+
+		public static Dictionary<ClusterSelection_Base, string> ClusterCoordinates_Base = new()
+		{
+			{ClusterSelection_Base.The_Badlands, "BAD-A"},
+			{ClusterSelection_Base.Arboria, "FRST-A"},
+			{ClusterSelection_Base.Aridio, "HTFST-A"},
+			{ClusterSelection_Base.Verdante, "LUSH-A"},
+			//{ClusterSelection_Base.Skewed_Asteroid, "KF23-A"}, //only 1 seed available
+			{ClusterSelection_Base.Oasisse, "OASIS-A"},
+			{ClusterSelection_Base.Oceania, "OCAN-A"},
+			{ClusterSelection_Base.Terra, "SNDST-A"},
+			{ClusterSelection_Base.Rime, "S-FRZ"},
+			{ClusterSelection_Base.Volcanea, "VOLCA"},
+			{ClusterSelection_Base.Ceres, "CER-A"},
+			{ClusterSelection_Base.Blasted_Ceres, "CERS-A"},
+			{ClusterSelection_Base.Relica, "PRE-A"},
+			{ClusterSelection_Base.Blasted_Relica, "PRES-A"},
+		};
 		public static Dictionary<ClusterSelection_SO, string> ClusterCoordinates_SO = new()
 		{
 			{ClusterSelection_SO.Folia_Cluster, "FRST-C"},
@@ -191,14 +204,41 @@ namespace _WorldGenStateCapture
 		{
 			if (DlcManager.IsExpansion1Active())
 			{
-				if (ClusterCoordinates_SO.TryGetValue(Instance.ClusterSelection_SpacedOut, out targetPrefix))
+				bool fixedCluster = ClusterCoordinates_SO.TryGetValue(Instance.ClusterSelection_SpacedOut, out targetPrefix);
+				bool secondary = ClusterCoordinates_SO.TryGetValue(Instance.ClusterSelection_SpacedOut2, out var targetPrefix2);
+				bool tertiary = ClusterCoordinates_SO.TryGetValue(Instance.ClusterSelection_SpacedOut3, out var targetPrefix3);
+
+				if (fixedCluster)
+				{
+					List<string> possiblePrefixes =[targetPrefix];
+					if(secondary)
+						possiblePrefixes.Add(targetPrefix2);
+					if(secondary && tertiary)
+						possiblePrefixes.Add(targetPrefix3);
+
+					targetPrefix = possiblePrefixes.GetRandom();
 					return true;
+				}
 				return false;
 			}
 			else
 			{
-				if (ClusterCoordinates_Base.TryGetValue(Instance.ClusterSelection_BaseGame, out targetPrefix))
+
+				bool fixedCluster = ClusterCoordinates_Base.TryGetValue(Instance.ClusterSelection_BaseGame, out targetPrefix);
+				bool secondary = ClusterCoordinates_Base.TryGetValue(Instance.ClusterSelection_BaseGame2, out var targetPrefix2);
+				bool tertiary = ClusterCoordinates_Base.TryGetValue(Instance.ClusterSelection_BaseGame3, out var targetPrefix3);
+
+				if (fixedCluster)
+				{
+					List<string> possiblePrefixes = [targetPrefix];
+					if (secondary)
+						possiblePrefixes.Add(targetPrefix2);
+					if (secondary && tertiary)
+						possiblePrefixes.Add(targetPrefix3);
+
+					targetPrefix = possiblePrefixes.GetRandom();
 					return true;
+				}
 				return false;
 			}
 		}

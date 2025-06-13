@@ -35,6 +35,26 @@
 				public static LocString NAME = "Target Cluster (DLC)";
 				public static LocString DESC = "Coordinate prefix of the cluster to parse seeds from.";
 			}
+			public class TARGETCLUSTERBASE2
+			{
+				public static LocString NAME = "Secondary Target World (Basegame)";
+				public static LocString DESC = "Add a second asteroid to collect seeds from.\nOnly has an effect when \"Target World\" is set";
+			}
+			public class TARGETCLUSTERDLC2
+			{
+				public static LocString NAME = "Secondary Target Cluster (DLC)";
+				public static LocString DESC = "Add a second cluster to collect seeds from.\nOnly has an effect when \"Target Cluster\" is set";
+			}
+			public class TARGETCLUSTERBASE3
+			{
+				public static LocString NAME = "Tertiary Target World (Basegame)";
+				public static LocString DESC = "Add a third asteroid to collect seeds from.\nOnly has an effect when \"Secondary Target World\" is set";
+			}
+			public class TARGETCLUSTERDLC3
+			{
+				public static LocString NAME = "Tertiary Target Cluster (DLC)";
+				public static LocString DESC = "Add a third cluster to collect seeds from.\nOnly has an effect when \"Secondary Target Cluster\" is set";
+			}
 			public class TARGETNUMBER
 			{
 				public static LocString NAME = "Seeds per Session";
