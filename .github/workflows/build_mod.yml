@@ -86,9 +86,8 @@ jobs:
             echo "{`"staticID`":`"$modId`",`"version`":`"$modVersion`",`"minimumSupportedBuild`":`"$minGameVersion`",`"modName`":`"$ModNameCleaned`",`"modDesc`":`"$ModDescCleaned`"},">> ./BuildsZipped/_ReleaseVersionInfoData.json
             
             #create zip file
-            Compress-Archive `
-            -Path $folderpath/* `  
-            -DestinationPath $destination\$modId}
+            Compress-Archive -Path $folderpath/* -DestinationPath ./BuildsZipped/$modId 
+            }
                         
             #finalize version info json file
             echo "]}" >> ./BuildsZipped/_ReleaseVersionInfoData.json
