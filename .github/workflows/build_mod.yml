@@ -87,9 +87,8 @@ jobs:
             
             #create zip file
             Compress-Archive `
-            -Path $folderpath/* `
-            -DestinationPath $destination\MapsNotIncludedMod}   
-            #-DestinationPath $destination\$modId}    <- usually here, but there is only one mod, so we can override that
+            -Path $folderpath/* `  
+            -DestinationPath $destination\$modId}
                         
             #finalize version info json file
             echo "]}" >> ./BuildsZipped/_ReleaseVersionInfoData.json
