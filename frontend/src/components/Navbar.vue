@@ -80,7 +80,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
               {{ $t("coordinate_request_dialog.title") }}
             </button>
             <a v-else :href="loginUrl">
-              <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" />
+              <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" crossorigin />
             </a>
           </div>
         </ul>
