@@ -12,6 +12,9 @@
     "@headlessui/vue": "^1.7.23",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "leaflet": "^1.9.4",
+    "leaflet-gesture-handling": "^1.2.2",
+    "leaflet.fullscreen": "^4.0.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.12.4",
     "vue": "^3.4.29",
@@ -19,6 +22,8 @@
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.18",
+    "@types/leaflet.fullscreen": "^3.0.2",
     "@vitejs/plugin-vue": "^5.0.5",
     "sass": "^1.32.13",
     "vite": "^5.3.1"
