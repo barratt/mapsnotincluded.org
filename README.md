@@ -41,15 +41,15 @@ The 'Frontend' is the 'main' user interface that currently acts as parent to Ste
 
 The 'App' is a general NodeJS api, and is for day-to-day api calls such as requesting a seed.
 
-The 'Mod' is what you run on your PC, on Discord we have a few dedicated contributors that run this mod 24/7, it is responsible for automating the OxygenNotIncluded worldgen and submitting the resuts to the Ingest Server
+The 'Mod' is what you run on your PC, on Discord we have a few dedicated contributors that run this mod 24/7, it is responsible for automating the Oxygen Not Included worldgen and submitting the resuts to the Ingest Server.
 
-The 'Ingest Service' is again hosted over on Steps' github, but it is the URL endpoint the Mod will call to submit seeds. This service also currently hosts some APIs for Steps' own user interface. You may find reminants of ingest in the app code that hasn't been removed just yet. 
+The 'Ingest Service' is again hosted over on Steps' Github, but it is the URL endpoint the Mod will call to submit seeds. This service also currently hosts some APIs for Steps' own user interface. You may find reminants of ingest in the app code that hasn't been removed just yet. 
 
-The 'Hash Service' is used to automate the process of getting OxygenNotIncluded hash files, we use this to verify the integrity of the worldgen files with the latest game updates. 
+The 'Hash Service' is used to automate the process of getting Oxygen Not Included hash files, we use this to verify the integrity of the worldgen files with the latest game updates. 
 
 ## How will we know the service won't shut down?
 
-It might! My plan is to be fully open and transparent, all of the services will be deployable via Docker and periodic exports of the database will be automatically shared on the discord, and the website, we hope to share them in more places too as it becomes more valuable
+While we do not anticipate the service shutting down anytime soon, and we are committed to its continued operation, there is always a small possibility of unforeseen circumstances. My plan is to be fully open and transparent, all of the services will be deployable via Docker and periodic exports of the database will be automatically shared on the Discord and the website. The AGPL license ensures that any modifications or improvements made by anyone in the community are also released publicly. We hope to share them in more places too as it becomes more valuable.
 
 ## Coding Standards and Best Practices
 
