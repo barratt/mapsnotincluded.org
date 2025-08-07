@@ -2,6 +2,7 @@
 using PeterHan.PLib.Options;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace _WorldGenStateCapture
 {
@@ -11,23 +12,44 @@ namespace _WorldGenStateCapture
 	[ModInfo("World Parser")]
 	public class Config : SingletonOptions<Config>
 	{
+		[Option("STRINGS.WORLDPARSERMODCONFIG.GETSTEAMTOKEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.GETSTEAMTOKEN.DESC")]
+		[JsonIgnore]
+		public System.Action<object> Button_OpenCarepackageEditor => (_) => Application.OpenURL("https://steam.stefanoltmann.workers.dev/login");
 
+		[Option("STRINGS.WORLDPARSERMODCONFIG.STEAMTOKEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.STEAMTOKEN.DESC")]
+		[JsonProperty]
+		public string MNI_AuthToken { get; set; } = string.Empty;
+
+		[RequireDLC(DlcManager.VANILLA_ID, true)]
+		[RequireDLC(DlcManager.EXPANSION1_ID, false)]
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE.DESC")]
 		[JsonProperty]
 		public ClusterSelection_Base ClusterSelection_BaseGame { get; set; } = ClusterSelection_Base.Random;
+
+		[RequireDLC(DlcManager.VANILLA_ID, true)]
+		[RequireDLC(DlcManager.EXPANSION1_ID, false)]
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE2.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE2.DESC")]
 		[JsonProperty]
 		public ClusterSelection_Base ClusterSelection_BaseGame2 { get; set; } = ClusterSelection_Base.Random;
+
+		[RequireDLC(DlcManager.VANILLA_ID, true)]
+		[RequireDLC(DlcManager.EXPANSION1_ID, false)]
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE3.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERBASE3.DESC")]
 		[JsonProperty]
 		public ClusterSelection_Base ClusterSelection_BaseGame3 { get; set; } = ClusterSelection_Base.Random;
 
+
+		[RequireDLC(DlcManager.EXPANSION1_ID, true)]
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC.DESC")]
 		[JsonProperty]
 		public ClusterSelection_SO ClusterSelection_SpacedOut { get; set; } = ClusterSelection_SO.Random;
+
+		[RequireDLC(DlcManager.EXPANSION1_ID, true)]
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC2.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC2.DESC")]
 		[JsonProperty]
-		public ClusterSelection_SO ClusterSelection_SpacedOut2 { get; set; } = ClusterSelection_SO.Random; 
+		public ClusterSelection_SO ClusterSelection_SpacedOut2 { get; set; } = ClusterSelection_SO.Random;
+
+		[RequireDLC(DlcManager.EXPANSION1_ID, true)]
 		[Option("STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC3.NAME", "STRINGS.WORLDPARSERMODCONFIG.TARGETCLUSTERDLC3.DESC")]
 		[JsonProperty]
 		public ClusterSelection_SO ClusterSelection_SpacedOut3 { get; set; } = ClusterSelection_SO.Random;
@@ -210,10 +232,10 @@ namespace _WorldGenStateCapture
 
 				if (fixedCluster)
 				{
-					List<string> possiblePrefixes =[targetPrefix];
-					if(secondary)
+					List<string> possiblePrefixes = [targetPrefix];
+					if (secondary)
 						possiblePrefixes.Add(targetPrefix2);
-					if(secondary && tertiary)
+					if (secondary && tertiary)
 						possiblePrefixes.Add(targetPrefix3);
 
 					targetPrefix = possiblePrefixes.GetRandom();

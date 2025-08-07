@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using static MapsNotIncluded_WorldParser.Export.WorldExporter;
 using MapsNotIncluded_WorldParser.Export;
+using MapsNotIncluded_WorldParser.Test;
 
 namespace _WorldGenStateCapture
 {
@@ -30,6 +31,8 @@ namespace _WorldGenStateCapture
 		public static bool ModDilution = false;
 		//when the mod is outdated
 		public static bool VersionOutdated = false;
+		//upload data to the server; disable for tests
+		public static bool UploadData = true;
 		public static string ModPath => System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		public static Dictionary<WorldContainer, List<MapGeyser>> currentGeysers = new();
 		public static Dictionary<WorldContainer, List<MapPOI>> currentPOIs = new();
@@ -220,6 +223,11 @@ namespace _WorldGenStateCapture
 
 
 			Debug.Log("Send data to webservice...");
+
+			if (WorldgenCheck.IsTestMode)
+			{
+				WorldgenCheck.CompareWithServerData(data);
+			}
 
 
 			//Console.WriteLine(json);

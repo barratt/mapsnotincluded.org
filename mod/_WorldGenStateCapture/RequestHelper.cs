@@ -1,4 +1,5 @@
 ﻿using MapsNotIncluded_WorldParser;
+using MapsNotIncluded_WorldParser.Test;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,8 +25,17 @@ namespace _WorldGenStateCapture
         /// </summary>
 		public static void FetchNewRequestedCoordinate()
         {
-            //opt out of requested seeds in config
-            if (!Config.Instance.AcceptRequestedSeeds || _hasServerRequestedCoordinate)
+            if(WorldgenCheck.HasTestMaps())
+			{
+				Debug.Log("Test mode active, generating next...");
+                HandleRequestedCoordinateResponse(WorldgenCheck.GetNextCoordinate());
+				return;
+			}
+            if (WorldgenCheck.IsTestMode)
+                return;
+
+			//opt out of requested seeds in config
+			if (!Config.Instance.AcceptRequestedSeeds || _hasServerRequestedCoordinate)
                 return;
 
             var serverMappedDlcIds = BlackBoxInACornerBuriedDeepInMoria.GiveWeirdRemappedDlcIds(DlcManager.GetActiveDLCIds());
@@ -125,7 +135,11 @@ namespace _WorldGenStateCapture
                 request.downloadHandler = new DownloadHandlerBuffer();
                 // Send the API key
                 request.SetRequestHeader("MNI_API_KEY", API_TOKEN);
-                Debug.Log("Trying to send GET Request ...");
+
+                if(!Config.Instance.MNI_AuthToken.IsNullOrWhiteSpace())
+                    request.SetRequestHeader("MNI_TOKEN", Config.Instance.MNI_AuthToken);
+
+				Debug.Log("Trying to send GET Request ...");
 
                 yield return request.SendWebRequest();
 
@@ -161,7 +175,10 @@ namespace _WorldGenStateCapture
                 // Send the API key
                 request.SetRequestHeader("MNI_API_KEY", API_TOKEN);
 
-                Debug.Log("Trying to POST-Request a new server coordinate...");
+				if (!Config.Instance.MNI_AuthToken.IsNullOrWhiteSpace())
+					request.SetRequestHeader("MNI_TOKEN", Config.Instance.MNI_AuthToken);
+
+				Debug.Log("Trying to POST-Request a new server coordinate...");
 
                 yield return request.SendWebRequest();
 
@@ -182,8 +199,15 @@ namespace _WorldGenStateCapture
 
         public static IEnumerator TryPostRequest(string url, byte[] bodyRaw, System.Action OnComplete, System.Action<byte[]> OnFail)
         {
-            //Debug.Log("Calling MNI API: " + url);
-            using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+            if(ModAssets.UploadData == false)
+			{
+				Debug.LogWarning("UploadData is set to false, not sending request to server.");
+				OnComplete();
+				yield break;
+			}
+
+			//Debug.Log("Calling MNI API: " + url);
+			using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
             {
 
                 // Set the request body to the JSON byte array
@@ -195,7 +219,10 @@ namespace _WorldGenStateCapture
                 // Send the API key
                 request.SetRequestHeader("MNI_API_KEY", API_TOKEN);
 
-                Debug.Log("Trying to send POST Request ...");
+				if (!Config.Instance.MNI_AuthToken.IsNullOrWhiteSpace())
+					request.SetRequestHeader("MNI_TOKEN", Config.Instance.MNI_AuthToken);
+
+				Debug.Log("Trying to send POST Request ...");
 
                 yield return request.SendWebRequest();
 

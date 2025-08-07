@@ -85,6 +85,16 @@
 				public static LocString NAME = "Export Local World Statistics";
 				public static LocString DESC = "Exports a number of statistics of each world generated to a local folder (/mods/export)";
 			}
+			public class STEAMTOKEN
+			{
+				public static LocString NAME = "Steam Authentication Token";
+				public static LocString DESC = "Optional!\nAdd your steam authentication token here to give seeds sent by you an extra level of verification.\nDO NOT SHARE THIS TOKEN WITH ANYONE ELSE!";
+			}
+			public class GETSTEAMTOKEN
+			{
+				public static LocString NAME = "Get Authentication Token";
+				public static LocString DESC = "Opens the webbrowser for you to grab your authentication token.";
+			}
 		}
 		public class AUTOPARSING
 		{
