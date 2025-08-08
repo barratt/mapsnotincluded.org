@@ -14,10 +14,11 @@ namespace _WorldGenStateCapture
 	{
 		[Option("STRINGS.WORLDPARSERMODCONFIG.GETSTEAMTOKEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.GETSTEAMTOKEN.DESC")]
 		[JsonIgnore]
-		public System.Action<object> Button_OpenCarepackageEditor => (_) => Application.OpenURL("https://steam.stefanoltmann.workers.dev/login");
+		public System.Action<object> Button_OpenAuthGetter => (_) => Application.OpenURL("https://steam.auth.stefanoltmann.de/");
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.STEAMTOKEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.STEAMTOKEN.DESC")]
 		[JsonProperty]
+		[Limit(256, 1024)]
 		public string MNI_AuthToken { get; set; } = string.Empty;
 
 		[RequireDLC(DlcManager.VANILLA_ID, true)]

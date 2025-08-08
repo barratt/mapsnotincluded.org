@@ -20,6 +20,7 @@ namespace _WorldGenStateCapture
 		public static string API_URL_CHECK_MAP_EXISTS = "https://ingest.mapsnotincluded.org/exists/{0}";
 		public static string API_URL_GET_EXISTING_DATA = "https://ingest.mapsnotincluded.org/coordinate/{0}";
 
+		public static readonly string API_GET_AUTH = "https://steam.auth.stefanoltmann.de/";
 	}
 }
  
