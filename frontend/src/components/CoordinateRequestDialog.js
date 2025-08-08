@@ -1,11 +1,10 @@
 import Swal from "sweetalert2";
-import {useUserStore} from "@/stores";
+import { useUserStore } from "@/stores";
 import i18n from "@/i18n";
 
-const {t} = i18n.global;
+const { t } = i18n.global;
 
 export function requestCoordinate() {
-
     Swal.fire({
         title: t("coordinate_request_dialog.text"),
         input: "text",
@@ -17,7 +16,6 @@ export function requestCoordinate() {
         showLoaderOnConfirm: true,
         inputValidator: (coordinate) => validateCoordinate(coordinate),
         preConfirm: (coordinates) => {
-
             const userStore = useUserStore();
             const token = userStore.getValidToken();
 
@@ -29,7 +27,7 @@ export function requestCoordinate() {
                 method: "POST",
                 body: coordinates,
                 headers: {
-                    "token": token
+                    token: token,
                 },
             })
                 .then((response) => {
@@ -38,24 +36,21 @@ export function requestCoordinate() {
                             useUserStore().clearToken();
                             throw new Error("Unauthorized, please login again!");
                         }
+                        if (response.status === 409) {
+                            throw new Error(t("coordinate_request_dialog.coordinate_exists"));
+                        }
+                        throw new Error(t("coordinate_request_dialog.request_failed"));
                     }
-
-                    return response.json();
+                    // 200 OK - no response body expected
+                    return { success: true, message: t("coordinate_request_dialog.request_successful") };
                 })
-                .then((data) => {
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
-                    return data;
-                })
-
                 .catch((error) => {
-                    Swal.showValidationMessage(`${error}`);
+                    Swal.showValidationMessage(`${error.message}`);
                 });
         },
         allowOutsideClick: () => !Swal.isLoading(),
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed && result.value?.success) {
             Swal.fire({
                 title: t("coordinate_request_dialog.request_successful"),
                 text: result.value.message,
