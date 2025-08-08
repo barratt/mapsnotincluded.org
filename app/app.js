@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const discord = require('./lib/discord');
-const mongo   = require('./lib/mongo');
 
 const express = require('express');
 const cors    = require('cors');
