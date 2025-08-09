@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { useUserStore } from '@/stores';
@@ -22,7 +22,6 @@ onMounted(() => {
 
   queryParams.value = { ...route.query, embedded: 'mni' };
 
-  // add token to query params if it exists and is valid
   const userStore = useUserStore()
 
   const token = userStore.getValidToken();
@@ -31,7 +30,6 @@ onMounted(() => {
     queryParams.value.token = token;
   }
 
-  // Construct iframe url from query param  
   let url = MAPEXPLORER_URL;
 
   url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
