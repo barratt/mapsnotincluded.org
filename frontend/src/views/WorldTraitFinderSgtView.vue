@@ -6,14 +6,13 @@
 
 <script setup>
 import { onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
 import { useUserStore } from '@/stores';
 
 const route = useRoute();
 
-const TRAITFINDER_URL = import.meta.env.VITE_TRAITFINDER_URL || 'https://mapsnotincluded.github.io/ONITraitFinder/';
+const TRAITFINDER_URL = 'https://sgt-imalas.github.io/ONITraitFinder/';
 
 const iframeUrl = ref(null)
 const iframeRef = ref(null)
