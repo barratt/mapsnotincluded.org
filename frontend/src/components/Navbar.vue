@@ -41,26 +41,6 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
             <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">{{
               $t("navbar.github_link") }}</a>
           </li>
-          <!-- <li class="nav-item">
-                      <Menu>
-                        <MenuButton class="locale-button">
-                          <i class="bi bi-globe nav-link"></i>
-                        </MenuButton>
-                        <MenuItems class="locale-dropdown">
-                          <MenuItem 
-                            v-for="locale in $i18n.availableLocales" 
-                            :key="`locale-${locale}`" 
-                            :value="locale" 
-                            :class="`locale-dropdown-item ${ locale === $i18n.locale ? 'locale-selected' : '' }`"
-                            @click="$i18n.locale = locale"
-                          >
-                            <p class="locale-text">{{$localeLabels[locale]}}</p>
-                          </MenuItem>
-                        </MenuItems>
-                      </Menu>
-                    </li> -->
-
-          <!-- Optionally, add buttons to set or clear token -->
           <div class="nav-link my-auto">
             <button v-if="isAuthenticated" @click="requestCoordinate" class="btn btn-sm btn-primary">
               {{ $t("coordinate_request_dialog.title") }}
@@ -76,13 +56,12 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 </template>
 
 <script>
-const apiUrl = import.meta.env.VITE_API_URL;
 import { useUserStore } from "@/stores";
 import { requestCoordinate } from "./CoordinateRequestDialog";
 export default {
   data() {
     return {
-      loginUrl: `${apiUrl}/login?origin=${window.location.origin}`,
+      loginUrl: `https://steam.auth.stefanoltmann.de/login?redirect=https://mapsnotincluded.org`,
     };
   },
   computed: {
