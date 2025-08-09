@@ -4,25 +4,27 @@
 
 <template>
 
-  <div class="mb-5">
-    <h2 class="text-danger">{{ $t('contribute.header.donation') }}</h2>
-    <i18n-t keypath="contribute.description.donation" tag="p">
-      <template v-slot:donateHosting>
-        <a href="https://github.com/sponsors/barratt" target="mni_sponsor_hosting">{{ $t('contribute.link.donate_hosting') }}</a>
-      </template>
-      <template v-slot:donateSeedBrowser>
-        <a href="https://github.com/sponsors/StefanOltmann" target="mni_sponsor_seed_browser">{{ $t('contribute.link.donate_seed_browser') }}</a>
-      </template>
-      <template v-slot:donateMod>
-        <a href="https://ko-fi.com/sgtimalas" target="mni_sponsor_mod">{{ $t('contribute.link.donate_mod') }}</a>
-      </template>
-    </i18n-t>
-  </div>
-
   <main class="container mt-5">
+
     <div class="mb-5">
       <h1>{{ $t('contribute.title') }}</h1>
     </div>
+
+    <div class="mb-5">
+      <h2 class="text-danger">{{ $t('contribute.header.donation') }}</h2>
+      <i18n-t keypath="contribute.description.donation" tag="p">
+        <template v-slot:donateHosting>
+          <a href="https://github.com/sponsors/barratt" target="mni_sponsor_hosting">{{ $t('contribute.link.donate_hosting') }}</a>
+        </template>
+        <template v-slot:donateSeedBrowser>
+          <a href="https://github.com/sponsors/StefanOltmann" target="mni_sponsor_seed_browser">{{ $t('contribute.link.donate_seed_browser') }}</a>
+        </template>
+        <template v-slot:donateMod>
+          <a href="https://ko-fi.com/sgtimalas" target="mni_sponsor_mod">{{ $t('contribute.link.donate_mod') }}</a>
+        </template>
+      </i18n-t>
+    </div>
+
     <div class="mb-5">
       <h2 class="text-success">{{ $t('contribute.header.developer') }}</h2>
       <i18n-t keypath="contribute.description.developer" tag="p">
