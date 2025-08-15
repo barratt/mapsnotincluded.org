@@ -142,6 +142,7 @@ jobs:
 
       - name: Compute SHA-256 checksum and send to server
         shell: powershell
+        continue-on-error: true # may be turned off later
         env:
           API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
         run: |
@@ -165,3 +166,53 @@ jobs:
           
             Write-Error "File not found: $filePath"
           }
+
+      - name: Create version info files
+        shell: pwsh
+        run: |
+          
+          $filePath = "Builds/MapsNotIncluded_WorldParser/MapsNotIncluded_WorldParser.dll"
+          
+          if (Test-Path -Path $filePath) {
+
+            # Calculate checksum from DLL
+            $checksum = (Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash).ToLower()
+          
+            # Get version from the previously generated JSON info file
+            $modVersion = (Get-Content "./BuildsZipped/_ReleaseVersionInfoData.json" | ConvertFrom-Json).mods[0].version
+          
+            # Get commit hash from environment variable
+            $commitHash = "${{ env.SHORT_COMMIT }}"
+
+            # --- Create individual text files ---
+            Write-Output "Creating version.txt, checksum.txt, and commit.txt"
+            Set-Content -Path version.txt -Value $modVersion -Encoding UTF8
+            Set-Content -Path checksum.txt -Value $checksum -Encoding UTF8
+            Set-Content -Path commit.txt -Value $commitHash -Encoding UTF8
+
+            # --- Create an JSON file ---
+            Write-Output "Creating version.json"
+            $json = @{
+              version = $modVersion
+              checksum = $checksum
+              commit = $commitHash
+            } | ConvertTo-Json -Compress
+            Set-Content -Path version.json -Value $json -Encoding UTF8
+          
+          } else {
+            Write-Error "File not found: $filePath"
+          }
+
+      - name: Prepare GitHub pages deployment artifacts
+        run: |
+          mkdir -p ../deploy_temp
+          mv version.json version.txt checksum.txt commit.txt ../deploy_temp/
+        shell: bash
+
+      - name: Deploy version info files to GitHub pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./deploy_temp
+          commit_message: "Update mod version info"
