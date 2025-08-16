@@ -15,7 +15,7 @@ namespace _WorldGenStateCapture
 		public static string API_URL_REPORT_FAILED = "https://ingest.mapsnotincluded.org/report-worldgen-failure";
 
 		public static string API_URL_REQUEST_SEED = "https://ingest.mapsnotincluded.org/requested-coordinate";
-		public static string API_URL_GET_VERSION = "https://ingest.mapsnotincluded.org/current-mod-version";
+		public static string API_URL_GET_VERSION = "https://barratt.github.io/mapsnotincluded.org/commit.txt";
 
 		public static string API_URL_CHECK_MAP_EXISTS = "https://ingest.mapsnotincluded.org/exists/{0}";
 		public static string API_URL_GET_EXISTING_DATA = "https://ingest.mapsnotincluded.org/coordinate/{0}";
