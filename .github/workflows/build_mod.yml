@@ -186,9 +186,9 @@ jobs:
 
             # --- Create individual text files ---
             Write-Output "Creating version.txt, checksum.txt, and commit.txt"
-            Set-Content -Path version.txt -Value $modVersion -Encoding UTF8
-            Set-Content -Path checksum.txt -Value $checksum -Encoding UTF8
-            Set-Content -Path commit.txt -Value $commitHash -Encoding UTF8
+            Set-Content -Path version.txt -Value $modVersion -Encoding UTF8 -NoNewline
+            Set-Content -Path checksum.txt -Value $checksum -Encoding UTF8 -NoNewline
+            Set-Content -Path commit.txt -Value $commitHash -Encoding UTF8 -NoNewline
 
             # --- Create an JSON file ---
             Write-Output "Creating version.json"
@@ -197,7 +197,7 @@ jobs:
               checksum = $checksum
               commit = $commitHash
             } | ConvertTo-Json -Compress
-            Set-Content -Path version.json -Value $json -Encoding UTF8
+            Set-Content -Path version.json -Value $json -Encoding UTF8 -NoNewline
           
           } else {
             Write-Error "File not found: $filePath"
