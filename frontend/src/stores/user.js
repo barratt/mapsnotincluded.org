@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import {defineStore} from 'pinia';
 
 // Function to validate a JWT token
 function validateToken(token) {
@@ -20,12 +20,26 @@ function validateToken(token) {
             const header = JSON.parse(atob(parts[0]));
 
             if (header.alg !== 'ES256') {
-                console.log('Invalid token algorithm');
+                console.log('Invalid token: Wrong algorithm');
                 return false;
             }
 
         } catch (e) {
             console.log('Could not parse token header');
+            return false;
+        }
+
+        try {
+
+            const payload = JSON.parse(atob(parts[1]));
+
+            if (!payload.hash) {
+                console.log('Invalid token: Field "hash" is missing.');
+                return false;
+            }
+
+        } catch (e) {
+            console.log('Could not parse token body');
             return false;
         }
 
