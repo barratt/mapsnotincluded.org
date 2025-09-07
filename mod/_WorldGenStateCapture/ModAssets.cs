@@ -150,12 +150,7 @@ namespace _WorldGenStateCapture
 			worldDataItem.cluster = clusterData.GetCoordinatePrefix();
 			worldDataItem.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
 
-			var remappedDlcIdNameThings = BlackBoxInACornerBuriedDeepInMoria.GiveWeirdRemappedDlcIds(SaveLoader.Instance.GameInfo.dlcIds);
-
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
-
-			worldDataItem.dlcs = remappedDlcIdNameThings;
-			//worldDataItem.mixingIds = GetActiveMixingSettingIds();
 
 			Debug.Log("accumulating asteroid data...");
 			foreach (var asteroid in ClusterManager.Instance.WorldContainers)

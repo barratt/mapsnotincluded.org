@@ -10,11 +10,9 @@ namespace _WorldGenStateCapture.WorldStateData
 		public string coordinate;
 		public string cluster;
 		public uint gameVersion;
-		public List<string> dlcs;
 		public List<AsteroidData> asteroids = new List<AsteroidData>();
 		public List<VanillaMap_Entry> starMapEntriesVanilla = null;
 		public List<HexMap_Entry> starMapEntriesSpacedOut = null;
-		//public List<string> mixingIds;
 
 		public WorldDataInstance()
 		{
