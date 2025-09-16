@@ -8,7 +8,7 @@
 		public int idleTime;
 		public int eruptionTime;
 
-		public float dormancyCycles;
-		public float activeCycles;
+		public int dormancyCycles;
+		public int activeCycles;
 	}
 }

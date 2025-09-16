@@ -93,11 +93,11 @@ namespace _WorldGenStateCapture.WorldStateData.WorldPOIs
 					idleTime = Mathf.RoundToInt(configuration.GetOffDuration()),
 					eruptionTime = Mathf.RoundToInt(configuration.GetOnDuration()),
 
-					dormancyCycles = (float)Math.Round(configuration.GetYearOffDuration() / 600f, 1),
-					activeCycles = (float)Math.Round(configuration.GetYearOnDuration() / 600f, 1),
+					dormancyCycles = Mathf.RoundToInt(configuration.GetYearOffDuration() / 600f),
+					activeCycles = Mathf.RoundToInt(configuration.GetYearOnDuration() / 600f),
 
-					emitRate = Mathf.RoundToInt((float)Math.Round(configuration.GetEmitRate() * 1000f, 2)),		
-					avgEmitRate = Mathf.RoundToInt((float)Math.Round(configuration.GetAverageEmission()*1000f,2))
+					emitRate = Mathf.RoundToInt(configuration.GetEmitRate() * 1000f),		
+					avgEmitRate = Mathf.RoundToInt(configuration.GetAverageEmission()*1000f)
 				});
 			}
 		}

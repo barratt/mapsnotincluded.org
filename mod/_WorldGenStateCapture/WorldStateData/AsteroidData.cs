@@ -1,4 +1,5 @@
 ﻿using _WorldGenStateCapture.WorldStateData.WorldPOIs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,13 @@ namespace _WorldGenStateCapture.WorldStateData
 	internal class AsteroidData
 	{
 		public string id;
-		public int offsetX, offsetY; //bottom left corner of the asteroid 
+
+		//bottom left corner of the asteroid 
+		[JsonIgnore] //not used anymore in tool
+		public int offsetX;
+		[JsonIgnore]//not used anymore in tool
+		public int offsetY; 
+
 		public int sizeX, sizeY;
 
 
