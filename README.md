@@ -16,7 +16,7 @@ Feel free to join us on [Discord](https://discord.gg/3vhCpp6PNq).
 
 You can collect & contribute seeds to the database by downloading and running the mod.
 
-The latest release can be downloaded [here](https://github.com/barratt/mapsnotincluded.org/releases/latest/download/MapsNotIncludedMod.zip).
+The latest release can be downloaded [here](https://github.com/barratt/mapsnotincluded.org/releases/latest/download/MapsNotIncluded_WorldParser.zip).
 
 ## Data exports
 
