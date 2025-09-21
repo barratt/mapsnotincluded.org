@@ -66,6 +66,10 @@ namespace _WorldGenStateCapture
 			// DataItem.seed = seed;
 
 			data.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
+
+			if(RequestHelper.HasServerRequestedCoordinate(out string requested))
+				data.coordinate = requested;
+
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
 			//data.mixingIds = GetActiveMixingSettingIds();
 
@@ -149,6 +153,9 @@ namespace _WorldGenStateCapture
 
 			worldDataItem.cluster = clusterData.GetCoordinatePrefix();
 			worldDataItem.coordinate = CustomGameSettings.Instance.GetSettingsCoordinate();
+
+			if (RequestHelper.HasServerRequestedCoordinate(out string requested))
+				worldDataItem.coordinate = requested;
 
 			data.fileHashes = IntegrityCheck.HarvestClusterHashes(clusterData, seed);
 

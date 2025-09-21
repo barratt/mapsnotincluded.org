@@ -80,16 +80,17 @@ namespace _WorldGenStateCapture
 
 		public static void HandleRequestedCoordinateResponse(string coordinateResponse)
         {
-            Debug.Log("Requested Coordinate received: "+coordinateResponse);
 
             if (string.IsNullOrEmpty(coordinateResponse))
-            {
-                _hasServerRequestedCoordinate = false;
+			{
+				Debug.Log("Requested Coordinate response was empty");
+				_hasServerRequestedCoordinate = false;
                 ServerRequestedCoordinate = string.Empty;
             }
             else
-            {
-                _hasServerRequestedCoordinate = true;
+			{
+				Debug.Log("Requested Coordinate received: " + coordinateResponse);
+				_hasServerRequestedCoordinate = true;
                 ServerRequestedCoordinate = coordinateResponse;
             }
         }
