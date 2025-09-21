@@ -190,6 +190,14 @@ namespace _WorldGenStateCapture
 						STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC);
 					return;
 				}
+				if (Config.Instance.MNI_AuthToken.IsNullOrWhiteSpace())
+				{
+					Debug.LogWarning("mod does not have a token set");
+
+					Dialog(STRINGS.AUTOPARSING.MISSINGTOKEN.TITLE,
+						STRINGS.AUTOPARSING.MISSINGTOKEN.DESC);
+					return;
+				}
 
 				menuTimer = __instance.gameObject.AddOrGet<MNI_Timer>();
 				InitDelayedAutoStart(__instance);
@@ -236,8 +244,17 @@ namespace _WorldGenStateCapture
 				{
 					if (!ModAssets.LastConnectionSuccessful)
 					{
-						Dialog(STRINGS.AUTOPARSING.CONNECTIONERROR.TITLE, STRINGS.AUTOPARSING.CONNECTIONERROR.DESC);
-						menuTimer.SetTimer(60);
+						if(ModAssets.LastConnectionResponse == 401)
+						{
+							Dialog(STRINGS.AUTOPARSING.UNAUTHORIZED.TITLE, STRINGS.AUTOPARSING.UNAUTHORIZED.DESC);
+							menuTimer.Abort();
+							return;
+						}
+						else
+						{
+							Dialog(STRINGS.AUTOPARSING.CONNECTIONERROR.TITLE, STRINGS.AUTOPARSING.CONNECTIONERROR.DESC);
+							menuTimer.SetTimer(60);
+						}
 					}
 					else if (Config.Instance.AskBetweenRunsDialog)
 					{

@@ -144,15 +144,16 @@ namespace _WorldGenStateCapture
 
                 yield return request.SendWebRequest();
 
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.LogWarning(request.error);
+
+				if (request.result != UnityWebRequest.Result.Success)
+				{
+					Debug.LogWarning(request.error);
                     //ModAssets.ConnectionError();
                     OnFail(request.downloadHandler.text);
                 }
                 else
-                {
-                    Debug.Log("GET Request complete!");
+				{
+					Debug.Log("GET Request complete!");
                     //ModAssets.ConnectionSuccessful();
                     OnComplete(request.downloadHandler.text);
                 }
@@ -184,15 +185,16 @@ namespace _WorldGenStateCapture
                 yield return request.SendWebRequest();
 
                 if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.LogWarning("POST request was not successful!");
+				{
+					Debug.LogWarning("POST request was not successful!");
                     Debug.LogWarning(request.error);
                 }
                 else
-                {
-                    Debug.Log("POST request successful complete!");
-                }
-                handleResponse(request.downloadHandler.text);
+				{
+					Debug.Log("POST request successful complete!");
+				}
+				ModAssets.LastConnectionResponse = request.responseCode;
+				handleResponse(request.downloadHandler.text);
             }
         }
 
@@ -227,7 +229,8 @@ namespace _WorldGenStateCapture
 
                 yield return request.SendWebRequest();
 
-                if (request.result != UnityWebRequest.Result.Success)
+				ModAssets.LastConnectionResponse = request.responseCode;
+				if (request.result != UnityWebRequest.Result.Success)
                 {
                     Debug.LogWarning(request.error);
                     ModAssets.ConnectionError();

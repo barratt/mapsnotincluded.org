@@ -119,6 +119,16 @@
 				public static LocString TITLE = "Failed at Uploading";
 				public static LocString DESC = "The last seed upload did not upload due to the mod failing at establishing a connection to the server.\nThe mod will sleep for a minute, then try again.";
 			}
+			public class UNAUTHORIZED
+			{
+				public static LocString TITLE = "Connection Unauthorized";
+				public static LocString DESC = "The last seed upload did not upload due to the server refusing the connection.\nPlease check that you have a valid steam authentication token set";
+			}
+			public class MISSINGTOKEN
+			{
+				public static LocString TITLE = "No Steam Token!";
+				public static LocString DESC = "There is no valid steam authentication token set in the mod config.\nThe mod cannot connect to the server without that.\nPlease fill in the token.";
+			}
 		}
 	}
 }

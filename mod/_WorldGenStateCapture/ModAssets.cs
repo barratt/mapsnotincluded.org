@@ -102,6 +102,7 @@ namespace _WorldGenStateCapture
 			return BlackBoxInACornerBuriedDeepInMoria.GiveWeirdRemappedDlcIds(entries);
 		}
 
+		public static long LastConnectionResponse;
 		public static bool LastConnectionSuccessful = true;
 		public static void ConnectionSuccessful()
 		{
