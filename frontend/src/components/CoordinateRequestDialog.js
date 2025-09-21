@@ -62,7 +62,7 @@ export function requestCoordinate() {
 
 export function validateCoordinate(coordinate) {
     const coordinateValidationRegex = RegExp(
-        /(^(SNDST-A|CER-A|CERS-A|PRE-A|PRES-A|OCAN-A|S-FRZ|LUSH-A|FRST-A|VOLCA|BAD-A|HTFST-A|OASIS-A|V-SNDST-C|V-CER-C|V-CERS-C|V-PRE-C|V-PRES-C|V-OCAN-C|V-SWMP-C|V-SFRZ-C|V-LUSH-C|V-FRST-C|V-VOLCA-C|V-BAD-C|V-HTFST-C|V-OASIS-C|SNDST-C|CER-C|PRE-C|FRST-C|SWMP-C|M-SWMP-C|M-BAD-C|M-FRZ-C|M-FLIP-C|M-RAD-C|M-CERS-C)-\d+-[^-]*-[^-]*-[^-]*)/gm
+        /(^(SNDST-A|CER-A|CERS-A|PRE-A|PRES-A|OCAN-A|S-FRZ|LUSH-A|FRST-A|VOLCA|BAD-A|HTFST-A|OASIS-A|V-SNDST-C|V-CER-C|V-CERS-C|V-PRE-C|V-PRES-C|V-OCAN-C|V-SWMP-C|V-SFRZ-C|V-LUSH-C|V-FRST-C|V-VOLCA-C|V-BAD-C|V-HTFST-C|V-OASIS-C|SNDST-C|CER-C|PRE-C|FRST-C|SWMP-C|M-SWMP-C|M-BAD-C|M-FRZ-C|M-FLIP-C|M-RAD-C|M-CERS-C)-\d+-0-0-[^-]*)/gm
     );
     return new Promise((resolve) => {
         console.log(coordinate);
