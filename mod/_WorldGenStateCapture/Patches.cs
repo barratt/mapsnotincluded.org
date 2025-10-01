@@ -499,8 +499,9 @@ namespace _WorldGenStateCapture
 							}
 							if (setting is MixingSettingConfig mixingSetting)
 							{
-								//disable if forbidden by cluster or not all dlcs required active
-								if (!DlcManager.IsAllContentSubscribed(mixingSetting.required_content) || targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
+                                //disable if forbidden by cluster or not all dlcs required active
+                                if (!DlcManager.IsAllContentSubscribed(mixingSetting.required_content) || targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag))
+									|| (setting.id.Contains("AsteroidMixing") && !DlcManager.IsExpansion1Active()))
 								{
 									Debug.Log(setting.id + " is forbidden by the current cluster is missing dlcs, disabling it.");
 									settingsInstance.SetMixingSetting(mixingSetting, SubworldMixingSettingConfig.DisabledLevelId); //same id for world and subworld mixing setting
