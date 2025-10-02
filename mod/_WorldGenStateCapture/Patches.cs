@@ -198,6 +198,16 @@ namespace _WorldGenStateCapture
 						STRINGS.AUTOPARSING.MISSINGTOKEN.DESC);
 					return;
 				}
+				if (ModAssets.GameOutdated)
+				{
+					Debug.LogWarning("game is outdated(!), aborting");
+					string ownVersion = IntegrityCheck.GetGameVersion().ToString();
+					string latestVersion = ModAssets.LatestGameVersion.ToString();
+
+					Dialog( STRINGS.AUTOPARSING.GAMEOUTDATED.TITLE,
+					string.Format(STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC, ownVersion, latestVersion));
+					return;
+				}
 
 				menuTimer = __instance.gameObject.AddOrGet<MNI_Timer>();
 				InitDelayedAutoStart(__instance);
@@ -490,7 +500,7 @@ namespace _WorldGenStateCapture
 								continue;
 							}
 						}
-
+						bool isBaseGame = DlcManager.IsPureVanilla();
 						foreach (var setting in CustomGameSettings.Instance.MixingSettings.Values)
 						{
 							if (setting.coordinate_range == -1) //settings that cannot be configured
@@ -500,9 +510,11 @@ namespace _WorldGenStateCapture
 							if (setting is MixingSettingConfig mixingSetting)
 							{
 								//disable if forbidden by cluster or not all dlcs required active
-								if (!DlcManager.IsAllContentSubscribed(mixingSetting.required_content) || targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag)))
+								if (!DlcManager.IsAllContentSubscribed(mixingSetting.required_content) 
+									|| targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag))
+									|| mixingSetting is WorldMixingSettingConfig && isBaseGame)
 								{
-									Debug.Log(setting.id + " is forbidden by the current cluster is missing dlcs, disabling it.");
+									Debug.Log(setting.id + " is forbidden by the current dlc configuration or cluster, disabling it.");
 									settingsInstance.SetMixingSetting(mixingSetting, SubworldMixingSettingConfig.DisabledLevelId); //same id for world and subworld mixing setting
 								}
 								else

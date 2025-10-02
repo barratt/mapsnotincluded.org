@@ -3,6 +3,7 @@ using ProcGenGame;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -116,12 +117,51 @@ namespace _WorldGenStateCapture
 			return GUID;
 		}
 
+		internal static void CheckGameVersion()
+		{
+			Debug.Log("MNI: Checking game version..");
+			Global.Instance.StartCoroutine(RequestHelper.TryGetRequest(Credentials.API_URL_GET_GAME_VERSION, HandleGameVersionCheck, HandleGameVersionCheck));
+		}
+		static void HandleGameVersionCheck(string serverVersion)
+		{
+			Debug.Log("MNI: Game version received");
+			Debug.Log("Version string received from server: " + serverVersion);
+
+			uint currentGameVersion = GetGameVersion();
+			if (uint.TryParse(serverVersion, out uint serverVersionNum))
+			{
+				Debug.Log("Internal Game Version: " + currentGameVersion);
+				if (serverVersionNum > currentGameVersion)
+				{
+					ModAssets.GameOutdated = true;
+					ModAssets.LatestGameVersion = serverVersionNum;
+					Debug.LogWarning("MNI: Game version mismatch detected. Please update your game.");
+				}
+				else
+				{
+					Debug.Log("MNI: Game version is up to date.");
+				}
+			}
+			else
+			{
+				if (serverVersion.ToString() != currentGameVersion.ToString())
+				{
+					ModAssets.GameOutdated = true;
+					ModAssets.LatestGameVersion = serverVersionNum;
+					Debug.LogWarning("MNI: Game version mismatch detected. Please update your game.");
+				}
+				else
+				{
+					Debug.Log("MNI: Game version is up to date.");
+				}
+			}
+		}
 		internal static void CheckModVersion()
 		{
 			Debug.Log("MNI: Checking mod version..");
-			Global.Instance.StartCoroutine(RequestHelper.TryGetRequest(Credentials.API_URL_GET_VERSION, HandleVersionCheck, HandleVersionCheck));
+			Global.Instance.StartCoroutine(RequestHelper.TryGetRequest(Credentials.API_URL_GET_VERSION, HandleModVersionCheck, HandleModVersionCheck));
 		}
-		static void HandleVersionCheck(string serverVersion)
+		static void HandleModVersionCheck(string serverVersion)
 		{
 			Debug.Log("MNI: Mod version received");
 			Debug.Log("Version string received from server: " + serverVersion);
@@ -135,6 +175,11 @@ namespace _WorldGenStateCapture
 			{
 				Debug.Log("MNI: Mod version is up to date.");
 			}
+		}
+
+		internal static uint GetGameVersion()
+		{
+			return (uint)typeof(KleiVersion).GetField("ChangeList", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 		}
 	}
 }

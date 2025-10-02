@@ -129,6 +129,11 @@
 				public static LocString TITLE = "No Steam Token!";
 				public static LocString DESC = "There is no valid steam authentication token set in the mod config.\nThe mod cannot connect to the server without that.\nPlease fill in the token.";
 			}
+			public class GAMEOUTDATED
+			{
+				public static LocString TITLE = "Warning: game version outdated!";
+				public static LocString DESC = "Your current game version does not match the latest in the database {0} (you are on {1}).\nMap collection will proceed after you have updated it.";
+			}
 		}
 	}
 }

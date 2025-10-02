@@ -26,6 +26,7 @@ namespace _WorldGenStateCapture
 		{
 			base.OnAllModsLoaded(harmony, mods);
 			IntegrityCheck.CheckModVersion();
+			IntegrityCheck.CheckGameVersion();
 			foreach (var mod in mods)
 			{
 				if (mod.IsEnabledForActiveDlc() && mod != this.mod 

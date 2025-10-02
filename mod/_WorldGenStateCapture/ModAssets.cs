@@ -33,6 +33,12 @@ namespace _WorldGenStateCapture
 		public static bool VersionOutdated = false;
 		//upload data to the server; disable for tests
 		public static bool UploadData = true;
+		//game is somehow on an unsupported version
+		public static bool GameOutdated = false;
+		//latest game version known to the mod
+		public static uint LatestGameVersion = 0;
+
+
 		public static string ModPath => System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		public static Dictionary<WorldContainer, List<MapGeyser>> currentGeysers = new();
 		public static Dictionary<WorldContainer, List<MapPOI>> currentPOIs = new();
@@ -50,6 +56,11 @@ namespace _WorldGenStateCapture
 			if (ModAssets.VersionOutdated)
 			{
 				Debug.LogWarning("Mod is outdated, aborting world parsing.");
+				return;
+			}
+			if (ModAssets.GameOutdated)
+			{
+				Debug.LogWarning("Game! is outdated, aborting world parsing.");
 				return;
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();

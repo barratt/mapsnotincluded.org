@@ -16,7 +16,7 @@ namespace _WorldGenStateCapture.WorldStateData
 
 		public WorldDataInstance()
 		{
-			gameVersion = (uint)typeof(KleiVersion).GetField("ChangeList", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+			gameVersion = IntegrityCheck.GetGameVersion();
 		}
 	}
 }
