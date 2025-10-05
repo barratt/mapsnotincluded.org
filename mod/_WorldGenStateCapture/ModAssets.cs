@@ -27,6 +27,8 @@ namespace _WorldGenStateCapture
 
     internal class ModAssets
 	{
+		//set to false on connection errors
+		public static bool ServerConnectionEstablished = true;
 		//if any other mods are installed
 		public static bool ModDilution = false;
 		//when the mod is outdated
@@ -48,6 +50,11 @@ namespace _WorldGenStateCapture
 
 		internal static void AccumulateFailedSeedData(OfflineWorldGen instance)
 		{
+			if (!ModAssets.ServerConnectionEstablished)
+			{
+				Debug.LogWarning("Could not connect to server");
+				return;
+			}
 			if (ModAssets.ModDilution)
 			{
 				Debug.LogWarning("Other active mods detected, aborting world parsing.");
@@ -127,7 +134,11 @@ namespace _WorldGenStateCapture
 
 		internal static void AccumulateSeedData()
 		{
-
+			if (!ModAssets.ServerConnectionEstablished)
+			{
+				Debug.LogWarning("Could not connect to server");
+				return;
+			}
 			if (ModAssets.ModDilution)
 			{
 				Debug.LogWarning("Other active mods detected, aborting world parsing.");
@@ -136,6 +147,11 @@ namespace _WorldGenStateCapture
 			if (ModAssets.VersionOutdated)
 			{
 				Debug.LogWarning("Mod is outdated, aborting world parsing.");
+				return;
+			}
+			if (ModAssets.GameOutdated)
+			{
+				Debug.LogWarning("Game! is outdated, aborting world parsing.");
 				return;
 			}
 			bool dlcActive = DlcManager.IsExpansion1Active();

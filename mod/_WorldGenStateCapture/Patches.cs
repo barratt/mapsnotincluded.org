@@ -173,7 +173,15 @@ namespace _WorldGenStateCapture
 				MNI_Statistics.MainMenuInitialize();
 				MainMenuInfoBox.InitMainMenuBox(__instance);
 
-				autoLoadActive = false;
+				autoLoadActive = false; 
+				if (!ModAssets.ServerConnectionEstablished)
+				{
+					Debug.LogWarning("could not establish a connection to the server!");
+
+					Dialog(STRINGS.AUTOPARSING.SERVERNOTREACHABLE.TITLE,
+						STRINGS.AUTOPARSING.SERVERNOTREACHABLE.DESC);
+					return;
+				}
 				if (ModAssets.ModDilution)
 				{
 					Debug.LogWarning("other active mods detected, aborting auto world parsing");
@@ -257,6 +265,12 @@ namespace _WorldGenStateCapture
 						if(ModAssets.LastConnectionResponse == 401)
 						{
 							Dialog(STRINGS.AUTOPARSING.UNAUTHORIZED.TITLE, STRINGS.AUTOPARSING.UNAUTHORIZED.DESC);
+							menuTimer.Abort();
+							return;
+						}
+						else if(ModAssets.LastConnectionResponse >= 500)
+						{
+							Dialog(STRINGS.AUTOPARSING.SERVERNOTREACHABLE.TITLE, STRINGS.AUTOPARSING.SERVERNOTREACHABLE.DESC);
 							menuTimer.Abort();
 							return;
 						}

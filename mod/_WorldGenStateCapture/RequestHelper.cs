@@ -19,10 +19,20 @@ namespace _WorldGenStateCapture
         private static bool _hasServerRequestedCoordinate = false;
         private static bool _isGeneratingServerRequestedCoordinate = false;
 
+        static void CheckServerConnectionStatus(UnityWebRequest result)
+        {
+            if (ModAssets.ServerConnectionEstablished == false)
+                return;
 
-        /// <summary>
-        /// gets a requested coordinate from the server
-        /// </summary>
+            if (result.responseCode >= 500)
+            {
+                ModAssets.ServerConnectionEstablished = false;
+            }
+		}
+
+		/// <summary>
+		/// gets a requested coordinate from the server
+		/// </summary>
 		public static void FetchNewRequestedCoordinate()
         {
             if(WorldgenCheck.HasTestMaps())
@@ -150,14 +160,15 @@ namespace _WorldGenStateCapture
 					Debug.LogWarning(request.error);
                     //ModAssets.ConnectionError();
                     OnFail(request.downloadHandler.text);
-                }
+				}
                 else
 				{
 					Debug.Log("GET Request complete!");
                     //ModAssets.ConnectionSuccessful();
                     OnComplete(request.downloadHandler.text);
                 }
-            }
+                CheckServerConnectionStatus(request);
+			}
         }
 
 
@@ -195,7 +206,8 @@ namespace _WorldGenStateCapture
 				}
 				ModAssets.LastConnectionResponse = request.responseCode;
 				handleResponse(request.downloadHandler.text);
-            }
+				CheckServerConnectionStatus(request);
+			}
         }
 
         public static IEnumerator TryPostRequest(string url, string data, System.Action OnComplete, System.Action<byte[]> OnFail) => TryPostRequest(url, Encoding.UTF8.GetBytes(data), OnComplete, OnFail);
@@ -242,8 +254,9 @@ namespace _WorldGenStateCapture
                     ModAssets.ConnectionSuccessful();
                     ModAssets.TrySendingCollected();
                     OnComplete();
-                }
-            }
+				}
+				CheckServerConnectionStatus(request);
+			}
         }       
     }
 }

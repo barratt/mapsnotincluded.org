@@ -134,6 +134,11 @@
 				public static LocString TITLE = "Warning: game version outdated!";
 				public static LocString DESC = "Your current game version does not match the latest in the database {0} (you are on {1}).\nMap collection will proceed after you have updated it.";
 			}
+			public class SERVERNOTREACHABLE
+			{
+				public static LocString TITLE = "Server not reachable";
+				public static LocString DESC = "Could not establish a connection to the server.\nPlease notify the developers on the discord about this.";
+			}
 		}
 	}
 }
