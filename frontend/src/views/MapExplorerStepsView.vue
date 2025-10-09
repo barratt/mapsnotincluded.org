@@ -28,16 +28,15 @@ onMounted(() => {
 
   // Encode query parameters safely
   const encodedQuery = Object.entries(queryParams)
-      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
   // Build final URL
   let url = `${MAPEXPLORER_URL}?${encodedQuery}`;
 
   // Add seed fragment if present
-  if (route.params.seed) {
-    url += `#${encodeURIComponent(route.params.seed)}`;
-  }
+  if (route.params.seed)
+    url += `#${route.params.seed}`;
 
   iframeUrl.value = url;
 });
