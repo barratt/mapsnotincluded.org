@@ -24,10 +24,6 @@
     },
     "help": {
         "title": "Help",
-        "guide": {
-            "header": "Beginner's Guide",
-            "description": "TBA"
-        },
         "faq": {
             "header": "FAQ",
             "items": [
@@ -60,6 +56,9 @@
                     "answer": "At the moment, there is no way to contribute maps with specific mixing settings. The closest you can get is turning mixing frequency up to 100% and enabling/disabling DLCs with content you do/don't want to mix."
                 } 
             ]
+        },
+        "troubleshooting": {
+            "header": "Troubleshooting Guide"
         }
     },
     "contribute": {
