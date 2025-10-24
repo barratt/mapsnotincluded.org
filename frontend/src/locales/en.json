@@ -33,7 +33,7 @@
                 },
                 {
                     "question": "How do I search for a specific map/seed?",
-                    "answer": "While there currently isn't a place within the UI to do this, you can append a map to the end of the map explorer URL. For example, mapsnotincluded.org/map-explorer/SNDST-A-1-0-0-0 would search for the seed SNDST-A-1-0-0-0."
+                    "answer": "While there currently isn't a place within the UI to do this, you can append a seed to the end of the map explorer URL. For example, mapsnotincluded.org/map-explorer/SNDST-A-1-0-0-0 would search for the seed SNDST-A-1-0-0-0."
                 },
                 {
                     "question": "How do I search for a map with specific mixing settings?",
@@ -58,7 +58,11 @@
                 {
                     "question": "Can I contribute maps with specific mixing settings?",
                     "answer": "At the moment, there is no way to contribute maps with specific mixing settings. The closest you can get is turning mixing frequency up to 100% and enabling/disabling DLCs with content you do/don't want to mix."
-                } 
+                },
+                {
+                    "question": "Why does the mixing setting change when I paste a seed into the game?",
+                    "answer": "Oxygen Not Included has a bug that the developer of the contribution mod refuses to reproduce. The one in-game is the same as the one on the site, just with a different set of letters at the end."
+                }
             ]
         },
         "troubleshooting_guide": {
