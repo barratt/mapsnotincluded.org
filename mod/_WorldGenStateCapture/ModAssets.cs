@@ -590,6 +590,8 @@ namespace _WorldGenStateCapture
 		{
 			if (cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
 				cancelTokenSource?.Cancel();
+
+			Thread.Sleep(1000);
 			App.instance.Restart();
 		}
 

@@ -11,14 +11,14 @@ namespace _WorldGenStateCapture.WorldStateData
 	{
 		public string userId;
 		public string installationId;
-		public string gameVersion;
+		public uint gameVersion;
 		public Dictionary<string, string> fileHashes;
 		public WorldDataInstance cluster;
 		public Upload_SuccessfulGeneration()
 		{
 			userId = IntegrityCheck.GetUserId();
 			installationId = IntegrityCheck.GetInstallationId();
-			gameVersion = BuildWatermark.GetBuildText();
+			gameVersion = IntegrityCheck.GetGameVersion();
 		}
 	}
 }

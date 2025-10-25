@@ -13,5 +13,7 @@ namespace _WorldGenStateCapture
 		public static string ConfigFolder => Path.Combine(ModsFolder, "config");
         public static string WorldsFolder => Path.Combine(Paths.ConfigFolder, "OfflineWorlds");
 		public static string ExportFolder => Path.Combine(ModsFolder, "export");
+
+		public static string UpdateInstallationLocation => Path.GetFullPath(Path.Combine(ModsFolder, "MapsNotIncluded_WorldParser_Update.zip"));
 	}
 }

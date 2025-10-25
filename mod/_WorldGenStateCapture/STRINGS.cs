@@ -14,7 +14,7 @@
 			public static LocString SESSION_SHORT = "Seeds this session: {0}";
 			public static LocString SESSION_TIME_SHORT = "Session runtime: {0} m";
 			public static LocString LASTTIME_SHORT = "Last generation time: {0} s";
-			public static LocString REQUESTED_SHORT = "Website seeds: {0}";
+			public static LocString REQUESTED_SHORT = "Website requests: {0}";
 			public static LocString OPTED_OUT = "(Opted out)";
 
 		}
@@ -107,12 +107,15 @@
 			public class MODSDETECTED
 			{
 				public static LocString TITLE = "Warning: active mods detected";
-				public static LocString DESC = "There are currently other mods enabled that might invalidate the integrity of the collected world data.\nMap collection will proceed after you have disabled them.";
+				public static LocString DESC = "There are currently other mods enabled that might invalidate the integrity of the collected world data.\nMap collection will proceed after you have disabled them.\nAllowed are: Mod Updater, Mod Profile Manager";
 			}
 			public class VERSIONOUTDATED
 			{
 				public static LocString TITLE = "Warning: mod version outdated";
 				public static LocString DESC = "Your version of the MNI Parser mod is outdated and might not work correctly with the current game version.\nPlease update the mod.";
+				public static LocString DESC_STEAM_AUTOUPDATE = "Your version of the MNI Parser mod is outdated and might not work correctly with the current game version.\nDo you want to update it to the latest version?";
+				public static LocString DESC_STEAM_AUTOUPDATE_SUCCESS = "The update was downloaded successfully, the game will now restart to install it.";
+				public static LocString DESC_STEAM_AUTOUPDATE_FAILURE = "The update failed.\nPlease inform the Maintainers. Error Message:\n";
 			}
 			public class CONNECTIONERROR
 			{

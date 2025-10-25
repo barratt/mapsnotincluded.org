@@ -12,7 +12,7 @@ namespace MapsNotIncluded_WorldParser.WorldStateData
 	{
 		public string userId;
 		public string installationId;
-		public string gameVersion;
+		public uint gameVersion;
 		public Dictionary<string, string> fileHashes;
 		public string coordinate;
 		//public List<string> mixingIds;
@@ -20,7 +20,7 @@ namespace MapsNotIncluded_WorldParser.WorldStateData
 		{
 			userId = IntegrityCheck.GetUserId();
 			installationId = IntegrityCheck.GetInstallationId();
-			gameVersion = BuildWatermark.GetBuildText();
+			gameVersion = IntegrityCheck.GetGameVersion();
 		}
 	}
 }

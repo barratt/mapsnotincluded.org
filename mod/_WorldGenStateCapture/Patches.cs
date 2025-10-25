@@ -8,6 +8,8 @@ using System;
 using static STRINGS.UI.FRONTEND;
 using _WorldGenStateCapture.Statistics;
 using MapsNotIncluded_WorldParser.Test;
+using MapsNotIncluded_WorldParser;
+using System.Net.Http;
 
 namespace _WorldGenStateCapture
 {
@@ -167,13 +169,14 @@ namespace _WorldGenStateCapture
 			[HarmonyPriority(Priority.Low)]
 			public static void Postfix(MainMenu __instance)
 			{
+				CleanupDownload();
 				//CheckIfCoordinateExistsTest.RunTest();
 
 				ModAssets.OnMainMenuLoaded();
 				MNI_Statistics.MainMenuInitialize();
 				MainMenuInfoBox.InitMainMenuBox(__instance);
 
-				autoLoadActive = false; 
+				autoLoadActive = false;
 				if (!ModAssets.ServerConnectionEstablished)
 				{
 					Debug.LogWarning("could not establish a connection to the server!");
@@ -194,8 +197,15 @@ namespace _WorldGenStateCapture
 				{
 					Debug.LogWarning("mod is outdated, aborting");
 
-					Dialog(STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE,
-						STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC);
+					if (Mod.IsSteamMod)
+					{
+						RequestAutoUpdate();
+					}
+					else
+					{
+						Dialog(STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE,
+							STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC);
+					}
 					return;
 				}
 				if (Config.Instance.MNI_AuthToken.IsNullOrWhiteSpace())
@@ -212,7 +222,7 @@ namespace _WorldGenStateCapture
 					string ownVersion = IntegrityCheck.GetGameVersion().ToString();
 					string latestVersion = ModAssets.LatestGameVersion.ToString();
 
-					Dialog( STRINGS.AUTOPARSING.GAMEOUTDATED.TITLE,
+					Dialog(STRINGS.AUTOPARSING.GAMEOUTDATED.TITLE,
 					string.Format(STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC, ownVersion, latestVersion));
 					return;
 				}
@@ -239,6 +249,76 @@ namespace _WorldGenStateCapture
 				if (Popup != null)
 					UnityEngine.Object.Destroy(Popup.gameObject);
 			}
+
+
+			static void RequestAutoUpdate()
+			{
+
+				var empty = () => { };
+				Dialog(STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE,
+					STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC_STEAM_AUTOUPDATE, on_confirm: InitUpdate, on_cancel: empty);
+
+			}
+			static void ReportError(string msg)
+			{
+
+				Dialog(STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE,
+					STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC_STEAM_AUTOUPDATE_FAILURE+ msg);
+			}
+
+			static void CleanupDownload()
+			{
+				string updateFileLocation = Paths.UpdateInstallationLocation;
+				if (File.Exists(updateFileLocation))
+				{
+					File.Delete(updateFileLocation);
+				}
+			}
+			internal async static void InitUpdate()
+			{
+				string updateFileLocation = Paths.UpdateInstallationLocation;
+				string updateUrl = Credentials.UPDATE_URL;
+				CleanupDownload();
+				Console.WriteLine("Starting download of MNI Update...");
+
+				Console.WriteLine("Fetching from " + updateUrl);
+				try
+				{
+					using (HttpClient client = new HttpClient())
+					{
+						client.Timeout = TimeSpan.FromSeconds(30);
+
+						using var fs = new FileStream(updateFileLocation, FileMode.Create);
+						await client.DownloadAsync(updateUrl, fs);
+
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Mod download failed! Exception: " + e.Message);
+					ReportError(e.Message);
+					return;
+				}
+				if (!File.Exists(updateFileLocation))
+				{
+					Console.WriteLine("We downloaded the mod, but the zip file " + updateFileLocation + " does not exist! how did this happen??");
+					ReportError("cannot find downloaded file!");
+					return;
+				}
+
+				Console.WriteLine("Mod zip download successful");
+
+				var mod = Global.Instance.modManager.FindMod(Mod.Instance.label);
+
+				mod.reinstall_path = updateFileLocation;
+				mod.status = KMod.Mod.Status.ReinstallPending;
+				Global.Instance.modManager.Save();
+
+				Dialog(STRINGS.AUTOPARSING.VERSIONOUTDATED.TITLE,
+					STRINGS.AUTOPARSING.VERSIONOUTDATED.DESC_STEAM_AUTOUPDATE_SUCCESS, on_confirm: ModAssets.RestartAndKillThreads);
+			}
+
+
 			//copied from KMod.Manager to allow closing it externally;
 			static void Dialog(string title = null, string text = null, string confirm_text = null, System.Action on_confirm = null, string cancel_text = null, System.Action on_cancel = null, string configurable_text = null, System.Action on_configurable_clicked = null, UnityEngine.Sprite image_sprite = null)
 			{
@@ -262,13 +342,13 @@ namespace _WorldGenStateCapture
 				{
 					if (!ModAssets.LastConnectionSuccessful)
 					{
-						if(ModAssets.LastConnectionResponse == 401)
+						if (ModAssets.LastConnectionResponse == 401)
 						{
 							Dialog(STRINGS.AUTOPARSING.UNAUTHORIZED.TITLE, STRINGS.AUTOPARSING.UNAUTHORIZED.DESC);
 							menuTimer.Abort();
 							return;
 						}
-						else if(ModAssets.LastConnectionResponse >= 500)
+						else if (ModAssets.LastConnectionResponse >= 500)
 						{
 							Dialog(STRINGS.AUTOPARSING.SERVERNOTREACHABLE.TITLE, STRINGS.AUTOPARSING.SERVERNOTREACHABLE.DESC);
 							menuTimer.Abort();
@@ -524,7 +604,7 @@ namespace _WorldGenStateCapture
 							if (setting is MixingSettingConfig mixingSetting)
 							{
 								//disable if forbidden by cluster or not all dlcs required active
-								if (!DlcManager.IsAllContentSubscribed(mixingSetting.required_content) 
+								if (!DlcManager.IsAllContentSubscribed(mixingSetting.required_content)
 									|| targetLayout.clusterTags.Any(tag => mixingSetting.forbiddenClusterTags.Contains(tag))
 									|| mixingSetting is WorldMixingSettingConfig && isBaseGame)
 								{
