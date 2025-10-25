@@ -17,9 +17,70 @@
         "world_trait_finder_link": "World Trait Finder",
         "seed_viewer_link": "Seed Viewer",
         "starmap_link": "StarMap Generator",
+        "help_link": "Help",
         "contribute_link": "Contribute",
         "discord_link": "Discord",
         "github_link": "GitHub"
+    },
+    "help": {
+        "title": "Help",
+        "faq": {
+            "header": "FAQ",
+            "content_items": [
+                {
+                    "question": "What's the difference between the map explorer and the world trait finder?",
+                    "answer": "The map explorer is where you can browse maps that contributors have submitted. These maps contain detailed information on geysers, POIs, etc. The world trait finder contains limited information on every seed that can exist, even if a contributor hasn't submitted it yet. Once you find some seeds you like, you can request them and they will be viewable within the map explorer once the requests have been filled."
+                },
+                {
+                    "question": "How do I search for a specific map/seed?",
+                    "answer": "While there currently isn't a place within the UI to do this, you can append a seed to the end of the map explorer URL. For example, mapsnotincluded.org/map-explorer/SNDST-A-1-0-0-0 would search for the seed SNDST-A-1-0-0-0."
+                },
+                {
+                    "question": "How do I search for a map with specific mixing settings?",
+                    "answer": "Using the map explorer, you can either search for specific DLC biomes, or enter a mixing preset (using the \"Mixing: -/-\" field). The easiest way of getting the mixing preset you want is by going to the world trait finder, configuring your mixing settings and copying the last section from the example seed. It should look something like \"E6A87\"."
+                },
+                {
+                    "question": "How do I save/share my map explorer search queries?",
+                    "answer": "Next to the reset and search buttons, there is a clipboard button allowing you to copy the link to your search query. When this link is pasted into your browser, it will automatically apply the filter settings associated with that link."
+                },
+                {
+                    "question": "What does requesting a map do?",
+                    "answer": "When you request a map, it's added to the request queue. Once the request is filled by a contributor, it will be available to view in the map explorer. Maps added to the queue first are last to be filled, which means that you can request as many maps as you want without clogging the queue for days."
+                },
+                {
+                    "question": "When does the database update?",
+                    "answer": "0:00UTC every day."
+                },
+                {
+                    "question": "How does DLC mixing affect geysers?",
+                    "answer": "Biomes which haven't been replaced via mixing will keep their geysers. However, biomes which have been replaced will have their geysers deleted, with new ones generating across the map."
+                },
+                {
+                    "question": "Can I contribute maps with specific mixing settings?",
+                    "answer": "At the moment, there is no way to contribute maps with specific mixing settings. The closest you can get is turning mixing frequency up to 100% and enabling/disabling DLCs with content you do/don't want to mix."
+                },
+                {
+                    "question": "Why does the mixing setting change when I paste a seed into the game?",
+                    "answer": "Oxygen Not Included has a bug that the developer of the contribution mod refuses to reproduce. The one in-game is the same as the one on the site, just with a different set of letters at the end."
+                }
+            ]
+        },
+        "troubleshooting_guide": {
+            "header": "Troubleshooting Guide",
+            "content_items": [
+                {
+                    "problem": "Contributor leaderboard position isn't updating",
+                    "solution": "Your leaderboard position only updates once per day, when the database updates."
+                },
+                {
+                    "problem": "Mod can't establish a connection to the server",
+                    "solution": "This is most likely due to a back-end error, which could be a multitude of things. Status updates on this are usually posted in the {discordLink}."
+                }
+            ]
+        },
+        "link": {
+            "discord": "Discord"
+        }
     },
     "contribute": {
         "title": "Contribute",

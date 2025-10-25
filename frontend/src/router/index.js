@@ -18,6 +18,7 @@ const router = createRouter({
     { path: '/seed-viewer', component: () => import('../views/SeedViewerView.vue') },
 
     { path: '/about', component: () => import('../views/AboutView.vue') },
+    { path: '/help', component: () => import('../views/HelpView.vue') },
     { path: '/contribute', component: () => import('../views/ContributeView.vue') },
 
     { path: '/:pathMatch(.*)*', component: () => import('../views/Errors/404.vue') }, // todo: check if they have passed a seed, if not, redirect to map-explorer/seed

@@ -5,10 +5,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-
-import { useUserStore } from '@/stores';
+import {onMounted, ref} from 'vue';
+import {useRoute} from 'vue-router';
+import {useUserStore} from '@/stores';
 
 const route = useRoute();
 
@@ -16,47 +15,48 @@ const MAPEXPLORER_URL = 'https://stefanoltmann.de/oni-seed-browser';
 
 const iframeUrl = ref(null)
 const iframeRef = ref(null)
-const queryParams = ref({});
 
 onMounted(() => {
-
-  queryParams.value = { ...route.query, embedded: 'mni' };
-
   const userStore = useUserStore()
-
   const token = userStore.getValidToken();
 
-  if (token) {
-    queryParams.value.token = token;
-  }
+  // Merge query parameters from URL
+  const queryParams = {...route.query, embedded: 'mni'};
 
-  let url = MAPEXPLORER_URL;
+  // Add token if available
+  if (token) queryParams.token = token;
 
-  url = `${url}?${new URLSearchParams(queryParams.value).toString()}`;
+  // Encode query parameters safely
+  const encodedQuery = Object.entries(queryParams)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
 
-  if (route.params.seed) {
-    url = `${url}#${route.params.seed}`;
-  }
+  // Build final URL
+  let url = `${MAPEXPLORER_URL}?${encodedQuery}`;
+
+  // Add seed fragment if present
+  if (route.params.seed)
+    url += `#${route.params.seed}`;
 
   iframeUrl.value = url;
-})
+});
 </script>
 
 <style scoped>
 main {
   overflow: hidden;
-  height: 100vh; 
+  height: 100vh;
 }
 
 .iframe-container {
   display: flex;
-  width: 100%; 
-  height: calc(100vh - 69px); /* not ideal, but I can't seem to work out how to get the frame to take the remaining space and ignore the navbar*/
-  overflow: hidden; 
+  width: 100%;
+  height: calc(100vh - 69px);
+  overflow: hidden;
 }
 
 iframe {
-  width: 100%; 
+  width: 100%;
   height: 100%;
   border: none;
   overflow: auto;
