@@ -17,10 +17,11 @@
 		<FrostyPlanetBeta>616718</FrostyPlanetBeta>
 		<FrostyPlanetRelease>622222</FrostyPlanetRelease>
 		<PrehistoricRelease>674504</PrehistoricRelease>
+		<QOL2025November>701625</QOL2025November>
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<LatestVersion>$(PrehistoricRelease)</LatestVersion>
+		<LatestVersion>$(QOL2025November)</LatestVersion>
 	</PropertyGroup>
 
 	<!--Copyright notice-->

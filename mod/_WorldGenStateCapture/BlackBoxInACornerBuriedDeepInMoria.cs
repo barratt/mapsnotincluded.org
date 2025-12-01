@@ -41,6 +41,8 @@ namespace MapsNotIncluded_WorldParser
 					case DlcManager.DLC4_ID:
 						weirdIdNameThings.Add("PrehistoricPlanet");
 						break;
+					case DlcManager.COSMETIC1_ID:
+						break;
 					default:
                         weirdIdNameThings.Add(semiConsistentKleiDlcId); // If it's not a known ID, keep it as is
                         break;
