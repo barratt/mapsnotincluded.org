@@ -11,7 +11,7 @@ import {useUserStore} from '@/stores';
 
 const route = useRoute();
 
-const MAPEXPLORER_URL = 'https://stefanoltmann.de/oni-seed-browser';
+const MAPEXPLORER_URL = 'https://browser.mapsnotincluded.org';
 
 const iframeUrl = ref(null)
 const iframeRef = ref(null)
