@@ -53,7 +53,7 @@
 
                 <h4 class="mt-4">b) SteamIDs</h4>
                 <ul>
-                    <li>Collected when a user interacts with features that allow saving or favoriting maps</li>
+                    <li>Collected when a user interacts with features that allow requesting coordinates</li>
                     <li>Used solely to associate favorites with a specific user</li>
                     <li>SteamIDs are not publicly displayed or shared</li>
                 </ul>
@@ -65,7 +65,7 @@
                 <ul>
                     <li>Ensuring the security and stability of the Website</li>
                     <li>Preventing abuse and excessive requests</li>
-                    <li>Providing core functionality requested by users (such as map favorites)</li>
+                    <li>Providing core functionality requested by users (such as coordinate requests)</li>
                 </ul>
                 <p>No automated decision-making or profiling takes place.</p>
             </section>
@@ -74,7 +74,7 @@
                 <h2>5. Data Retention</h2>
                 <ul>
                     <li>IP addresses are stored only for as long as necessary for rate limiting and security purposes and are automatically deleted after a short retention period.</li>
-                    <li>SteamIDs are stored for as long as the related favorites exist or until deletion is requested.</li>
+                    <li>SteamIDs are stored for as long as the related maps/coordinates exist or until deletion is requested.</li>
                 </ul>
             </section>
 
