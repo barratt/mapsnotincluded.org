@@ -23,7 +23,7 @@ export function requestCoordinate() {
                 throw new Error("Authentication required. Please login.");
             }
 
-            return fetch(`https://ingest.mapsnotincluded.org/request-coordinate`, {
+            return fetch(`https://mni.stefan-oltmann.de/request-coordinate`, {
                 method: "POST",
                 body: coordinates,
                 headers: {

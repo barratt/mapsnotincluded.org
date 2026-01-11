@@ -140,33 +140,6 @@ jobs:
           retain_days: 1
           keep_minimum_runs: 3
 
-      - name: Compute SHA-256 checksum and send to server
-        shell: powershell
-        continue-on-error: true # may be turned off later
-        env:
-          API_KEY: ${{ secrets.DATABASE_EXPORT_API_KEY }}
-        run: |
-          
-          $filePath = "Builds/MapsNotIncluded_WorldParser/MapsNotIncluded_WorldParser.dll"
-          
-          if (Test-Path -Path $filePath) {
-          
-            $checksum = (Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash).ToLower()
-          
-            $headers = @{
-              "API_KEY" = "$env:API_KEY"
-              "GIT_TAG" = "$env:SHORT_COMMIT"
-            }
-
-            $response = Invoke-RestMethod -Uri "https://ingest.mapsnotincluded.org/add-mod-binary-checksum" -Method Post -Headers $headers -Body $checksum -ContentType "text/plain"
-
-            Write-Output "Server response: $response"
-          
-          } else {
-          
-            Write-Error "File not found: $filePath"
-          }
-
       - name: Create version info files
         shell: pwsh
         run: |
