@@ -69,7 +69,7 @@ import { requestCoordinate } from "./CoordinateRequestDialog";
 export default {
   data() {
     return {
-      loginUrl: `https://steam.auth.stefanoltmann.de/login?redirect=https://mapsnotincluded.org`,
+      loginUrl: `https://steam.stefan-oltmann.de/login?redirect=https://mapsnotincluded.org`,
     };
   },
   computed: {

@@ -14,7 +14,7 @@ namespace _WorldGenStateCapture
 	{
 		[Option("STRINGS.WORLDPARSERMODCONFIG.GETSTEAMTOKEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.GETSTEAMTOKEN.DESC")]
 		[JsonIgnore]
-		public System.Action<object> Button_OpenAuthGetter => (_) => Application.OpenURL("https://steam.auth.stefanoltmann.de/login");
+		public System.Action<object> Button_OpenAuthGetter => (_) => Application.OpenURL("https://steam.stefan-oltmann.de/login");
 
 		[Option("STRINGS.WORLDPARSERMODCONFIG.STEAMTOKEN.NAME", "STRINGS.WORLDPARSERMODCONFIG.STEAMTOKEN.DESC")]
 		[JsonProperty]

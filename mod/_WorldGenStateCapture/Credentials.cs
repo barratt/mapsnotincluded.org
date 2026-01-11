@@ -21,7 +21,7 @@ namespace _WorldGenStateCapture
 		public static readonly string API_URL_CHECK_MAP_EXISTS = "https://mni.stefan-oltmann.de/exists/{0}";
 		public static readonly string API_URL_GET_EXISTING_DATA = "https://mni.stefan-oltmann.de/coordinate/{0}";
 
-		public static readonly string API_GET_AUTH = "https://steam.auth.stefanoltmann.de/login";
+		public static readonly string API_GET_AUTH = "https://steam.stefan-oltmann.de/login";
 
 		public static readonly string UPDATE_URL = "https://github.com/barratt/mapsnotincluded.org/releases/download/MNI_Mod_Automatic_Release/MapsNotIncluded_WorldParser.zip";
 	}
