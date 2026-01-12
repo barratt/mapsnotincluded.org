@@ -28,9 +28,6 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
         </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <router-link to="/privacy" class="nav-link">Privacy</router-link>
-          </li>
-          <li class="nav-item">
             <router-link to="/help" class="nav-link">{{
               $t("navbar.help_link")
                }}</router-link>
