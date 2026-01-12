@@ -1,6 +1,6 @@
 Welcome to MapsNotIncluded.org
 
-A fully opensource alternative to [ToolsNotIncluded.net](https://ToolsNotIncluded.net) by [Cairath](https://github.com/Cairath)
+A fully opensource alternative to [ToolsNotIncluded.net](https://ToolsNotIncluded.net).
 
 Feel free to join us on [Discord](https://discord.gg/3vhCpp6PNq).
 
