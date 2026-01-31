@@ -26,16 +26,36 @@ export default {
   data() { 
     return {};
   },
+  methods: {
+    handleLogoutHash() {
+      if (window.location.hash === '#logout') {
+        useUserStore().clearToken();
+        const url = new URL(window.location.href);
+        url.hash = '';
+        window.history.replaceState({}, '', url);
+        return true;
+      }
+      return false;
+    }
+  },
   mounted() {
     console.log("App mounted");
 
     this.$router.isReady().then(() => {
+      if (this.handleLogoutHash()) {
+        return;
+      }
       const token = this.$route.query.token;
       if (token) {
         useUserStore().setToken(token);
         this.$router.replace({ query: {} });
       }
     });
+
+    window.addEventListener('hashchange', this.handleLogoutHash);
+  },
+  beforeUnmount() {
+    window.removeEventListener('hashchange', this.handleLogoutHash);
   }
 }
 </script>
