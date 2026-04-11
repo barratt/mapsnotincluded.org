@@ -79,31 +79,45 @@
 	</Target>
 
 	<!--Creates publicized dlls from the game dlls-->
-	<Target Name="Publicise" AfterTargets="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
-		<ItemGroup>
-			<PubliciseInputAssemblies
-					 Include="
-				$(GameLibsFolder)/Assembly-CSharp.dll;
-				$(GameLibsFolder)/Assembly-CSharp-firstpass.dll;
-         "/>
-		</ItemGroup>
+	<ItemGroup>
+		<GameRefAssemblies Include="
+					    Assembly-CSharp.dll;
+					    Assembly-CSharp-firstpass.dll;
+					    0Harmony.dll;
+					    FMODUnity.dll;
+					    Newtonsoft.Json.dll;
+					    UnityEngine.dll;
+					    UnityEngine.CoreModule.dll;
+					    UnityEngine.ImageConversionModule.dll;
+					    UnityEngine.AssetBundleModule.dll;
+					    UnityEngine.PhysicsModule.dll;
+					    UnityEngine.Physics2DModule.dll;
+					    UnityEngine.ParticleSystemModule.dll;
+					    UnityEngine.InputLegacyModule.dll;
+					    Unity.TextMeshPro.dll;
+					    UnityEngine.TextRenderingModule.dll;
+					    UnityEngine.UI.dll;
+					    UnityEngine.UIModule.dll;
+					    UnityEngine.UnityWebRequestModule.dll;
+					    Ionic.Zip.dll;
+					    Newtonsoft.Json.dll;
+					    com.rlabrecque.steamworks.net.dll;
+					    " />
+		<RefAssemblies Include="../PublicisedAssembly/*.dll; @(GameRefAssemblies->'$(GameLibsFolder)\%(Identity)')" />
+	</ItemGroup>
+	<Target Name="GenerateRefAssemblies"
+		Inputs="@(RefAssemblies)"
+		Outputs="@(RefAssemblies->'../Lib/%(Filename)%(Extension)')"
+		AfterTargets="Publicise"
+		BeforeTargets="BeforeResolveReferences"
+		Condition="'$(GameLibsFolder)' != '../Lib' and '$(RefasmerInstalled)' != '0' and '$(IsMod)' == 'true'">
 
-		<Publicise
-			   InputAssemblies="@(PubliciseInputAssemblies)"
-			   OutputPath="$(SolutionDir)\PublicisedAssembly"
-			   PubliciseCompilerGenerated="false"/>
+		<!--Workaround for paths containing spaces, e.g. "Program Files (x86)"-->
+		<!--For some reason, adding the quotes to GameLibsFolder does not work-->
+		<ItemGroup>
+			<RefAsmerArguments Include="@(RefAssemblies -> '&quot;%(FullPath)&quot;', ' ')" />
+		</ItemGroup>
+		<Exec Command="dotnet tool run refasmer -v -O ../Lib --all -c @(RefAsmerArguments)" />
 	</Target>
-	<Target Name="GenerateRefAssemblies" AfterTargets="Clean" Condition="'$(GameLibsFolder)' != '../Lib' ">
-		<Exec Command="Refasmer -v -O ../Lib --all -c ../PublicisedAssembly/Assembly-CSharp_public.dll ../PublicisedAssembly/Assembly-CSharp-firstpass_public.dll ^
-    $(GameLibsFolder)/Assembly-CSharp.dll $(GameLibsFolder)/Assembly-CSharp-firstpass.dll $(GameLibsFolder)/0Harmony.dll ^
-    $(GameLibsFolder)/FMODUnity.dll $(GameLibsFolder)/Newtonsoft.Json.dll $(GameLibsFolder)/UnityEngine.dll ^
-    $(GameLibsFolder)/UnityEngine.CoreModule.dll $(GameLibsFolder)/UnityEngine.ImageConversionModule.dll ^
-    $(GameLibsFolder)/UnityEngine.AssetBundleModule.dll $(GameLibsFolder)/UnityEngine.PhysicsModule.dll ^
-    $(GameLibsFolder)/UnityEngine.Physics2DModule.dll $(GameLibsFolder)/UnityEngine.ParticleSystemModule.dll ^ 
-    $(GameLibsFolder)/UnityEngine.InputLegacyModule.dll $(GameLibsFolder)/Unity.TextMeshPro.dll ^
-    $(GameLibsFolder)/UnityEngine.TextRenderingModule.dll $(GameLibsFolder)/UnityEngine.UI.dll ^
-    $(GameLibsFolder)/UnityEngine.UIModule.dll $(GameLibsFolder)/UnityEngine.UnityWebRequestModule.dll ^
-    $(GameLibsFolder)/Ionic.Zip.dll $(GameLibsFolder)/Newtonsoft.Json.dll $(GameLibsFolder)/com.rlabrecque.steamworks.net.dll ^
-	$(GameLibsFolder)/netstandard.dll" />
-	</Target>
+
 </Project>

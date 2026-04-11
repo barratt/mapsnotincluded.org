@@ -21,6 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
   
+      - uses: actions/setup-dotnet@v4
+        env:
+            DOTNET_NOLOGO: true
+            DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+      - name: Restore
+        run: dotnet restore
+
       - name: Set SHORT_COMMIT environment variable
         shell: pwsh
         run: |
