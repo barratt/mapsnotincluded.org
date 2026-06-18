@@ -46,14 +46,6 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
             <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc" class="nav-link">{{
               $t("navbar.github_link") }}</a>
           </li>
-          <div class="nav-link my-auto">
-            <button v-if="isAuthenticated" @click="requestCoordinate" class="btn btn-sm btn-primary">
-              {{ $t("coordinate_request_dialog.title") }}
-            </button>
-            <a v-else :href="loginUrl">
-              <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" />
-            </a>
-          </div>
         </ul>
       </div>
     </div>
