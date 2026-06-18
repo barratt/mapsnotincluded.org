@@ -33,23 +33,6 @@
         </template>
       </i18n-t>
     </div>
-    
-    <div class="mb-5">
-      <h2 class="text-info">{{ $t('contribute.header.gamer') }}</h2>
-      <i18n-t keypath="contribute.description.gamer" tag="p" style="white-space: pre-wrap;">
-        <template v-slot:githubReleaseLink>
-          <a href="https://github.com/barratt/mapsnotincluded.org/releases" target="_blank">{{ $t('contribute.link.github_release') }}</a>
-        </template>
-        <template v-slot:discordLink>
-          <a href="https://discord.gg/3vhCpp6PNq" target="mni_gh">{{ $t('contribute.link.discord') }}</a>
-        </template>
-      </i18n-t>
-    </div>
-
-    <div class="mb-5">
-      <h2 class="text-warning">{{ $t('contribute.header.artist') }}</h2>
-      <p>{{ $t('contribute.description.artist') }}</p>
-    </div>
 
     <div class="mb-5">
       <h2>{{ $t('contribute.header.contributor') }}</h2>
