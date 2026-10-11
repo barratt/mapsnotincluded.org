@@ -1,0 +1,199 @@
+{
+    "_source": "World trait names, descriptions and colours and asteroid names extracted from TraitFinderApp/wwwroot/data/gamedata_*.json of ONI Trait Finder by Sgt_Imalas, https://github.com/Sgt-Imalas/ONITraitFinder, MIT License, Copyright (c) 2025 SGT_Imalas. Text is Klei Entertainment game data.",
+    "traits": {
+        "BouldersLarge": {
+            "name": "Large Boulders",
+            "description": "Huge boulders make digging through this world more difficult",
+            "color": "#BDBDBD"
+        },
+        "BouldersMedium": {
+            "name": "Medium Boulders",
+            "description": "Mid-sized boulders make digging through this world more difficult",
+            "color": "#BDBDBD"
+        },
+        "BouldersMixed": {
+            "name": "Mixed Boulders",
+            "description": "Boulders of various sizes make digging through this world more difficult",
+            "color": "#BDBDBD"
+        },
+        "BouldersSmall": {
+            "name": "Small Boulders",
+            "description": "Tiny boulders make digging through this world more difficult",
+            "color": "#BDBDBD"
+        },
+        "DeepOil": {
+            "name": "Trapped Oil",
+            "description": "Most of the Oil in this world will need to be extracted with Oil Wells",
+            "color": "#6C6C6C"
+        },
+        "FrozenCore": {
+            "name": "Frozen Core",
+            "description": "This world has a chilly core of solid Ice",
+            "color": "#91D8F0"
+        },
+        "GeoActive": {
+            "name": "Geoactive",
+            "description": "This world has more Geysers and Vents than usual",
+            "color": "#F8A22E"
+        },
+        "Geodes": {
+            "name": "Geodes",
+            "description": "Large geodes containing rare material caches are deposited across this world",
+            "color": "#D077FB"
+        },
+        "GeoDormant": {
+            "name": "Geodormant",
+            "description": "This world has fewer Geysers and Vents than usual",
+            "color": "#8494A1"
+        },
+        "GlaciersLarge": {
+            "name": "Large Glaciers",
+            "description": "Huge chunks of primordial Ice are scattered across this world",
+            "color": "#91D8F0"
+        },
+        "MagmaVents": {
+            "name": "Magma Channels",
+            "description": "The Magma from this world's core has leaked into the mantle and crust",
+            "color": "#FA4545"
+        },
+        "MetalPoor": {
+            "name": "Metal Poor",
+            "description": "There is a reduced amount of Metal Ore on this world, proceed with caution!",
+            "color": "#8494A1"
+        },
+        "MetalRich": {
+            "name": "Metal Rich",
+            "description": "This asteroid is an abundant source of Metal Ore",
+            "color": "#DAA932"
+        },
+        "MisalignedStart": {
+            "name": "Alternate Pod Location",
+            "description": "The Printing Pod didn't end up in the asteroid's exact center this time... but it's still nowhere near the surface",
+            "color": "#E9DC96"
+        },
+        "SlimeSplats": {
+            "name": "Slime Molds",
+            "description": "Sickly Slime growths have crept all over this world",
+            "color": "#83B520"
+        },
+        "CrashedSatellites": {
+            "name": "Crashed Satellites",
+            "description": "This world contains crashed radioactive satellites",
+            "color": "#5CD64C"
+        },
+        "DistressSignal": {
+            "name": "Frozen Friend",
+            "description": "This world contains a frozen friend from a long time ago",
+            "color": "#8494A1"
+        },
+        "IrregularOil": {
+            "name": "Irregular Oil",
+            "description": "The Oil on this asteroid is anything but regular!",
+            "color": "#6C6C6C"
+        },
+        "LushCore": {
+            "name": "Lush Core",
+            "description": "This world has a lush forest core",
+            "color": "#52A247"
+        },
+        "MetalCaves": {
+            "name": "Metallic Caves",
+            "description": "This world has caves of metal ore",
+            "color": "#DAA932"
+        },
+        "RadioactiveCrust": {
+            "name": "Radioactive Crust",
+            "description": "Deposits of Uranium Ore are found in this world's crust",
+            "color": "#5CD64C"
+        },
+        "SubsurfaceOcean": {
+            "name": "Subsurface Ocean",
+            "description": "Below the crust of this world is a Salt Water sea",
+            "color": "#12D1F4"
+        },
+        "Volcanoes": {
+            "name": "Volcanic Activity",
+            "description": "Several active Volcanoes have been detected in this world",
+            "color": "#FA4545"
+        }
+    },
+    "asteroids": {
+        "SandstoneDefault": "Terra",
+        "ForestMoonlet": "Folia Asteroid",
+        "SwampyLandingSite": "Irradiated Swampy Asteroid",
+        "OilRichWarpTarget": "Rusty Oil Asteroid",
+        "TundraMoonlet": "Tundra Asteroid",
+        "MarshyMoonlet": "Marshy Asteroid",
+        "MooMoonlet": "Moo Asteroid",
+        "WaterMoonlet": "Water Asteroid",
+        "NiobiumMoonlet": "Superconductive Asteroid",
+        "RegolithMoonlet": "Regolith Asteroid",
+        "StrangeAsteroidKleiFest2023Cluster": "Skewed Asteroid",
+        "MediumRadioactiveVanillaWarpPlanet": "Radioactive Swamp Asteroid",
+        "MiniRegolithMoonlet": "Regolith Asteroid",
+        "MiniBadlandsStart": "The Desolands Asteroid",
+        "MiniRadioactiveOceanWarp": "Radioactive Ocean Asteroid",
+        "MiniMetallicSwampy": "Metallic Swampy Asteroid",
+        "MiniForestFrozen": "Frozen Forest Asteroid",
+        "MiniFlipped": "Flipped Asteroid",
+        "MiniBadlandsWarp": "The Desolands Asteroid",
+        "MiniFlippedStart": "Flipped Asteroid",
+        "MiniRadioactiveOcean": "Radioactive Ocean Asteroid",
+        "MiniForestFrozenStart": "Frozen Forest Asteroid",
+        "MiniBadlands": "The Desolands Asteroid",
+        "MiniMetallicSwampyStart": "Metallic Swampy Asteroid",
+        "MiniForestFrozenWarp": "Frozen Forest Asteroid",
+        "MiniRadioactiveOceanStart": "Radioactive Ocean Asteroid",
+        "MiniFlippedWarp": "Flipped Asteroid",
+        "TerraMoonlet": "Terrania Asteroid",
+        "IdealLandingSite": "Irradiated Forest Asteroid",
+        "WarpOilySwamp": "Oily Swamp Asteroid",
+        "SwampMoonlet": "Quagmiris Asteroid",
+        "MetalHeavyLandingSite": "Irradiated Marsh Asteroid",
+        "VanillaArboria": "Arboria Asteroid",
+        "MediumSandyRadioactiveVanillaWarpPlanet": "Radioactive Terra Asteroid",
+        "VanillaAridio": "Aridio Asteroid",
+        "MediumSandySwamp": "Radioactive Terrabog Asteroid",
+        "VanillaBadlands": "The Badlands Asteroid",
+        "VanillaForestDefault": "Verdante Asteroid",
+        "VanillaOasis": "Oasisse Asteroid",
+        "VanillaOceania": "Oceania Asteroid",
+        "MediumForestyWasteland": "Glowood Wasteland Asteroid",
+        "VanillaSandstoneDefault": "Terra Asteroid",
+        "VanillaSandstoneFrozen": "Rime Asteroid",
+        "MediumSwampy": "Stinko Swamp Asteroid",
+        "VanillaSwampDefault": "Squelchy Asteroid",
+        "MediumForestyRadioactiveVanillaWarpPlanet": "Radioactive Forest Asteroid",
+        "VanillaVolcanic": "Volcanea Asteroid",
+        "MiniMetallicSwampyWarp": "Metallic Swampy Asteroid",
+        "CeresClassicAsteroid": "Ceres Asteroid",
+        "CeresClassicShatteredAsteroid": "Blasted Ceres",
+        "CeresSpacedOutAsteroid": "Ceres Minor",
+        "MiniShatteredStartAsteroid": "Ceres Mantle Asteroid",
+        "MiniShatteredWarpAsteroid": "Sweet Ceres Asteroid",
+        "MiniShatteredGeoAsteroid": "Ceres Core Asteroid",
+        "MixingCeresAsteroid": "Ceres Fragment",
+        "PrehistoricClassicAsteroid": "Relica Asteroid",
+        "PrehistoricShatteredClassicAsteroid": "RelicAAAAAAAGHH",
+        "PrehistoricSpacedOutAsteroid": "Relica Minor",
+        "WarpOilySandySwamp": "Oily Sandy Swamp Asteroid",
+        "MixingPrehistoricAsteroid": "Relica Fragment",
+        "AquaticClassicAsteroid": "Marinea Asteroid",
+        "AquaticSpacedOutAsteroid": "Marinea Minor",
+        "MixingAquaticAsteroid": "Marinea Fragment",
+        "Badlands": "The Badlands",
+        "ForestDefault": "Arboria",
+        "ForestHot": "Aridio",
+        "ForestLush": "Verdante",
+        "StrangeAsteroidKleiFest2023": "Skewed Asteroid",
+        "Oasis": "Oasisse",
+        "Oceania": "Oceania",
+        "SandstoneFrozen": "Rime",
+        "Volcanic": "Volcanea",
+        "CeresBaseGameAsteroid": "Ceres",
+        "CeresBaseGameShatteredAsteroid": "Blasted Ceres",
+        "PrehistoricBaseGameAsteroid": "Relica",
+        "PrehistoricShatteredBaseGameAsteroid": "RelicAAAAAAAGHH",
+        "AquaticBaseGameAsteroid": "Marinea"
+    }
+}

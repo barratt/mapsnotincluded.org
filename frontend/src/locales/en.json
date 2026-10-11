@@ -129,6 +129,27 @@
             "contribute": "Contribute",
             "discord": "Discord",
             "github": "GitHub"
+        },
+        "search": {
+            "title": "What kind of world are you looking for?",
+            "placeholder": "e.g. Spaced Out Terra with a cool steam vent and no volcanoes on the start",
+            "button": "Find worlds",
+            "searching": "Searching every world we know about...",
+            "read_as": "We read that as:",
+            "any_world": "Any world",
+            "searched": "Searched {count} indexed worlds.",
+            "view": "View world",
+            "copy": "Copy coordinate",
+            "unavailable": "World search is having a moment. Please try again shortly.",
+            "progress": "Checked {checked} worlds · {found} found",
+            "near_match": "Closest match: {satisfied} of {total} conditions",
+            "rate_limited": "You've reached our fair-use limit for now. Try again after {time}.",
+            "match_short": "{satisfied}/{total} match",
+            "copied": "Copied",
+            "traits": "World traits",
+            "start_asteroid": "Start asteroid",
+            "rest_of_cluster": "Rest of cluster ({n} asteroids)",
+            "no_geysers": "No geysers"
         }
     },
     "not_found": {
@@ -150,5 +171,109 @@
         "link": {
             "contribute": "contribute"
         }
+    },
+    "world": {
+        "title": "World",
+        "start": "Start",
+        "map_explorer": "Map Explorer",
+        "new_search": "New search",
+        "synthetic": "preview",
+        "synthetic_notice": "This is placeholder data from our development generator, not a real Oxygen Not Included world.",
+        "not_indexed": "We don't have this world indexed yet.",
+        "map_coming": "Detailed tile maps are coming soon. Use the Map Explorer for now.",
+        "map_failed": "We couldn't generate the map for this world.",
+        "mock_map": "Placeholder map (development data)",
+        "generating": "Generating map...",
+        "preview_badge": "Preview data",
+        "copy": "Copy",
+        "copied": "Copied!",
+        "loading": "Loading world...",
+        "mode": {
+            "spaced_out": "Spaced Out",
+            "base_game": "Base game"
+        },
+        "facts": {
+            "asteroids": "Asteroids",
+            "geysers": "Geysers",
+            "pois": "Points of interest",
+            "biomes": "Biome types",
+            "version": "Game build",
+            "cluster": "Cluster",
+            "size": "Size"
+        },
+        "cluster_heading": "Cluster · {n} asteroids",
+        "asteroid_heading": "Asteroid",
+        "cluster_layout": "Cluster layout",
+        "geyser_count": "{n} geysers",
+        "details": "Asteroid details",
+        "size_value": "{x} × {y} tiles",
+        "traits": "World traits",
+        "no_traits": "No world traits",
+        "biomes": "Biomes",
+        "geysers_heading": "Geysers ({n})",
+        "pois_heading": "Points of interest ({n})",
+        "position": "at {x}, {y}",
+        "credits": "Sprites, biome colours and the geyser rating style come from Stefan Oltmann's {stefan} (AGPL-3.0). World trait names, descriptions and icons come from Sgt_Imalas' {sgt} (MIT). Oxygen Not Included art belongs to Klei Entertainment.",
+        "map": {
+            "aria": "Map of {name}. Use plus and minus to zoom and the arrow keys to pan.",
+            "no_biomes": "No biome data for this asteroid yet.",
+            "controls": "Map controls",
+            "zoom_in": "Zoom in",
+            "zoom_out": "Zoom out",
+            "reset": "Reset view",
+            "hint": "Scroll or pinch to zoom, drag to pan, select a marker for details."
+        },
+        "geyser": {
+            "quality_label": "Average output is at {pct}% of the possible range",
+            "no_range": "Fixed output",
+            "on_average": "on average",
+            "tons_per_cycle": "{t} t/cycle",
+            "eruption": "Eruption",
+            "eruption_value": "{rate} g/s for {on}s every {period}s",
+            "activity": "Active",
+            "activity_value": "{on} of every {period} cycles",
+            "storage": "Dormancy storage",
+            "storage_value": "{t} t",
+            "col_name": "Geyser",
+            "col_avg": "Avg output",
+            "col_quality": "Quality",
+            "col_eruption": "Eruption",
+            "col_activity": "Activity",
+            "col_position": "Position",
+            "eruption_short": "{rate} g/s · {on}s of {period}s",
+            "activity_short": "{on} of {period} cycles",
+            "share": "{pct} of the time",
+            "sort_by": "Sort by",
+            "none": "No geysers"
+        },
+        "poi": {
+            "none": "No points of interest",
+            "show": "Show {name} at {x}, {y} on the map"
+        },
+        "starmap": {
+            "heading": "Starmap",
+            "aria": "Starmap. Use plus and minus to zoom and the arrow keys to pan.",
+            "entry": "{name}, {d} hexes from the start",
+            "distance": "{d} hexes out",
+            "list": "All {n} starmap destinations"
+        }
+    },
+    "privacy": {
+        "link": "Privacy",
+        "title": "Privacy",
+        "updated": "Last updated October 2026",
+        "intro": "Maps Not Included collects as little as it can to run world search fairly. This page explains what we store and why.",
+        "collect_title": "What we collect",
+        "collect_search": "The text you search for and the presets you use.",
+        "collect_ip": "Your IP address and network range, stored only as one-way keyed hashes. We check the IP against public lists of Tor exits and cloud providers, and may ask a VPN/proxy detection service about it.",
+        "collect_fingerprint": "A browser fingerprint (a hash of browser settings such as language, screen size and time zone) and a random ID stored in your browser. Both are hashed again before we store them.",
+        "why_title": "Why",
+        "why": "To keep search free for everyone: we use these signals to apply fair-use limits and to detect abuse, such as automated scraping or attempts to get around limits. We don't sell data or use it for advertising.",
+        "processors_title": "Who else sees it",
+        "processors": "Your search text is sent to our AI provider to interpret it. IP addresses may be checked with a VPN/proxy detection service.",
+        "retention_title": "How long we keep it",
+        "retention": "Search logs are deleted after 90 days and cached AI results after 30 days. Abuse flags expire, and are deleted 90 days after expiry.",
+        "rights_title": "Your rights",
+        "rights": "You can ask what we hold about you, or ask us to delete it, on our {discordLink}."
     }
 }

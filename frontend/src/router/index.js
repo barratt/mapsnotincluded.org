@@ -17,6 +17,9 @@ const router = createRouter({
     { path: '/starmap-generator', component: () => import('../views/StarmapGeneratorView.vue') },
     { path: '/seed-viewer', component: () => import('../views/SeedViewerView.vue') },
 
+    { path: '/world/:coordinate', component: () => import('../views/WorldView.vue') },
+    { path: '/privacy', component: () => import('../views/PrivacyView.vue') },
+
     { path: '/about', component: () => import('../views/AboutView.vue') },
     { path: '/help', component: () => import('../views/HelpView.vue') },
     { path: '/contribute', component: () => import('../views/ContributeView.vue') },

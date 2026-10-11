@@ -1,0 +1,50 @@
+// Loads the full world detail for the world page from
+// GET /worlds/:coordinate/detail on the search API (shape documented in
+// README.md, "World page"). Falls back to the search summary, which has no
+// map data.
+
+import { SEARCH_API_URL, api } from './searchApi'
+import { asteroidInfo, traitInfo } from './oniCatalog'
+
+const looksLikeDetail = (data) => Array.isArray(data?.asteroids)
+
+// Returns { detail, source } where source is 'api' or 'summary', or
+// { detail: null, source: null } when nothing is known about the coordinate.
+export async function loadWorldDetail(coordinate) {
+  const path = `/worlds/${encodeURIComponent(coordinate)}`
+  if (SEARCH_API_URL) {
+    try {
+      const res = await api(`${path}/detail`)
+      if (res.ok && looksLikeDetail(res.data)) return { detail: res.data, source: 'api' }
+    } catch {
+      // fall back to the summary
+    }
+  }
+
+  if (SEARCH_API_URL) {
+    try {
+      const res = await api(path)
+      if (res.ok && looksLikeDetail(res.data)) return { detail: summaryToDetail(res.data), source: 'summary' }
+    } catch {
+      // fall through
+    }
+  }
+  return { detail: null, source: null }
+}
+
+// The search summary (GET /worlds/:coordinate) has asteroids with plain trait
+// strings and geysers without positions. Normalise it so the page can still
+// show the asteroid list when the detail endpoint isn't available.
+export function summaryToDetail(summary) {
+  return {
+    ...summary,
+    asteroids: summary.asteroids.map((a) => ({
+      ...a,
+      name: a.name ?? asteroidInfo(a.id).label,
+      traits: (a.traits ?? []).map((t) => (typeof t === 'string' ? { id: t, name: traitInfo(t).label } : t)),
+      geysers: (a.geysers ?? []).map((g) => ({ ...g, type: g.type ?? g.id ?? '' })),
+      biomes: a.biomes ?? [],
+      pois: a.pois ?? [],
+    })),
+  }
+}
