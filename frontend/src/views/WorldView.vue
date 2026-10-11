@@ -1,8 +1,8 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { loadWorldDetail } from '@/worldDetail'
+import { loadWorldDetail, loadWorldTiles } from '@/worldDetail'
 import AdSlot from '@/components/AdSlot.vue'
 import StoreLinks from '@/components/StoreLinks.vue'
 import SupportLinks from '@/components/SupportLinks.vue'
@@ -10,6 +10,7 @@ import { productsForCluster } from '@/siteConfig'
 import { SPACE_BACKGROUND, asteroidInfo, traitInfo } from '@/oniCatalog'
 import AsteroidMap from '@/components/world/AsteroidMap.vue'
 import BiomeLegend from '@/components/world/BiomeLegend.vue'
+import ElementLegend from '@/components/world/ElementLegend.vue'
 import ClusterLayout from '@/components/world/ClusterLayout.vue'
 import ClusterOverview from '@/components/world/ClusterOverview.vue'
 import GeyserTable from '@/components/world/GeyserTable.vue'
@@ -21,30 +22,95 @@ const { t } = useI18n()
 const coordinate = computed(() => String(route.params.coordinate).toUpperCase())
 
 const loading = ref(true)
-const detail = ref(null)
+// Shallow: the tile arrays inside must not become reactive proxies.
+const detail = shallowRef(null)
 const loadError = ref(null)
 const source = ref(null)
 const selectedIndex = ref(0)
 const selectedMarker = ref(null)
 const highlightZone = ref(null)
+const highlightElement = ref(null)
 const copied = ref(false)
+// Tile state: variant shown ('presettle' | 'settled' | null), what the
+// settled variant is doing, whether tiles are still being generated, and why
+// there is no world (coordinate refused / worldgen failure).
+const tileVariant = ref(null)
+const settleState = ref(null)
+const tilesPending = ref(false)
+const refused = ref(null)
+const failure = ref(null)
+
+let pollTimer = null
+let loadId = 0
+const stopPolling = () => clearTimeout(pollTimer)
+onBeforeUnmount(stopPolling)
+
+// Swaps in a newer payload (tiles arrived, or settled replaced pre-settle)
+// and keeps the selected asteroid.
+function applyTiles(result) {
+  const selectedId = asteroid.value?.id
+  detail.value = result.detail
+  source.value = 'api'
+  tileVariant.value = result.variant
+  settleState.value = result.settle
+  tilesPending.value = false
+  const index = result.detail.asteroids.findIndex((a) => a.id === selectedId)
+  if (index >= 0) selectedIndex.value = index
+}
+
+// Polls for tiles still being generated, then for the settled variant while
+// it is being settled. Gives up after ~5 minutes.
+function poll(id, variant, delayMs, attempt = 0) {
+  stopPolling()
+  if (attempt > 120) {
+    tilesPending.value = false
+    if (settleState.value === 'generating') settleState.value = 'failed'
+    return
+  }
+  pollTimer = setTimeout(async () => {
+    const result = await loadWorldTiles(coordinate.value, variant ? { variant } : undefined)
+    if (id !== loadId) return
+    if (result.status === 'ok') {
+      applyTiles(result)
+      if (!variant && ['generating', 'busy'].includes(result.settle)) poll(id, 'settled', 5000)
+    } else if (result.status === 'generating' || result.status === 'busy') {
+      poll(id, variant, Math.min(10000, result.retryAfterMs ?? 3000), attempt + 1)
+    } else {
+      tilesPending.value = false
+      if (variant) settleState.value = 'failed'
+    }
+  }, Math.max(1000, delayMs))
+}
 
 async function load() {
+  const id = ++loadId
+  stopPolling()
   loading.value = true
   detail.value = null
+  refused.value = null
+  failure.value = null
   const result = await loadWorldDetail(coordinate.value)
+  if (id !== loadId) return
   detail.value = result.detail
   source.value = result.source
   loadError.value = result.error ?? null
+  refused.value = result.refused ?? null
+  failure.value = result.failure ?? null
+  tileVariant.value = result.tiles?.variant ?? (result.detail?.asteroids?.some((a) => a.tileData) ? 'presettle' : null)
+  settleState.value = result.tiles?.settle ?? null
+  tilesPending.value = Boolean(result.pending)
   const start = result.detail?.asteroids?.findIndex((a) => a.start) ?? -1
   selectedIndex.value = Math.max(0, start)
   loading.value = false
+  if (result.pending) poll(id, null, result.pending.retryAfterMs ?? 2000)
+  else if (['generating', 'busy'].includes(result.tiles?.settle)) poll(id, 'settled', 5000)
 }
 watch(coordinate, load, { immediate: true })
 
 watch(selectedIndex, () => {
   selectedMarker.value = null
   highlightZone.value = null
+  highlightElement.value = null
 })
 
 const asteroids = computed(() => detail.value?.asteroids ?? [])
@@ -52,8 +118,12 @@ const asteroid = computed(() => asteroids.value[selectedIndex.value] ?? null)
 const asteroidName = computed(() => (asteroid.value ? asteroidInfo(asteroid.value.id, asteroid.value.name).label : ''))
 const traits = computed(() => (asteroid.value?.traits ?? []).map(traitInfo))
 const hasMap = computed(
-  () => asteroid.value && (asteroid.value.biomes?.length || asteroid.value.geysers?.some((g) => g.x != null)) && asteroid.value.sizeX,
+  () =>
+    asteroid.value &&
+    (asteroid.value.tileData || asteroid.value.biomes?.length || asteroid.value.geysers?.some((g) => g.x != null)) &&
+    asteroid.value.sizeX,
 )
+const hasTiles = computed(() => Boolean(asteroid.value?.tileData))
 const clusterHasBiomes = computed(() => asteroids.value.length > 1 && asteroids.value.every((a) => a.biomes?.length && a.sizeX))
 const totalGeysers = computed(() => asteroids.value.reduce((n, a) => n + (a.geysers?.length ?? 0), 0))
 const starmap = computed(() => (detail.value?.starmap?.entries?.length ? detail.value.starmap : null))
@@ -151,6 +221,17 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
         {{ $t('world.busy') }}
         <button type="button" class="btn btn-sm btn-outline-light ms-2" @click="load">{{ $t('world.retry') }}</button>
       </div>
+      <div v-else-if="refused" class="alert sb-alert mt-3">
+        <p class="mb-1">{{ $t(refused.status === 'rewritten' ? 'world.tiles.rewritten' : 'world.tiles.refused') }}</p>
+        <p v-if="refused.reason || refused.error" class="small text-body-secondary mb-1">{{ refused.reason || refused.error }}</p>
+        <router-link v-if="refused.status === 'rewritten' && refused.coordinate" :to="`/world/${refused.coordinate}`" class="btn btn-sm btn-warning">
+          {{ $t('world.tiles.open_rewritten', { coordinate: refused.coordinate }) }}
+        </router-link>
+      </div>
+      <div v-else-if="failure !== null" class="alert sb-alert mt-3">
+        <p class="mb-1">{{ $t('world.tiles.worldgen_failure') }}</p>
+        <p v-if="failure" class="small text-body-secondary mb-0">{{ failure }}</p>
+      </div>
       <div v-else-if="!detail" class="alert sb-alert mt-3">{{ $t('world.not_indexed') }}</div>
 
       <template v-else>
@@ -171,8 +252,29 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
                 <h2 id="asteroid-heading" class="sb-heading d-flex flex-wrap align-items-center gap-2">
                   {{ asteroidName }}
                   <span v-if="asteroid.start" class="badge sb-start-badge">{{ $t('world.start') }}</span>
+                  <span
+                    v-if="hasTiles"
+                    class="badge"
+                    :class="tileVariant === 'settled' ? 'sb-settled-badge' : 'sb-presettle-badge'"
+                    :title="$t(tileVariant === 'settled' ? 'world.tiles.settled_notice' : 'world.tiles.presettle_notice')"
+                  >
+                    {{ $t(tileVariant === 'settled' ? 'world.tiles.settled' : 'world.tiles.presettle') }}
+                  </span>
+                  <span v-if="hasTiles && tileVariant !== 'settled' && settleState === 'generating'" class="badge text-bg-secondary">
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>{{ $t('world.tiles.settling') }}
+                  </span>
+                  <span v-if="tilesPending" class="badge text-bg-secondary">
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>{{ $t('world.generating') }}
+                  </span>
                 </h2>
-                <AsteroidMap v-if="hasMap" v-model:selected="selectedMarker" :asteroid="asteroid" :highlight-zone="highlightZone" />
+                <AsteroidMap
+                  v-if="hasMap"
+                  v-model:selected="selectedMarker"
+                  :asteroid="asteroid"
+                  :tiles="detail.tiles"
+                  :highlight-zone="highlightZone"
+                  :highlight-element="highlightElement"
+                />
                 <div v-else class="alert sb-alert mb-0">{{ $t('world.map_coming') }}</div>
               </div>
             </div>
@@ -212,6 +314,11 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
               <div class="sb-panel">
                 <h3 class="sb-subheading">{{ $t('world.biomes') }}</h3>
                 <BiomeLegend v-model="highlightZone" :asteroid="asteroid" />
+              </div>
+
+              <div v-if="hasTiles" class="sb-panel">
+                <h3 class="sb-subheading">{{ $t('world.tiles.elements') }}</h3>
+                <ElementLegend v-model="highlightElement" :asteroid="asteroid" :tiles="detail.tiles" />
               </div>
             </div>
           </div>
@@ -293,6 +400,17 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
   background: var(--sb-hover);
   color: #222529;
   font-size: 0.8rem;
+}
+.world-page .sb-settled-badge {
+  background: #2e7d32;
+  color: #fff;
+  font-size: 0.8rem;
+}
+.world-page .sb-presettle-badge {
+  background: #455a64;
+  color: #fff;
+  font-size: 0.8rem;
+  cursor: help;
 }
 .world-page .sb-preview-badge {
   background: #7e57c2;

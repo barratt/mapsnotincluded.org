@@ -3,17 +3,24 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SPACE_BACKGROUND, geyserInfo, geyserRating, poiInfo, zoneInfo } from '@/oniCatalog'
 import { usePanZoom } from '@/composables/usePanZoom'
+import { cellInfo, elementTable, formatMass, formatTemperature, paintTiles } from '@/worldTiles'
 import GeyserBadge from './GeyserBadge.vue'
 import GeyserStats from './GeyserStats.vue'
 
-// Biome polygons with geyser and POI markers for one asteroid. Game
-// coordinates have y pointing up; everything here is flipped once into SVG
-// space (y down) and then drawn inside a pan/zoom transform. Markers are HTML
-// buttons on top so they stay the same size and are keyboard focusable.
+// One asteroid: every tile (when the detail has tile data) or the biome
+// polygons, with geyser, POI and spawn markers. Game coordinates have y
+// pointing up; everything here is flipped once into SVG space (y down) and
+// then drawn inside a pan/zoom transform. The tiles are painted once per view
+// mode into a canvas (ImageData) and shown as a pixelated SVG image, so pan
+// and zoom never repaint them. Markers are HTML buttons on top so they stay
+// the same size and are keyboard focusable.
 const props = defineProps({
   asteroid: { type: Object, required: true },
+  // detail.tiles: element and disease tables for asteroid.tileData.
+  tiles: { type: Object, default: null },
   selected: { type: String, default: null },
   highlightZone: { type: String, default: null },
+  highlightElement: { type: Number, default: null },
 })
 const emit = defineEmits(['update:selected'])
 const { t } = useI18n()
@@ -40,33 +47,62 @@ const biomePaths = computed(() =>
   }),
 )
 
-// Optional future layer: asteroid.tiles = { width, height, palette: ['#rrggbb', ...],
-// data: base64 string with one palette index byte per cell, bottom row first }.
-// When present it is drawn underneath and the biome polygons become outlines.
+// Tile layer. view: 'elements' | 'temperature' | 'biomes' (polygons only).
+const hasTiles = computed(() => Boolean(props.asteroid.tileData))
+const view = ref('elements')
+const showBiomes = ref(true)
+const table = computed(() => elementTable(props.tiles))
 const tileUrl = computed(() => {
-  const tiles = props.asteroid.tiles
-  if (!tiles?.data || !tiles.palette || typeof document === 'undefined') return null
+  const data = props.asteroid.tileData
+  if (!data || view.value === 'biomes' || typeof document === 'undefined') return null
   try {
-    const bytes = Uint8Array.from(atob(tiles.data), (c) => c.charCodeAt(0))
     const canvas = document.createElement('canvas')
-    canvas.width = tiles.width
-    canvas.height = tiles.height
+    canvas.width = data.width
+    canvas.height = data.height
     const ctx = canvas.getContext('2d')
-    const image = ctx.createImageData(tiles.width, tiles.height)
-    const rgb = tiles.palette.map((hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)))
-    for (let y = 0; y < tiles.height; y++) {
-      for (let x = 0; x < tiles.width; x++) {
-        const colour = rgb[bytes[y * tiles.width + x]] ?? [0, 0, 0]
-        const o = ((tiles.height - 1 - y) * tiles.width + x) * 4
-        image.data.set([...colour, 255], o)
-      }
-    }
+    const image = ctx.createImageData(data.width, data.height)
+    paintTiles(data, table.value, view.value, props.highlightElement, image.data)
     ctx.putImageData(image, 0, 0)
     return canvas.toDataURL()
   } catch {
     return null
   }
 })
+const biomeFill = (biome) => {
+  if (props.highlightZone && props.highlightZone !== biome.zone) return tileUrl.value ? 'rgba(0, 0, 0, 0.55)' : 'var(--sb-dimmed)'
+  return tileUrl.value ? 'none' : biome.color
+}
+
+// Ambient spawns (critters, plants, ...) placed once the world has settled.
+const showAmbient = ref(true)
+const ambient = computed(() => props.asteroid.ambient ?? [])
+const ambientByCell = computed(() => {
+  const byCell = new Map()
+  for (const a of ambient.value) {
+    const key = a.y * width.value + a.x
+    byCell.set(key, [...(byCell.get(key) ?? []), a.id.replace(/([a-z])([A-Z])/g, '$1 $2')])
+  }
+  return byCell
+})
+
+// Hovered cell: client position -> viewBox -> map (undo the pan/zoom) -> grid.
+const hoverCell = ref(null)
+function onPointerMove(event) {
+  const data = props.asteroid.tileData
+  if (!data || !viewport.value || event.pointerType === 'touch') return
+  const rect = viewport.value.getBoundingClientRect()
+  const vx = ((event.clientX - rect.left) / rect.width) * width.value
+  const vy = ((event.clientY - rect.top) / rect.height) * height.value
+  const x = Math.floor((vx - pz.tx.value) / pz.k.value)
+  const y = Math.floor(height.value - (vy - pz.ty.value) / pz.k.value)
+  const info = cellInfo(data, table.value, props.tiles?.diseases, x, y)
+  if (info) info.ambient = ambientByCell.value.get(y * data.width + x) ?? null
+  hoverCell.value = info
+}
+watch(
+  () => props.asteroid,
+  () => (hoverCell.value = null),
+)
 
 const markers = computed(() => [
   ...(props.asteroid.geysers ?? [])
@@ -81,6 +117,10 @@ const markers = computed(() => [
       return { key: `p${i}`, kind: 'poi', x: p.x, y: flipY(p.y), icon: info.icon, label: info.label, data: p }
     })
     .filter((m) => m.data.x != null && m.data.y != null),
+  // Where the Printing Pod prints the first Duplicants.
+  ...(props.asteroid.spawn
+    ? [{ key: 'spawn', kind: 'spawn', x: props.asteroid.spawn.x, y: flipY(props.asteroid.spawn.y), label: t('world.tiles.spawn'), data: props.asteroid.spawn }]
+    : []),
 ])
 
 const hovered = ref(null)
@@ -141,22 +181,26 @@ const frameStyle = computed(() => {
         :aria-label="$t('world.map.aria', { name: asteroid.name })"
         :style="{ touchAction: pz.touchAction.value }"
         v-on="pz.handlers"
+        @pointermove="onPointerMove"
+        @pointerleave="hoverCell = null"
         @click.self="!pz.moved.value && emit('update:selected', null)"
       >
         <svg :viewBox="`0 0 ${width} ${height}`" preserveAspectRatio="none" class="map-svg" aria-hidden="true" @click="!pz.moved.value && emit('update:selected', null)">
           <g :transform="pz.transform.value">
             <image v-if="tileUrl" :href="tileUrl" x="0" y="0" :width="width" :height="height" preserveAspectRatio="none" class="map-tiles" />
             <path
-              v-for="biome in biomePaths"
+              v-for="biome in tileUrl && !showBiomes && !highlightZone ? [] : biomePaths"
               :key="biome.zone"
               :d="biome.d"
-              :fill="highlightZone && highlightZone !== biome.zone ? 'var(--sb-dimmed)' : biome.color"
-              :fill-opacity="tileUrl ? 0.15 : 1"
+              :fill="biomeFill(biome)"
               class="map-biome"
-              :class="{ highlighted: highlightZone === biome.zone }"
+              :class="{ highlighted: highlightZone === biome.zone, 'over-tiles': tileUrl, 'no-outline': tileUrl && !showBiomes }"
               @pointerenter="hoveredZone = biome.name"
               @pointerleave="hoveredZone = null"
             />
+            <g v-if="showAmbient && ambient.length" class="map-ambient">
+              <rect v-for="(a, i) in ambient" :key="i" :x="a.x + 0.2" :y="flipY(a.y) - 0.8" width="0.6" height="0.6" />
+            </g>
             <rect x="0" y="0" :width="width" :height="height" class="map-outline" />
           </g>
         </svg>
@@ -177,6 +221,7 @@ const frameStyle = computed(() => {
           @blur="focused = null"
         >
           <GeyserBadge v-if="marker.kind === 'geyser'" :icon="marker.icon" :rating="marker.rating" :size="28" />
+          <span v-else-if="marker.kind === 'spawn'" class="spawn-ring"><i class="bi bi-person-fill" aria-hidden="true"></i></span>
           <span v-else class="poi-dot"><img v-if="marker.icon" :src="marker.icon" alt="" /><i v-else class="bi bi-geo-alt-fill"></i></span>
         </button>
 
@@ -191,8 +236,19 @@ const frameStyle = computed(() => {
           </div>
         </div>
 
-        <div v-if="hoveredZone && !tip" class="map-zone-chip">{{ hoveredZone }}</div>
-        <div v-if="!biomePaths.length" class="map-empty">{{ $t('world.map.no_biomes') }}</div>
+        <div v-if="hoverCell && !tip" class="map-cell-info" role="status">
+          <div class="fw-bold">{{ hoverCell.element }}</div>
+          <div v-if="hoverCell.state !== 'v'" class="small">
+            {{ formatMass(hoverCell.mass) }} · {{ formatTemperature(hoverCell.temperature) }}
+          </div>
+          <div v-if="hoverCell.germ" class="small">{{ $t('world.tiles.germs', { n: hoverCell.germCount.toLocaleString(), name: hoverCell.germ }) }}</div>
+          <div v-if="hoverCell.ambient" class="small">{{ hoverCell.ambient.join(', ') }}</div>
+          <div class="small text-body-secondary">
+            {{ $t('world.position', { x: hoverCell.x, y: hoverCell.y }) }}<template v-if="hoveredZone"> · {{ hoveredZone }}</template>
+          </div>
+        </div>
+        <div v-else-if="hoveredZone && !tip" class="map-zone-chip">{{ hoveredZone }}</div>
+        <div v-if="!biomePaths.length && !hasTiles" class="map-empty">{{ $t('world.map.no_biomes') }}</div>
       </div>
 
       <div class="map-controls" role="group" :aria-label="$t('world.map.controls')">
@@ -207,7 +263,30 @@ const frameStyle = computed(() => {
         </button>
       </div>
     </div>
-    <p class="map-hint">{{ $t('world.map.hint') }}</p>
+    <div v-if="hasTiles" class="map-views" role="group" :aria-label="$t('world.tiles.view')">
+      <div class="btn-group btn-group-sm">
+        <button
+          v-for="mode in ['elements', 'temperature', 'biomes']"
+          :key="mode"
+          type="button"
+          class="btn btn-outline-light"
+          :class="{ active: view === mode }"
+          :aria-pressed="view === mode"
+          @click="view = mode"
+        >
+          {{ $t(`world.tiles.views.${mode}`) }}
+        </button>
+      </div>
+      <div v-if="view !== 'biomes'" class="form-check form-switch mb-0">
+        <input id="map-biome-outlines" v-model="showBiomes" class="form-check-input" type="checkbox" />
+        <label class="form-check-label" for="map-biome-outlines">{{ $t('world.tiles.biome_outlines') }}</label>
+      </div>
+      <div v-if="ambient.length" class="form-check form-switch mb-0">
+        <input id="map-ambient" v-model="showAmbient" class="form-check-input" type="checkbox" />
+        <label class="form-check-label" for="map-ambient">{{ $t('world.tiles.ambient', { n: ambient.length }) }}</label>
+      </div>
+    </div>
+    <p class="map-hint">{{ $t(hasTiles ? 'world.tiles.hint' : 'world.map.hint') }}</p>
   </div>
 </template>
 
@@ -252,6 +331,70 @@ const frameStyle = computed(() => {
   stroke-width: 0.6px;
   vector-effect: non-scaling-stroke;
   transition: fill 0.15s;
+}
+.map-biome.over-tiles {
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1px;
+  pointer-events: all;
+}
+.map-biome.over-tiles.highlighted {
+  stroke: var(--sb-hover);
+  stroke-width: 2px;
+}
+.map-ambient rect {
+  fill: #ffeb3b;
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 0.15;
+  pointer-events: none;
+}
+.map-biome.no-outline {
+  stroke: none;
+}
+.spawn-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--sb-hover);
+  background: rgba(34, 37, 41, 0.6);
+  color: var(--sb-hover);
+  font-size: 0.9rem;
+  box-shadow: 0 0 0 3px rgba(255, 235, 59, 0.25);
+  animation: spawn-pulse 2s ease-in-out infinite;
+}
+@keyframes spawn-pulse {
+  50% {
+    box-shadow: 0 0 0 7px rgba(255, 235, 59, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spawn-ring {
+    animation: none;
+  }
+}
+.map-cell-info {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 4;
+  min-width: 9rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--sb-border);
+  border-radius: 6px;
+  background: rgba(34, 37, 41, 0.9);
+  font-size: 1rem;
+  line-height: 1.25;
+  pointer-events: none;
+}
+.map-views {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  margin-top: 0.4rem;
 }
 .map-outline {
   fill: none;

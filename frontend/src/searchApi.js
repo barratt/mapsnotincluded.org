@@ -53,7 +53,7 @@ export function steamSignInUrl(returnTo = window.location.href) {
   return `${SEARCH_API_URL}/auth/steam?return_to=${encodeURIComponent(returnTo)}`
 }
 
-async function headers() {
+export async function headers() {
   const h = { 'Content-Type': 'application/json', 'X-MNI-Anon': anonId() }
   const fp = await browserFingerprint()
   if (fp) h['X-MNI-FP'] = fp

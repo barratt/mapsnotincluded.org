@@ -12,15 +12,49 @@ Setup, and development instructions can be found in the [Local Development](./do
 
 ## World search
 
-The home page search box and presets call the world search API (`VITE_SEARCH_API_URL`). Results link to
-`/world/:coordinate`, which loads `GET ${VITE_SEARCH_API_URL}/worlds/:coordinate/detail` and shows a cluster
-overview, a zoomable biome map per asteroid with geyser and POI markers, sortable geyser stats, POIs, world traits
-and the Spaced Out starmap. `/privacy` explains what the search stores.
+`/world/:coordinate` (`src/views/WorldView.vue` and `src/components/world/`) shows a cluster overview, a
+zoomable map of every tile of each asteroid (element colours, a temperature view, hover info with element, mass,
+temperature and germs, biome outlines, geyser, POI and spawn markers), sortable geyser stats, POIs, world traits,
+biome and element legends and the Spaced Out starmap.
 
-The detail response has `coordinate`, `clusterName`, `gameMode`, `gameVersion`, `starmap` (`radius`, `entries` of
-`{ id, q, r }`) and `asteroids`, each with `id`, `start`, `sizeX`, `sizeY`, `offset`, `traits` (`{ id, name }`),
-`biomes` (`{ zone, polygons }`), `geysers` (`type`, `x`, `y`, `avgOutput`, `emitRate`, `eruptionSec`, `idleSec`,
-`activeCycles`, `dormantCycles`, `minAvgOutput`, `maxAvgOutput`) and `pois` (`{ type, name, x, y }`).
+Data comes from the search API (`VITE_SEARCH_API_URL`), loaded by `src/worldDetail.js`. Tiles are generated on the
+server; the page only decodes and draws them:
+
+1. `GET /worlds/:coordinate/detail?format=bin`: the binary world payload, decoded by `src/worldTiles.js`.
+2. Otherwise `GET /worlds/:coordinate/detail` (JSON, no tiles: biome map only), then the search summary
+   (`GET /worlds/:coordinate`, asteroid list only).
+
+### Binary world payload
+
+Little-endian: `"MNIW"`, u32 version (1), u32 header length, the header (UTF-8 JSON), zero padding to a multiple
+of 8 bytes, then the tile blob. The header is the JSON detail object, plus:
+
+- `tiles`: `{ format: 1, settled, source, elements: [{ id, state }], diseases: [id] }`. `settled` is false for
+  pre-settle tiles (the generator's layout before the game's settling step; shown with a "Pre-settle tiles" badge)
+  and true for the grid the game shows at game start ("Game start").
+- `coordinateCheck`: `{ status: 'accepted' }`.
+- per asteroid:
+  - `tiles`: `{ width, height, element, mass, temperature, disease, diseaseCount }`, where each array is
+    `{ offset, type }`, a byte offset into the blob, 4-byte aligned. `element` is u16 (index into `tiles.elements`),
+    `mass` f32 kg, `temperature` f32 K, `disease` u8 (index into `tiles.diseases`, 255 = no germs) and
+    `diseaseCount` i32. There are `width * height` cells, row-major with y up (`index = y * width + x`).
+  - `spawn`: `{ x, y, cell }`, start asteroid only (the Printing Pod).
+  - `templates`: `[{ id, x, y }]`.
+  - `ambient`: `[{ id, x, y }]` with settled tiles: critters, plants and other spawns.
+
+Response headers: `X-MNI-Tiles` (`presettle` | `settled`) and `X-MNI-Settle`, which says what the settled variant is
+doing (`ready`, `generating`, `busy`, `failed`, `available`, `unavailable`). While it is `generating`, the page polls
+`?variant=settled` and swaps in the settled grid when it is ready.
+
+Other answers:
+
+- `202 { status: 'generating', retryAfterMs }`: the tiles are being generated. The page shows the JSON detail and
+  polls.
+- `409 { status: 'coordinate_refused', coordinateCheck }`: the game would rewrite the coordinate or not load it.
+- `404` / `422 { status: 'worldgen_failure', reason }`: the game fails to generate the world.
+
+Element colours and names are in `src/data/elementColors.js`. The file is generated: each element's substance colour
+from the element table the game hands its simulation (build 744825), and the game's English element names.
 
 ### Third-party assets and code
 
