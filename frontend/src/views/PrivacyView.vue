@@ -9,6 +9,7 @@
       <li>{{ $t('privacy.collect_search') }}</li>
       <li>{{ $t('privacy.collect_ip') }}</li>
       <li>{{ $t('privacy.collect_fingerprint') }}</li>
+      <li>{{ $t('privacy.collect_steam') }}</li>
     </ul>
 
     <h4 class="mt-4">{{ $t('privacy.why_title') }}</h4>

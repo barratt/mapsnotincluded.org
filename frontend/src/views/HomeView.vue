@@ -2,7 +2,8 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import WorldCard from '@/components/WorldCard.vue'
-import { SEARCH_API_URL, api, jobEvents } from '@/searchApi'
+import SearchAccount from '@/components/SearchAccount.vue'
+import { SEARCH_API_URL, api, jobEvents, steamSignInUrl } from '@/searchApi'
 
 const MAX_LENGTH = 300
 
@@ -13,6 +14,7 @@ const presets = ref([])
 const loading = ref(false)
 const result = ref(null)
 const job = ref(null)
+const usage = ref(null)
 let stopEvents = null
 
 onMounted(async () => {
@@ -39,6 +41,7 @@ async function search(body) {
   try {
     const { data } = await api('/search', { method: 'POST', body })
     result.value = data.status ? data : { status: 'unavailable', message: t('home.search.unavailable') }
+    if (data.usage) usage.value = data.usage
     if (data.status === 'searching') follow(data.jobId)
   } catch {
     result.value = { status: 'unavailable', message: t('home.search.unavailable') }
@@ -66,7 +69,6 @@ function formatTime(iso) {
 <template>
   <main class="container mt-5 home-search">
     <h1>{{ $t('home.title') }}</h1>
-    <p>{{ $t('home.description_1') }}</p>
 
     <section v-if="SEARCH_API_URL" class="mt-4">
       <h2 class="text-center mt-2 search-title">{{ $t('home.search.title') }}</h2>
@@ -88,6 +90,8 @@ function formatTime(iso) {
           </button>
         </div>
       </form>
+
+      <SearchAccount :usage="usage" @usage="usage = $event" />
 
       <div v-if="presets.length" class="presets d-flex gap-2 mt-3 justify-content-md-center">
         <button
@@ -148,8 +152,13 @@ function formatTime(iso) {
           </div>
         </template>
 
-        <div v-else-if="result.status === 'rate_limited'" class="alert alert-warning">
-          <div>{{ $t('home.search.rate_limited', { time: formatTime(result.resetAt) }) }}</div>
+        <div v-else-if="result.status === 'rate_limited' || result.status === 'ip_blocked'" class="alert alert-warning">
+          <div v-if="result.status === 'rate_limited'">{{ $t('home.search.rate_limited', { time: formatTime(result.resetAt) }) }}</div>
+          <div v-else>{{ result.message }}</div>
+          <a v-if="result.canSignIn" :href="steamSignInUrl()" class="btn btn-sm btn-outline-dark mt-2 d-inline-flex align-items-center gap-2">
+            <i class="bi bi-steam" aria-hidden="true"></i>
+            {{ $t('home.search.sign_in_more', { n: result.usage?.signedInLimit ?? usage?.signedInLimit ?? 10 }) }}
+          </a>
         </div>
 
         <div v-else class="alert alert-warning">
