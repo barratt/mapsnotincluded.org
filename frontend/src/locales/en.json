@@ -178,7 +178,9 @@
             "geyser_group": "{name} ×{count} · {total} g/s combined, {average} g/s average ({outputs})",
             "history": "Recent searches",
             "history_results": "{n} results",
-            "link_missing": "That search link doesn't exist any more."
+            "link_missing": "That search link doesn't exist any more.",
+            "show_more": "Show more worlds",
+            "loading_more": "Loading more worlds"
         }
     },
     "not_found": {

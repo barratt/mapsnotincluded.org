@@ -1,4 +1,5 @@
 <script setup>
+import { api } from '@/searchApi'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { asteroidInfo, geyserInfo, geyserRating, traitInfo, ratingClass } from '@/oniCatalog'
@@ -16,7 +17,16 @@ const props = defineProps({
   world: { type: Object, required: true },
   // { geysers: [{ type, scope }], excludedGeysers, traits, quality } from the search response
   highlight: { type: Object, default: null },
+  // The search this card came from and its place in the list, for the
+  // "opened from a search" statistics.
+  searchId: { type: String, default: null },
+  rank: { type: Number, default: null },
 })
+
+function opened() {
+  if (!props.searchId) return
+  api('/events', { method: 'POST', body: { type: 'open_world', searchId: props.searchId, coordinate: props.world.coordinate, rank: props.rank } }).catch(() => {})
+}
 
 const { t } = useI18n()
 
@@ -240,7 +250,7 @@ async function copyCoordinate() {
     </section>
 
     <footer class="world-card-actions">
-      <router-link :to="`/world/${world.coordinate}`" class="btn btn-sm btn-warning flex-grow-1">
+      <router-link :to="`/world/${world.coordinate}`" class="btn btn-sm btn-warning flex-grow-1" @click="opened">
         {{ $t('home.search.view') }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
       </router-link>
       <router-link

@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import SearchHistory from '@/components/SearchHistory.vue'
@@ -73,7 +73,55 @@ async function openSearch(id) {
   }
 }
 
-onBeforeUnmount(() => stopEvents?.())
+onBeforeUnmount(() => {
+  stopEvents?.()
+  observer?.disconnect()
+})
+
+// Infinite scroll: results come 20 at a time; the next page loads when the
+// end of the list comes into view (or from the button below it).
+const loadingMore = ref(false)
+const moreSentinel = ref(null)
+let observer = null
+
+async function loadMore() {
+  const current = result.value
+  if (!current?.hasMore || !current.searchId || loadingMore.value) return
+  loadingMore.value = true
+  try {
+    const { ok, data } = await api(`/searches/${encodeURIComponent(current.searchId)}/results?offset=${current.worlds.length}`)
+    if (result.value !== current) return
+    if (!ok) {
+      current.hasMore = false
+      return
+    }
+    const seen = new Set(current.worlds.map((w) => w.coordinate))
+    current.worlds.push(...data.worlds.filter((w) => !seen.has(w.coordinate)))
+    current.hasMore = data.hasMore
+  } catch {
+    current.hasMore = false
+  } finally {
+    loadingMore.value = false
+  }
+  // Still in view (a tall screen): keep going.
+  await nextTick()
+  if (inView(moreSentinel.value)) loadMore()
+}
+
+function inView(node) {
+  if (!node) return false
+  const rect = node.getBoundingClientRect()
+  return rect.top < window.innerHeight + 400
+}
+
+watch(moreSentinel, (node) => {
+  observer?.disconnect()
+  if (!node || typeof IntersectionObserver === 'undefined') return
+  observer = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) loadMore()
+  }, { rootMargin: '400px' })
+  observer.observe(node)
+})
 
 function follow(jobId) {
   stopEvents?.()
@@ -217,9 +265,17 @@ function formatTime(iso) {
           <div v-else-if="result.message" class="alert alert-secondary">{{ result.message }}</div>
 
           <div class="row g-3">
-            <div v-for="world in result.worlds" :key="world.coordinate" class="col-12 col-sm-6 col-xl-4">
-              <WorldCard :world="world" :highlight="result.highlight" />
+            <div v-for="(world, i) in result.worlds" :key="world.coordinate" class="col-12 col-sm-6 col-xl-4">
+              <WorldCard :world="world" :highlight="result.highlight" :search-id="result.searchId" :rank="i" />
             </div>
+          </div>
+          <div v-if="result.hasMore" ref="moreSentinel" class="text-center my-4">
+            <span v-if="loadingMore" class="spinner-border spinner-border-sm text-secondary" role="status">
+              <span class="visually-hidden">{{ $t('home.search.loading_more') }}</span>
+            </span>
+            <button v-else type="button" class="btn btn-sm btn-outline-secondary" @click="loadMore">
+              {{ $t('home.search.show_more') }}
+            </button>
           </div>
         </template>
 
