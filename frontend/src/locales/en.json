@@ -180,6 +180,9 @@
             "history_results": "{n} results",
             "link_missing": "That search link doesn't exist any more.",
             "show_more": "Show more worlds",
+            "seed_title": "Worlds with seed {seed}",
+            "seed_clusters": "Open this seed on a cluster:",
+            "seed_unsupported": "We can't generate this cluster yet",
             "loading_more": "Loading more worlds"
         }
     },

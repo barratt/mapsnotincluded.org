@@ -279,6 +279,29 @@ function formatTime(iso) {
           </div>
         </template>
 
+        <!-- A bare seed: the worlds we have with it, then the seed on each cluster. -->
+        <template v-else-if="result.status === 'seed'">
+          <h2 class="h6">{{ $t('home.search.seed_title', { seed: result.seed }) }}</h2>
+          <div v-if="result.worlds.length" class="row g-3 mb-4">
+            <div v-for="(world, i) in result.worlds" :key="world.coordinate" class="col-12 col-sm-6 col-xl-4">
+              <WorldCard :world="world" :highlight="null" :search-id="result.searchId" :rank="i" />
+            </div>
+          </div>
+          <p class="small text-body-secondary mb-2">{{ $t('home.search.seed_clusters') }}</p>
+          <div class="d-flex flex-wrap gap-2">
+            <router-link
+              v-for="c in result.candidates"
+              :key="c.coordinate"
+              :to="`/world/${c.coordinate}`"
+              class="btn btn-sm"
+              :class="c.generated ? 'btn-outline-secondary' : 'btn-outline-secondary disabled'"
+              :title="c.generated ? c.coordinate : $t('home.search.seed_unsupported')"
+            >
+              {{ c.name }}
+            </router-link>
+          </div>
+        </template>
+
         <div v-else-if="result.status === 'rate_limited' || result.status === 'ip_blocked'" class="alert alert-warning">
           <div v-if="result.status === 'rate_limited'">{{ $t('home.search.rate_limited', { time: formatTime(result.resetAt) }) }}</div>
           <div v-else>{{ result.message }}</div>
