@@ -18,6 +18,7 @@ const coordinate = computed(() => String(route.params.coordinate).toUpperCase())
 
 const loading = ref(true)
 const detail = ref(null)
+const loadError = ref(null)
 const source = ref(null)
 const selectedIndex = ref(0)
 const selectedMarker = ref(null)
@@ -30,6 +31,7 @@ async function load() {
   const result = await loadWorldDetail(coordinate.value)
   detail.value = result.detail
   source.value = result.source
+  loadError.value = result.error ?? null
   const start = result.detail?.asteroids?.findIndex((a) => a.start) ?? -1
   selectedIndex.value = Math.max(0, start)
   loading.value = false
@@ -132,6 +134,15 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
 
       <div v-if="loading" class="text-center text-body-secondary my-5">
         <span class="spinner-border spinner-border-sm me-2" role="status"></span>{{ $t('world.loading') }}
+        <div class="small mt-1">{{ $t('world.loading_hint') }}</div>
+      </div>
+      <div v-else-if="!detail && loadError?.status === 'worldgen_failure'" class="alert sb-alert mt-3">
+        {{ $t('world.worldgen_failure') }}
+        <div v-if="loadError.reason" class="small text-body-secondary mt-1 font-monospace">{{ loadError.reason }}</div>
+      </div>
+      <div v-else-if="!detail && loadError?.status === 'busy'" class="alert sb-alert mt-3">
+        {{ $t('world.busy') }}
+        <button type="button" class="btn btn-sm btn-outline-light ms-2" @click="load">{{ $t('world.retry') }}</button>
       </div>
       <div v-else-if="!detail" class="alert sb-alert mt-3">{{ $t('world.not_indexed') }}</div>
 

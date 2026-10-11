@@ -1,6 +1,8 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import SearchHistory from '@/components/SearchHistory.vue'
 import WorldCard from '@/components/WorldCard.vue'
 import SearchAccount from '@/components/SearchAccount.vue'
 import SearchScope from '@/components/SearchScope.vue'
@@ -21,11 +23,55 @@ let stopEvents = null
 
 const RUNNING = ['queued', 'running']
 
+const route = useRoute()
+const router = useRouter()
+const history = ref(null)
+
 onMounted(async () => {
   if (!SEARCH_API_URL) return
+  if (route.query.s) openSearch(String(route.query.s))
   const { ok, data } = await api('/presets').catch(() => ({ ok: false }))
   if (ok) presets.value = data
 })
+
+// Each search lives at /?s=<id>, so back, forward, bookmarks and shared links
+// show it again. Opening a link re-runs its stored filter for free.
+watch(
+  () => route.query.s,
+  (id) => {
+    if (!id) {
+      stopEvents?.()
+      result.value = null
+      job.value = null
+    } else if (id !== result.value?.searchId) {
+      openSearch(String(id))
+    }
+  },
+)
+
+async function openSearch(id) {
+  stopEvents?.()
+  loading.value = true
+  job.value = null
+  try {
+    const { ok, data } = await api(`/searches/${encodeURIComponent(id)}`)
+    if (!ok) {
+      result.value = { status: 'unavailable', message: t('home.search.link_missing') }
+      return
+    }
+    if (data.status === 'coordinate' && data.coordinate) {
+      router.replace(`/world/${data.coordinate}`)
+      return
+    }
+    result.value = data
+    if (data.text) text.value = data.text
+    if (data.jobId) follow(data.jobId)
+  } catch {
+    result.value = { status: 'unavailable', message: t('home.search.unavailable') }
+  } finally {
+    loading.value = false
+  }
+}
 
 onBeforeUnmount(() => stopEvents?.())
 
@@ -44,9 +90,16 @@ async function search(body) {
   job.value = null
   try {
     const { data } = await api('/search', { method: 'POST', body: { ...body, options: scope.value ?? undefined } })
-    result.value = data.status ? data : { status: 'unavailable', message: t('home.search.unavailable') }
     if (data.usage) usage.value = data.usage
+    // A pasted coordinate: straight to its world page.
+    if (data.status === 'coordinate' && data.coordinate) {
+      router.push(`/world/${data.coordinate}`)
+      return
+    }
+    result.value = data.status ? data : { status: 'unavailable', message: t('home.search.unavailable') }
     if (data.status === 'searching') follow(data.jobId)
+    if (data.searchId) router.push({ path: '/', query: { s: data.searchId } })
+    history.value?.refresh()
   } catch {
     result.value = { status: 'unavailable', message: t('home.search.unavailable') }
   } finally {
@@ -97,7 +150,10 @@ function formatTime(iso) {
         </div>
       </form>
 
-      <SearchAccount :usage="usage" @usage="usage = $event" />
+      <div class="d-flex flex-wrap justify-content-center align-items-center gap-2">
+        <SearchAccount :usage="usage" @usage="usage = $event" />
+        <SearchHistory ref="history" :presets="presets" @open="(id) => router.push({ path: '/', query: { s: id } })" />
+      </div>
 
       <div v-if="presets.length" class="presets d-flex gap-2 mt-3 justify-content-md-center">
         <button

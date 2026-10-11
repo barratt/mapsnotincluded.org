@@ -175,7 +175,10 @@
             "clusters_hint": "Pick the clusters you want; none picked searches all of them. The list follows the game and DLC choices above.",
             "cluster_worlds": "{n} worlds indexed",
             "cluster_unavailable": "Not searchable yet",
-            "geyser_group": "{name} ×{count} · {total} g/s combined, {average} g/s average ({outputs})"
+            "geyser_group": "{name} ×{count} · {total} g/s combined, {average} g/s average ({outputs})",
+            "history": "Recent searches",
+            "history_results": "{n} results",
+            "link_missing": "That search link doesn't exist any more."
         }
     },
     "not_found": {
@@ -282,7 +285,11 @@
             "entry": "{name}, {d} hexes from the start",
             "distance": "{d} hexes out",
             "list": "All {n} starmap destinations"
-        }
+        },
+        "loading_hint": "New coordinates are generated on the spot; that takes a few seconds.",
+        "worldgen_failure": "The game can't generate this coordinate: it would fail and re-roll the seed. Try another one.",
+        "busy": "Lots of worlds are being generated right now. Try again in a moment.",
+        "retry": "Try again"
     },
     "privacy": {
         "link": "Privacy",
