@@ -111,7 +111,6 @@ function formatTime(iso) {
           {{ preset.label }}
         </button>
       </div>
-      <p v-if="presets.length" class="text-center small text-body-secondary mt-1 mb-0">{{ $t('home.search.presets_free') }}</p>
 
       <section v-if="loading" class="text-center mt-4 text-muted">
         {{ $t('home.search.searching') }}

@@ -77,8 +77,10 @@ const clusterGroups = computed(() =>
 const clusterShown = computed(() => clusterGroups.value.slice(0, CLUSTER_ROW_LIMIT))
 const clusterHidden = computed(() => clusterGroups.value.length - clusterShown.value.length)
 
+// Searched-for types first (met before unmet), then by combined output.
 function byStatus(a, b) {
-  return Number(Boolean(b.status)) - Number(Boolean(a.status))
+  const rank = (g) => (g.status === 'met' ? 2 : g.status ? 1 : 0)
+  return rank(b) - rank(a) || b.weight - a.weight
 }
 
 // "Geysers above average" requests: the share this world actually has.
@@ -97,8 +99,7 @@ const quality = computed(() => {
 })
 
 function groupTitle(group) {
-  const outputs = group.outputs.map((o) => `${o} g/s`).join(', ')
-  return `${group.label} ×${group.count} · ${outputs}`
+  return t('home.search.geyser_group', { name: group.label, count: group.count, total: group.total, average: group.average, outputs: group.outputs.join(', ') })
 }
 
 // Touch screens have no hover: tapping a geyser chip shows its name and
@@ -109,7 +110,7 @@ function toggle(row, group) {
 }
 function caption(group) {
   if (group.missing) return t('home.search.missing_geyser', { name: group.label, count: group.count, min: group.min })
-  return `${group.label} ×${group.count} · ${group.outputs.map((o) => `${o}`).join(', ')} g/s`
+  return groupTitle(group)
 }
 
 const copied = ref(false)
@@ -184,7 +185,7 @@ async function copyCoordinate() {
             @click="toggle('start', group)"
           >
             <GeyserBadge :icon="group.icon" :rating="group.rating" :count="group.count" :label="group.label" :size="34" />
-            <span class="world-card-output" :class="`tone-${ratingClass(group.rating)}`">{{ shortOutput(group.best.avgOutput) }}</span>
+            <span class="world-card-output" :class="`tone-${ratingClass(group.rating)}`">{{ shortOutput(group.total) }}</span>
           </button>
         </li>
         <li v-for="m in missingIn('start')" :key="`missing-${m.type}`">
@@ -219,7 +220,7 @@ async function copyCoordinate() {
             @click="toggle('cluster', group)"
           >
             <GeyserBadge :icon="group.icon" :rating="group.rating" :count="group.count" :label="group.label" :size="28" />
-            <span class="world-card-output" :class="`tone-${ratingClass(group.rating)}`">{{ shortOutput(group.best.avgOutput) }}</span>
+            <span class="world-card-output" :class="`tone-${ratingClass(group.rating)}`">{{ shortOutput(group.total) }}</span>
           </button>
         </li>
         <li v-for="m in missingIn('cluster')" :key="`missing-${m.type}`">
