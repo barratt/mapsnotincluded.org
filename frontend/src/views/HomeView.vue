@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import WorldCard from '@/components/WorldCard.vue'
 import SearchAccount from '@/components/SearchAccount.vue'
+import SearchScope from '@/components/SearchScope.vue'
 import { SEARCH_API_URL, api, jobEvents, steamSignInUrl } from '@/searchApi'
 
 const MAX_LENGTH = 300
@@ -15,7 +16,10 @@ const loading = ref(false)
 const result = ref(null)
 const job = ref(null)
 const usage = ref(null)
+const scope = ref(null)
 let stopEvents = null
+
+const RUNNING = ['queued', 'running']
 
 onMounted(async () => {
   if (!SEARCH_API_URL) return
@@ -39,7 +43,7 @@ async function search(body) {
   result.value = null
   job.value = null
   try {
-    const { data } = await api('/search', { method: 'POST', body })
+    const { data } = await api('/search', { method: 'POST', body: { ...body, options: scope.value ?? undefined } })
     result.value = data.status ? data : { status: 'unavailable', message: t('home.search.unavailable') }
     if (data.usage) usage.value = data.usage
     if (data.status === 'searching') follow(data.jobId)
@@ -73,7 +77,9 @@ function formatTime(iso) {
     <section v-if="SEARCH_API_URL" class="mt-4">
       <h2 class="text-center mt-2 search-title">{{ $t('home.search.title') }}</h2>
 
-      <form class="mt-4" @submit.prevent="submitText">
+      <SearchScope class="mt-3" @change="scope = $event" />
+
+      <form class="mt-2" @submit.prevent="submitText">
         <div class="input-group input-group-lg">
           <input
             v-model="text"
@@ -133,11 +139,20 @@ function formatTime(iso) {
                 {{ $t('home.search.progress', { checked: job.worldsChecked.toLocaleString(), found: job.matchesFound }) }}
               </div>
             </div>
+            <!-- Best so far: matches as they are found, then the closest worlds
+                 with what they meet (green) and miss (red). -->
+            <div v-if="(job.worlds ?? []).length || (job.nearMatches ?? []).length" class="d-flex align-items-center gap-2 mb-2">
+              <h2 class="h6 mb-0">{{ RUNNING.includes(job.status) ? $t('home.search.best_so_far') : (job.worlds ?? []).length ? $t('home.search.found') : $t('home.search.closest') }}</h2>
+              <span v-if="RUNNING.includes(job.status)" class="badge text-bg-info d-inline-flex align-items-center gap-1">
+                <span class="spinner-grow spinner-grow-sm" role="status"></span>
+                {{ $t('home.search.still_searching') }}
+              </span>
+            </div>
             <div class="row g-3">
               <div v-for="world in job.worlds ?? []" :key="world.coordinate" class="col-12 col-sm-6 col-xl-4">
                 <WorldCard :world="world" :highlight="result.highlight" />
               </div>
-              <div v-for="world in job.nearMatches ?? []" :key="world.coordinate" class="col-12 col-sm-6 col-xl-4">
+              <div v-for="world in job.status === 'done' ? [] : job.nearMatches ?? []" :key="world.coordinate" class="col-12 col-sm-6 col-xl-4">
                 <WorldCard :world="world" :highlight="result.highlight" />
               </div>
             </div>

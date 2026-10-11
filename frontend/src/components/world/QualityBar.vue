@@ -1,15 +1,25 @@
 <script setup>
 import { computed } from 'vue'
-import { geyserRating, ratingClass } from '@/oniCatalog'
+import { geyserMean, geyserRating, ratingClass } from '@/oniCatalog'
 import { int } from './format'
 
-// min [=====▼-----] max, the marker showing this geyser's average output.
+// min [====|=▼----] max: the marker is this geyser's average output within
+// its type's range, the tick is the type's mean, and the colour is the seed
+// browser rating (green at or above the mean).
 const props = defineProps({
   geyser: { type: Object, required: true },
   compact: { type: Boolean, default: false },
 })
 
 const rating = computed(() => geyserRating(props.geyser))
+const span = computed(() => props.geyser.maxAvgOutput - props.geyser.minAvgOutput)
+const position = computed(() =>
+  span.value > 0 ? Math.min(1, Math.max(0, (props.geyser.avgOutput - props.geyser.minAvgOutput) / span.value)) : 0,
+)
+const meanPosition = computed(() => {
+  const mean = geyserMean(props.geyser.type)
+  return mean != null && span.value > 0 ? (mean - props.geyser.minAvgOutput) / span.value : null
+})
 </script>
 
 <template>
@@ -23,8 +33,9 @@ const rating = computed(() => geyserRating(props.geyser))
       :aria-valuenow="geyser.avgOutput"
       :aria-label="$t('world.geyser.quality_label', { pct: Math.round(rating * 100) })"
     >
-      <span class="quality-fill" :style="{ width: `${rating * 100}%` }"></span>
-      <span class="quality-mark" :style="{ left: `${rating * 100}%` }"></span>
+      <span class="quality-fill" :style="{ width: `${position * 100}%` }"></span>
+      <span v-if="meanPosition != null" class="quality-mean" :style="{ left: `${meanPosition * 100}%` }"></span>
+      <span class="quality-mark" :style="{ left: `${position * 100}%` }"></span>
     </span>
     <span class="quality-end">{{ int(geyser.maxAvgOutput) }}</span>
   </div>
@@ -59,6 +70,14 @@ const rating = computed(() => geyserRating(props.geyser))
   border-radius: 4px;
   background: var(--tone);
   opacity: 0.55;
+}
+.quality-mean {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  transform: translateX(-1px);
+  background: rgba(255, 255, 255, 0.55);
 }
 .quality-mark {
   position: absolute;

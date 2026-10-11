@@ -370,12 +370,51 @@ export const SPACE_BACKGROUND = SPRITES + 'background_space.webp'
 
 export const SECONDS_PER_CYCLE = 600
 
-// 0..1 position of the average output inside the possible range for its type,
-// or null when the type has no meaningful range (oil reservoirs etc.).
+// Mean and standard deviation of average output (g/s) per geyser type, from
+// the ONI Seed Browser's GeyserType (measured over 410k worlds).
+const GEYSER_MEAN_STD = {
+  steam: [1500, 230],
+  hot_hydrogen: [105, 15],
+  methane: [105, 15],
+  chlorine_gas: [105, 15],
+  chlorine_gas_cool: [105, 15],
+  hot_steam: [750, 100],
+  hot_co2: [105, 15],
+  hot_po2: [105, 15],
+  slimy_po2: [105, 15],
+  hot_water: [3000, 400],
+  slush_water: [1500, 200],
+  filthy_water: [3000, 400],
+  slush_salt_water: [1500, 200],
+  salt_water: [3000, 400],
+  liquid_co2: [150, 20],
+  oil_drip: [125, 35],
+  liquid_sulfur: [1500, 250],
+  molten_iron: [300, 40],
+  molten_copper: [300, 40],
+  molten_gold: [300, 40],
+  molten_aluminum: [300, 40],
+  molten_cobalt: [300, 40],
+  molten_tungsten: [300, 40],
+  molten_niobium: [1200, 165],
+  big_volcano: [1100, 150],
+  small_volcano: [550, 75],
+}
+
+// Mean average output for a geyser type, or null when it has no range.
+export function geyserMean(type) {
+  return GEYSER_MEAN_STD[geyserInfo(type).id]?.[0] ?? null
+}
+
+// The seed browser's rating: position between mean - 1 sd and mean + 1 sd,
+// so 0.5 is the mean (shown green) and the ends are one sd either side.
+// Null for fixed-output types (oil reservoirs, tidal springs).
 export function geyserRating(geyser) {
-  const { avgOutput, minAvgOutput: min, maxAvgOutput: max } = geyser
-  if (avgOutput == null || min == null || max == null || max <= min) return null
-  return Math.min(1, Math.max(0, (avgOutput - min) / (max - min)))
+  const { avgOutput, type } = geyser
+  const stats = GEYSER_MEAN_STD[geyserInfo(type).id]
+  if (avgOutput == null || !stats) return null
+  const [mean, sd] = stats
+  return Math.min(1, Math.max(0.01, (avgOutput - (mean - sd)) / (2 * sd)))
 }
 
 // Same thresholds as the seed browser: at least average is good, the lowest

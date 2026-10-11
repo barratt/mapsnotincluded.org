@@ -155,7 +155,20 @@
             "none_left": "No searches left today",
             "sign_in_more": "Sign in with Steam for {n} searches a day",
             "signed_in_as": "Signed in as {name}",
-            "sign_out": "Sign out"
+            "sign_out": "Sign out",
+            "best_so_far": "Best so far",
+            "found": "Found",
+            "closest": "Closest matches",
+            "still_searching": "Still searching",
+            "missing_geyser": "{name}: {count} of {min} wanted",
+            "missing_trait": "Missing {name}",
+            "quality": "{pct}% of geysers above average {where} (wanted {need}%)",
+            "quality_well": "{pct}% of geysers well above average {where} (wanted {need}%)",
+            "on_start": "on the start",
+            "on_every": "on every asteroid",
+            "scope_game": "Game",
+            "scope_dlcs": "DLC packs you own",
+            "scope_dlc_hint": "Include clusters from this DLC pack"
         }
     },
     "not_found": {

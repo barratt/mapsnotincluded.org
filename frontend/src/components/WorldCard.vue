@@ -1,16 +1,20 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { asteroidInfo, traitInfo, ratingClass } from '@/oniCatalog'
+import { asteroidInfo, geyserInfo, geyserRating, traitInfo, ratingClass } from '@/oniCatalog'
 import GeyserBadge from '@/components/world/GeyserBadge.vue'
 import { groupGeysers, shortOutput } from '@/components/geyserGroups'
 
 // Compact search result: start asteroid, its traits as icons, and geysers
 // grouped by type (icon + count + best output). For multi-asteroid clusters
 // a second row sums up the rest of the cluster.
+//
+// What the search asked for is outlined: green where this world meets the
+// condition, red where it doesn't. Close matches (world.match.conditions)
+// also show faded chips for the geysers and traits they are missing.
 const props = defineProps({
   world: { type: Object, required: true },
-  // { geysers: [{ type, scope }], traits: [id] } from the search response
+  // { geysers: [{ type, scope }], excludedGeysers, traits, quality } from the search response
   highlight: { type: Object, default: null },
 })
 
@@ -22,25 +26,75 @@ const start = computed(() => props.world.asteroids.find((a) => a.start) ?? props
 const others = computed(() => props.world.asteroids.filter((a) => a !== start.value))
 const startInfo = computed(() => asteroidInfo(start.value.id))
 
-const highlightStart = computed(() => new Set((props.highlight?.geysers ?? []).filter((g) => g.scope === 'start').map((g) => g.type)))
-const highlightCluster = computed(() => new Set((props.highlight?.geysers ?? []).filter((g) => g.scope !== 'start').map((g) => g.type)))
-const highlightTraits = computed(() => new Set(props.highlight?.traits ?? []))
+// Per-condition results for close matches; full matches meet everything.
+const conditions = computed(() => props.world.match?.conditions ?? null)
+const geyserConditions = computed(() => (conditions.value ?? []).filter((c) => c.kind === 'geyser'))
 
-const traits = computed(() =>
-  start.value.traits
-    .map((trait) => {
-      const info = traitInfo(trait)
-      return { ...info, highlighted: highlightTraits.value.has(info.id) }
-    })
-    .sort((a, b) => Number(b.highlighted) - Number(a.highlighted)),
+// Status of a geyser type in a row: 'met', 'unmet' or null (not asked for).
+function geyserStatus(type, row) {
+  if (conditions.value) {
+    const relevant = geyserConditions.value.filter((c) => c.type === type && (row === 'start' || c.scope === 'cluster'))
+    if (!relevant.length) return null
+    return relevant.every((c) => c.ok) ? 'met' : 'unmet'
+  }
+  const h = props.highlight
+  if (!h) return null
+  if ((h.excludedGeysers ?? []).includes(type)) return 'unmet'
+  return (h.geysers ?? []).some((g) => g.type === type && (row === 'start' || g.scope !== 'start')) ? 'met' : null
+}
+
+// Geysers a close match lacks: shown faded in the row they were wanted in.
+function missingIn(row) {
+  const multi = others.value.length > 0
+  return geyserConditions.value
+    .filter((c) => !c.ok && c.count < c.min)
+    .filter((c) => (c.scope === 'start' ? row === 'start' : row === (multi ? 'cluster' : 'start')))
+    .map((c) => ({ ...c, info: geyserInfo(c.type) }))
+}
+
+const traits = computed(() => {
+  const wanted = new Set(props.highlight?.traits ?? [])
+  const traitConditions = (conditions.value ?? []).filter((c) => c.kind === 'trait')
+  const shown = start.value.traits.map((trait) => {
+    const info = traitInfo(trait)
+    const cond = traitConditions.find((c) => c.trait === info.id)
+    const status = cond ? (cond.ok ? 'met' : 'unmet') : wanted.has(info.id) ? 'met' : null
+    return { ...info, status }
+  })
+  const missing = traitConditions
+    .filter((c) => !c.ok && c.want && !shown.some((s) => s.id === c.trait))
+    .map((c) => ({ ...traitInfo(c.trait), status: 'missing' }))
+  return [...shown, ...missing].sort((a, b) => Number(Boolean(b.status)) - Number(Boolean(a.status)))
+})
+
+const startGroups = computed(() =>
+  groupGeysers(start.value.geysers, new Set()).map((g) => ({ ...g, status: geyserStatus(g.type, 'start') })).sort(byStatus),
 )
-
-const startGroups = computed(() => groupGeysers(start.value.geysers, new Set([...highlightStart.value, ...highlightCluster.value])))
-
 const clusterGeysers = computed(() => others.value.flatMap((a) => a.geysers))
-const clusterGroups = computed(() => groupGeysers(clusterGeysers.value, highlightCluster.value))
+const clusterGroups = computed(() =>
+  groupGeysers(clusterGeysers.value, new Set()).map((g) => ({ ...g, status: geyserStatus(g.type, 'cluster') })).sort(byStatus),
+)
 const clusterShown = computed(() => clusterGroups.value.slice(0, CLUSTER_ROW_LIMIT))
 const clusterHidden = computed(() => clusterGroups.value.length - clusterShown.value.length)
+
+function byStatus(a, b) {
+  return Number(Boolean(b.status)) - Number(Boolean(a.status))
+}
+
+// "Geysers above average" requests: the share this world actually has.
+const quality = computed(() => {
+  const fromMatch = (conditions.value ?? []).find((c) => c.kind === 'quality')
+  const q = props.highlight?.quality
+  if (!q && !fromMatch) return null
+  const scope = q?.scope ?? fromMatch?.scope ?? 'cluster'
+  const minShare = q?.minShare ?? fromMatch?.minShare ?? 0
+  const minRating = q?.minRating ?? 0.5
+  const asteroids = scope === 'start' ? [start.value] : props.world.asteroids
+  const rated = asteroids.flatMap((a) => a.geysers).map((g) => geyserRating(g)).filter((r) => r != null)
+  const share = fromMatch?.share ?? (rated.length ? rated.filter((r) => r >= minRating).length / rated.length : null)
+  if (share == null) return null
+  return { share, minShare, ok: share >= minShare, scope, well: minRating > 0.5 }
+})
 
 function groupTitle(group) {
   const outputs = group.outputs.map((o) => `${o} g/s`).join(', ')
@@ -54,6 +108,7 @@ function toggle(row, group) {
   selected.value = selected.value?.row === row && selected.value.group.type === group.type ? null : { row, group }
 }
 function caption(group) {
+  if (group.missing) return t('home.search.missing_geyser', { name: group.label, count: group.count, min: group.min })
   return `${group.label} ×${group.count} · ${group.outputs.map((o) => `${o}`).join(', ')} g/s`
 }
 
@@ -70,7 +125,7 @@ async function copyCoordinate() {
 </script>
 
 <template>
-  <article class="world-card h-100">
+  <article class="world-card h-100" :class="{ 'is-close': world.match }">
     <header class="d-flex align-items-center gap-2">
       <img v-if="startInfo.icon" :src="startInfo.icon" alt="" class="world-card-asteroid" loading="lazy" />
       <div class="min-w-0 flex-grow-1">
@@ -94,12 +149,23 @@ async function copyCoordinate() {
         v-for="trait in traits"
         :key="trait.id"
         class="world-card-trait"
-        :class="{ highlighted: trait.highlighted }"
-        :title="trait.description ? `${trait.label}: ${trait.description}` : trait.label"
+        :class="trait.status"
+        :title="trait.status === 'missing' ? $t('home.search.missing_trait', { name: trait.label }) : trait.description ? `${trait.label}: ${trait.description}` : trait.label"
       >
         <img v-if="trait.icon" :src="trait.icon" alt="" loading="lazy" />
         <span class="world-card-trait-label">{{ trait.label }}</span>
       </span>
+    </div>
+
+    <div v-if="quality" class="world-card-quality" :class="quality.ok ? 'met' : 'unmet'">
+      <i class="bi" :class="quality.ok ? 'bi-check-circle' : 'bi-x-circle'" aria-hidden="true"></i>
+      {{
+        $t(quality.well ? 'home.search.quality_well' : 'home.search.quality', {
+          pct: Math.round(quality.share * 100),
+          need: Math.round(quality.minShare * 100),
+          where: quality.scope === 'start' ? $t('home.search.on_start') : $t('home.search.on_every'),
+        })
+      }}
     </div>
 
     <section class="world-card-row">
@@ -112,7 +178,7 @@ async function copyCoordinate() {
           <button
             type="button"
             class="world-card-geyser"
-            :class="{ highlighted: group.highlighted, selected: selected?.row === 'start' && selected.group.type === group.type }"
+            :class="[group.status, { selected: selected?.row === 'start' && selected.group.type === group.type }]"
             :title="groupTitle(group)"
             :aria-label="groupTitle(group)"
             @click="toggle('start', group)"
@@ -121,7 +187,18 @@ async function copyCoordinate() {
             <span class="world-card-output" :class="`tone-${ratingClass(group.rating)}`">{{ shortOutput(group.best.avgOutput) }}</span>
           </button>
         </li>
-        <li v-if="!startGroups.length" class="text-body-secondary small">{{ $t('home.search.no_geysers') }}</li>
+        <li v-for="m in missingIn('start')" :key="`missing-${m.type}`">
+          <button
+            type="button"
+            class="world-card-geyser missing"
+            :title="$t('home.search.missing_geyser', { name: m.info.label, count: m.count, min: m.min })"
+            @click="toggle('start', { type: m.type, label: m.info.label, count: m.count, min: m.min, missing: true })"
+          >
+            <GeyserBadge :icon="m.info.icon" :rating="null" :label="m.info.label" :size="34" />
+            <span class="world-card-output">{{ m.count }}/{{ m.min }}</span>
+          </button>
+        </li>
+        <li v-if="!startGroups.length && !missingIn('start').length" class="text-body-secondary small">{{ $t('home.search.no_geysers') }}</li>
       </ul>
       <div v-if="selected?.row === 'start'" class="world-card-caption">{{ caption(selected.group) }}</div>
     </section>
@@ -136,13 +213,24 @@ async function copyCoordinate() {
           <button
             type="button"
             class="world-card-geyser"
-            :class="{ highlighted: group.highlighted, selected: selected?.row === 'cluster' && selected.group.type === group.type }"
+            :class="[group.status, { selected: selected?.row === 'cluster' && selected.group.type === group.type }]"
             :title="groupTitle(group)"
             :aria-label="groupTitle(group)"
             @click="toggle('cluster', group)"
           >
             <GeyserBadge :icon="group.icon" :rating="group.rating" :count="group.count" :label="group.label" :size="28" />
             <span class="world-card-output" :class="`tone-${ratingClass(group.rating)}`">{{ shortOutput(group.best.avgOutput) }}</span>
+          </button>
+        </li>
+        <li v-for="m in missingIn('cluster')" :key="`missing-${m.type}`">
+          <button
+            type="button"
+            class="world-card-geyser missing"
+            :title="$t('home.search.missing_geyser', { name: m.info.label, count: m.count, min: m.min })"
+            @click="toggle('cluster', { type: m.type, label: m.info.label, count: m.count, min: m.min, missing: true })"
+          >
+            <GeyserBadge :icon="m.info.icon" :rating="null" :label="m.info.label" :size="28" />
+            <span class="world-card-output">{{ m.count }}/{{ m.min }}</span>
           </button>
         </li>
         <li v-if="clusterHidden > 0" class="world-card-more">+{{ clusterHidden }}</li>
@@ -176,6 +264,8 @@ async function copyCoordinate() {
   --sb-good-ring: rgba(0, 255, 0, 0.65);
   --sb-medium-ring: rgba(255, 255, 0, 0.65);
   --sb-bad-ring: rgba(255, 161, 146, 0.65);
+  --met: #4cee4c;
+  --unmet: #ff6b6b;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -183,6 +273,9 @@ async function copyCoordinate() {
   border: 1px solid var(--bs-border-color);
   border-radius: 10px;
   background: var(--bs-tertiary-bg);
+}
+.world-card.is-close {
+  border-style: dashed;
 }
 .min-w-0 {
   min-width: 0;
@@ -230,8 +323,27 @@ async function copyCoordinate() {
   width: 20px;
   height: 20px;
 }
-.world-card-trait.highlighted {
-  border-color: var(--bs-warning);
+.world-card-trait.met {
+  border-color: var(--met);
+}
+.world-card-trait.unmet {
+  border-color: var(--unmet);
+}
+.world-card-trait.missing {
+  border: 1px dashed var(--unmet);
+  opacity: 0.6;
+}
+.world-card-quality {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+.world-card-quality.met {
+  color: var(--met);
+}
+.world-card-quality.unmet {
+  color: var(--unmet);
 }
 .world-card-row-title {
   margin: 0 0 0.3rem;
@@ -262,12 +374,20 @@ async function copyCoordinate() {
   border: 1px solid transparent;
   border-radius: 8px;
 }
-.world-card-geyser.highlighted {
-  border-color: var(--bs-warning);
-  background: rgba(255, 193, 7, 0.08);
+.world-card-geyser.met {
+  border-color: var(--met);
+  background: rgba(76, 238, 76, 0.08);
+}
+.world-card-geyser.unmet {
+  border-color: var(--unmet);
+  background: rgba(255, 107, 107, 0.08);
+}
+.world-card-geyser.missing {
+  border: 1px dashed var(--unmet);
+  opacity: 0.55;
 }
 .world-card-geyser.selected {
-  border-color: var(--bs-secondary-color);
+  box-shadow: 0 0 0 1px var(--bs-secondary-color);
 }
 .world-card-caption {
   margin-top: 0.3rem;
