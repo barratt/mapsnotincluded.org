@@ -1,5 +1,7 @@
 <script setup>
 import { api } from '@/searchApi'
+import StoreLinks from '@/components/StoreLinks.vue'
+import { productsForCluster } from '@/siteConfig'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { asteroidInfo, geyserInfo, geyserRating, traitInfo, ratingClass } from '@/oniCatalog'
@@ -249,6 +251,7 @@ async function copyCoordinate() {
       <div v-if="selected?.row === 'cluster'" class="world-card-caption">{{ caption(selected.group) }}</div>
     </section>
 
+    <StoreLinks compact :products="productsForCluster(world.cluster)" />
     <footer class="world-card-actions">
       <router-link :to="`/world/${world.coordinate}`" class="btn btn-sm btn-warning flex-grow-1" @click="opened">
         {{ $t('home.search.view') }} <i class="bi bi-arrow-right" aria-hidden="true"></i>

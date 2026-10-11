@@ -4,6 +4,10 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import SearchHistory from '@/components/SearchHistory.vue'
 import WorldCard from '@/components/WorldCard.vue'
+import AdSlot from '@/components/AdSlot.vue'
+import StoreLinks from '@/components/StoreLinks.vue'
+import SupportLinks from '@/components/SupportLinks.vue'
+import { site } from '@/siteConfig'
 import SearchAccount from '@/components/SearchAccount.vue'
 import SearchScope from '@/components/SearchScope.vue'
 import { SEARCH_API_URL, api, jobEvents, steamSignInUrl } from '@/searchApi'
@@ -269,6 +273,7 @@ function formatTime(iso) {
               <WorldCard :world="world" :highlight="result.highlight" :search-id="result.searchId" :rank="i" />
             </div>
           </div>
+          <AdSlot v-if="result.worlds?.length" placement="results" />
           <div v-if="result.hasMore" ref="moreSentinel" class="text-center my-4">
             <span v-if="loadingMore" class="spinner-border spinner-border-sm text-secondary" role="status">
               <span class="visually-hidden">{{ $t('home.search.loading_more') }}</span>
@@ -318,7 +323,10 @@ function formatTime(iso) {
           </ul>
         </div>
       </section>
+      <StoreLinks v-if="site.config.affiliate?.homeStrip" class="home-store mt-4" />
+      <SupportLinks />
       <p class="text-center small mt-3 mb-0"><router-link to="/privacy">{{ $t('privacy.link') }}</router-link></p>
+      <AdSlot placement="sidebar" />
     </section>
 
     <i18n-t keypath="home.description_2" tag="p" class="mt-5">

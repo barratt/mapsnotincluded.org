@@ -313,6 +313,27 @@
         "retention_title": "How long we keep it",
         "retention": "Search logs are deleted after 90 days and cached AI results after 30 days. Abuse flags expire, and are deleted 90 days after expiry.",
         "rights_title": "Your rights",
-        "rights": "You can ask what we hold about you, or ask us to delete it, on our {discordLink}."
+        "rights": "You can ask what we hold about you, or ask us to delete it, on our {discordLink}.",
+        "ads_title": "Advertising",
+        "ads": "Some pages show adverts from an advertising partner, who may use cookies to show and measure them. Where the law requires it, you are asked for consent first. Supporters see no adverts.",
+        "affiliate_title": "Store links",
+        "affiliate": "Links to buy the game or its DLCs are affiliate links: the store may pay us a commission, at no extra cost to you. We record that a link was followed, not who you are."
+    },
+    "store": {
+        "needs": "Needs",
+        "to_play": "To play this world you need:",
+        "get_game": "Get Oxygen Not Included and its DLCs:",
+        "on": "on {store}",
+        "products": {
+            "BaseGame": "Oxygen Not Included",
+            "SpacedOut": "Spaced Out!",
+            "FrostyPlanet": "The Frosty Planet Pack",
+            "PrehistoricPlanet": "The Prehistoric Planet Pack",
+            "AquaticPlanet": "The Aquatic Planet Pack",
+            "BionicBooster": "The Bionic Booster Pack"
+        }
+    },
+    "ads": {
+        "label": "Advertisement"
     }
 }

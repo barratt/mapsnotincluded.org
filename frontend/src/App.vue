@@ -14,6 +14,8 @@ body {
 </style>
 
 <script setup>
+import { loadSiteConfig } from '@/siteConfig'
+loadSiteConfig()
 import { onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'

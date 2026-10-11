@@ -3,6 +3,10 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { loadWorldDetail } from '@/worldDetail'
+import AdSlot from '@/components/AdSlot.vue'
+import StoreLinks from '@/components/StoreLinks.vue'
+import SupportLinks from '@/components/SupportLinks.vue'
+import { productsForCluster } from '@/siteConfig'
 import { SPACE_BACKGROUND, asteroidInfo, traitInfo } from '@/oniCatalog'
 import AsteroidMap from '@/components/world/AsteroidMap.vue'
 import BiomeLegend from '@/components/world/BiomeLegend.vue'
@@ -125,7 +129,10 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
             <dd class="font-monospace small">{{ detail.cluster }}</dd>
           </div>
         </dl>
+        <StoreLinks v-if="detail?.cluster && productsForCluster(detail.cluster).length" class="mt-3" :products="productsForCluster(detail.cluster)" />
       </header>
+      <AdSlot placement="world" />
+      <AdSlot placement="sidebar" />
 
       <div v-if="detail?.synthetic" class="alert sb-alert mt-3 mb-0">
         <i class="bi bi-info-circle me-1" aria-hidden="true"></i>{{ $t('world.synthetic_notice') }}
@@ -236,6 +243,7 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
           </template>
         </i18n-t>
       </footer>
+      <SupportLinks class="mt-4" />
     </div>
   </main>
 </template>

@@ -1,3 +1,7 @@
+<script setup>
+import { site } from '@/siteConfig'
+</script>
+
 <template>
   <main class="container mt-5" style="max-width: 820px">
     <h1>{{ $t('privacy.title') }}</h1>
@@ -17,6 +21,15 @@
 
     <h4 class="mt-4">{{ $t('privacy.processors_title') }}</h4>
     <p>{{ $t('privacy.processors') }}</p>
+
+    <template v-if="site.config.ads">
+      <h4 class="mt-4">{{ $t('privacy.ads_title') }}</h4>
+      <p>{{ $t('privacy.ads') }}</p>
+    </template>
+    <template v-if="site.config.affiliate">
+      <h4 class="mt-4">{{ $t('privacy.affiliate_title') }}</h4>
+      <p>{{ $t('privacy.affiliate') }}</p>
+    </template>
 
     <h4 class="mt-4">{{ $t('privacy.retention_title') }}</h4>
     <p>{{ $t('privacy.retention') }}</p>
