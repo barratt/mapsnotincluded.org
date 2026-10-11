@@ -168,7 +168,14 @@
             "on_every": "on every asteroid",
             "scope_game": "Game",
             "scope_dlcs": "DLC packs you own",
-            "scope_dlc_hint": "Include clusters from this DLC pack"
+            "scope_dlc_hint": "Include clusters from this DLC pack",
+            "clusters_all": "All clusters",
+            "clusters_some": "{n} cluster picked | {n} clusters picked",
+            "clusters_clear": "Search all clusters",
+            "clusters_hint": "Pick the clusters you want; none picked searches all of them. The list follows the game and DLC choices above.",
+            "cluster_worlds": "{n} worlds indexed",
+            "cluster_unavailable": "Not searchable yet",
+            "presets_free": "Presets are free: they don't use your daily searches."
         }
     },
     "not_found": {
