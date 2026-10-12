@@ -44,6 +44,8 @@ const refused = ref(null)
 const failure = ref(null)
 // DLC packs this world needs that the generator has no data for yet.
 const dlcUnavailable = ref(null)
+// "A, B and C" (British English, no serial comma, like the rest of the site).
+const listNames = (names) => (names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`)
 
 let pollTimer = null
 let loadId = 0
@@ -223,7 +225,7 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
         <div class="small mt-1">{{ $t('world.loading_hint') }}</div>
       </div>
       <div v-else-if="!detail && dlcUnavailable" class="alert sb-alert mt-3">
-        {{ dlcUnavailable.length ? $t('world.dlc_unavailable', { names: dlcUnavailable.join(', ') }) : $t('world.dlc_unavailable_unknown') }}
+        {{ dlcUnavailable.length ? $t('world.dlc_unavailable', { names: listNames(dlcUnavailable) }) : $t('world.dlc_unavailable_unknown') }}
       </div>
       <div v-else-if="!detail && loadError?.status === 'worldgen_failure'" class="alert sb-alert mt-3">
         {{ $t('world.worldgen_failure') }}
