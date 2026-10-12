@@ -6,6 +6,7 @@ import { usePanZoom } from '@/composables/usePanZoom'
 import { cellInfo, elementTable, formatMass, formatTemperature, paintTiles } from '@/worldTiles'
 import GeyserBadge from './GeyserBadge.vue'
 import GeyserStats from './GeyserStats.vue'
+import { spawnableInfo } from '@/data/spawnables'
 
 // One asteroid: every tile (when the detail has tile data) or the biome
 // polygons, with geyser, POI and spawn markers. Game coordinates have y
@@ -21,6 +22,8 @@ const props = defineProps({
   selected: { type: String, default: null },
   highlightZone: { type: String, default: null },
   highlightElement: { type: Number, default: null },
+  // Prefab id picked in the critter summary: only those are drawn, larger.
+  highlightSpawn: { type: String, default: null },
 })
 const emit = defineEmits(['update:selected'])
 const { t } = useI18n()
@@ -73,17 +76,48 @@ const biomeFill = (biome) => {
   return tileUrl.value ? 'none' : biome.color
 }
 
-// Ambient spawns (critters, plants, ...) placed once the world has settled.
+// Ambient spawns (critters, plants, seeds) placed once the world has settled,
+// coloured by kind. Critters are drawn largest so they stand out; loose seeds
+// are only drawn when picked in the critter summary.
+const SPAWN_RADIUS = { critter: 1.2, plant: 0.6, seed: 0.45, other: 0.5 }
 const showAmbient = ref(true)
-const ambient = computed(() => props.asteroid.ambient ?? [])
+const ambient = computed(() =>
+  (props.asteroid.ambient ?? []).map((a) => {
+    const info = spawnableInfo(a.id)
+    return { ...a, ...info, id: a.id, r: SPAWN_RADIUS[info.kind] }
+  }),
+)
+const ambientDefault = computed(() => ambient.value.filter((a) => a.kind !== 'seed'))
+const ambientShown = computed(() => {
+  if (props.highlightSpawn) return ambient.value.filter((a) => a.id === props.highlightSpawn).map((a) => ({ ...a, r: 1.6 }))
+  return showAmbient.value ? ambientDefault.value : []
+})
 const ambientByCell = computed(() => {
   const byCell = new Map()
-  for (const a of ambient.value) {
+  for (const a of ambientShown.value) {
     const key = a.y * width.value + a.x
-    byCell.set(key, [...(byCell.get(key) ?? []), a.id.replace(/([a-z])([A-Z])/g, '$1 $2')])
+    byCell.set(key, [...(byCell.get(key) ?? []), a])
   }
   return byCell
 })
+
+// The spawns nearest the pointer, within about 10 screen pixels, so
+// single-tile critters can be hovered at any zoom.
+function nearestSpawn(x, y, cellsPerPixel) {
+  const reach = Math.max(1, Math.ceil(10 * cellsPerPixel))
+  let best = null
+  let bestD = Infinity
+  for (let dy = -reach; dy <= reach; dy++) {
+    for (let dx = -reach; dx <= reach; dx++) {
+      const here = ambientByCell.value.get((y + dy) * width.value + (x + dx))
+      if (!here) continue
+      const d = dx * dx + dy * dy
+      if (d < bestD) [best, bestD] = [here, d]
+    }
+  }
+  return best
+}
+const hoverSpawn = ref(null)
 
 // Hovered cell: client position -> viewBox -> map (undo the pan/zoom) -> grid.
 const hoverCell = ref(null)
@@ -95,13 +129,20 @@ function onPointerMove(event) {
   const vy = ((event.clientY - rect.top) / rect.height) * height.value
   const x = Math.floor((vx - pz.tx.value) / pz.k.value)
   const y = Math.floor(height.value - (vy - pz.ty.value) / pz.k.value)
-  const info = cellInfo(data, table.value, props.tiles?.diseases, x, y)
-  if (info) info.ambient = ambientByCell.value.get(y * data.width + x) ?? null
-  hoverCell.value = info
+  hoverCell.value = cellInfo(data, table.value, props.tiles?.diseases, x, y)
+  const cellsPerPixel = width.value / rect.width / pz.k.value
+  const spawns = ambientShown.value.length ? nearestSpawn(x, y, cellsPerPixel) : null
+  hoverSpawn.value = spawns
+    ? { x: spawns[0].x, y: spawns[0].y, color: spawns[0].color, names: [...new Set(spawns.map((a) => a.name))], kind: spawns[0].kind }
+    : null
+}
+function onPointerLeave() {
+  hoverCell.value = null
+  hoverSpawn.value = null
 }
 watch(
   () => props.asteroid,
-  () => (hoverCell.value = null),
+  () => onPointerLeave(),
 )
 
 const markers = computed(() => [
@@ -182,7 +223,7 @@ const frameStyle = computed(() => {
         :style="{ touchAction: pz.touchAction.value }"
         v-on="pz.handlers"
         @pointermove="onPointerMove"
-        @pointerleave="hoverCell = null"
+        @pointerleave="onPointerLeave"
         @click.self="!pz.moved.value && emit('update:selected', null)"
       >
         <svg :viewBox="`0 0 ${width} ${height}`" preserveAspectRatio="none" class="map-svg" aria-hidden="true" @click="!pz.moved.value && emit('update:selected', null)">
@@ -198,8 +239,9 @@ const frameStyle = computed(() => {
               @pointerenter="hoveredZone = biome.name"
               @pointerleave="hoveredZone = null"
             />
-            <g v-if="showAmbient && ambient.length" class="map-ambient">
-              <rect v-for="(a, i) in ambient" :key="i" :x="a.x + 0.2" :y="flipY(a.y) - 0.8" width="0.6" height="0.6" />
+            <g v-if="ambientShown.length" class="map-ambient" :class="{ highlighting: highlightSpawn }">
+              <circle v-for="(a, i) in ambientShown" :key="i" :cx="a.x + 0.5" :cy="flipY(a.y) - 0.5" :r="a.r" :fill="a.color" />
+              <circle v-if="hoverSpawn" class="spawn-hover" :cx="hoverSpawn.x + 0.5" :cy="flipY(hoverSpawn.y) - 0.5" r="2.2" />
             </g>
             <rect x="0" y="0" :width="width" :height="height" class="map-outline" />
           </g>
@@ -236,16 +278,26 @@ const frameStyle = computed(() => {
           </div>
         </div>
 
-        <div v-if="hoverCell && !tip" class="map-cell-info" role="status">
-          <div class="fw-bold">{{ hoverCell.element }}</div>
+        <div v-if="(hoverCell || hoverSpawn) && !tip" class="map-cell-info" role="status">
+          <div v-if="hoverSpawn" class="spawn-tip">
+            <span class="spawn-tip-dot" :style="{ background: hoverSpawn.color }"></span>
+            <span>
+              <span class="fw-bold">{{ hoverSpawn.names.join(', ') }}</span>
+              <span class="d-block small text-body-secondary">
+                {{ $t(`world.critters.kind_one.${hoverSpawn.kind}`) }} · {{ $t('world.position', { x: hoverSpawn.x, y: hoverSpawn.y }) }}
+              </span>
+            </span>
+          </div>
+          <template v-if="hoverCell">
+            <div class="fw-bold">{{ hoverCell.element }}</div>
           <div v-if="hoverCell.state !== 'v'" class="small">
             {{ formatMass(hoverCell.mass) }} · {{ formatTemperature(hoverCell.temperature) }}
           </div>
           <div v-if="hoverCell.germ" class="small">{{ $t('world.tiles.germs', { n: hoverCell.germCount.toLocaleString(), name: hoverCell.germ }) }}</div>
-          <div v-if="hoverCell.ambient" class="small">{{ hoverCell.ambient.join(', ') }}</div>
           <div class="small text-body-secondary">
             {{ $t('world.position', { x: hoverCell.x, y: hoverCell.y }) }}<template v-if="hoveredZone"> · {{ hoveredZone }}</template>
           </div>
+          </template>
         </div>
         <div v-else-if="hoveredZone && !tip" class="map-zone-chip">{{ hoveredZone }}</div>
         <div v-if="!biomePaths.length && !hasTiles" class="map-empty">{{ $t('world.map.no_biomes') }}</div>
@@ -277,13 +329,15 @@ const frameStyle = computed(() => {
           {{ $t(`world.tiles.views.${mode}`) }}
         </button>
       </div>
-      <div v-if="view !== 'biomes'" class="form-check form-switch mb-0">
-        <input id="map-biome-outlines" v-model="showBiomes" class="form-check-input" type="checkbox" />
-        <label class="form-check-label" for="map-biome-outlines">{{ $t('world.tiles.biome_outlines') }}</label>
-      </div>
-      <div v-if="ambient.length" class="form-check form-switch mb-0">
-        <input id="map-ambient" v-model="showAmbient" class="form-check-input" type="checkbox" />
-        <label class="form-check-label" for="map-ambient">{{ $t('world.tiles.ambient', { n: ambient.length }) }}</label>
+      <div class="map-toggles">
+        <div v-if="view !== 'biomes'" class="form-check form-switch mb-0">
+          <input id="map-biome-outlines" v-model="showBiomes" class="form-check-input" type="checkbox" />
+          <label class="form-check-label" for="map-biome-outlines">{{ $t('world.tiles.biome_outlines') }}</label>
+        </div>
+        <div v-if="ambientDefault.length" class="form-check form-switch mb-0">
+          <input id="map-ambient" v-model="showAmbient" class="form-check-input" type="checkbox" />
+          <label class="form-check-label" for="map-ambient">{{ $t('world.tiles.ambient', { n: ambientDefault.length }) }}</label>
+        </div>
       </div>
     </div>
     <p class="map-hint">{{ $t(hasTiles ? 'world.tiles.hint' : 'world.map.hint') }}</p>
@@ -341,11 +395,34 @@ const frameStyle = computed(() => {
   stroke: var(--sb-hover);
   stroke-width: 2px;
 }
-.map-ambient rect {
-  fill: #ffeb3b;
-  stroke: rgba(0, 0, 0, 0.6);
-  stroke-width: 0.15;
+.map-ambient circle {
+  stroke: rgba(0, 0, 0, 0.7);
+  stroke-width: 0.2;
   pointer-events: none;
+}
+.map-ambient.highlighting circle {
+  stroke: #fff;
+  stroke-width: 0.35;
+}
+.map-ambient .spawn-hover {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+}
+.spawn-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin-bottom: 0.25rem;
+}
+.spawn-tip-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 0.4rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+  flex: none;
 }
 .map-biome.no-outline {
   stroke: none;
@@ -390,11 +467,16 @@ const frameStyle = computed(() => {
 }
 .map-views {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+.map-toggles {
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 0.4rem 1rem;
-  margin-top: 0.4rem;
+  gap: 0.3rem 1.25rem;
 }
 .map-outline {
   fill: none;

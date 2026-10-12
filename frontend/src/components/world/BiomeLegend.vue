@@ -40,8 +40,8 @@ function toggle(zone) {
         :aria-pressed="modelValue === row.id"
         @click="toggle(row.id)"
       >
-        <span class="biome-swatch" :style="{ background: row.color }"></span>
         <img v-if="row.icon" :src="row.icon" alt="" class="biome-icon" loading="lazy" />
+        <span class="biome-swatch" :style="{ background: row.color }" aria-hidden="true"></span>
         <span class="biome-name">{{ row.name }}</span>
         <span class="biome-share">{{ Math.round(row.share * 100) }}%</span>
       </button>
@@ -53,7 +53,7 @@ function toggle(zone) {
 <style scoped>
 .biome-legend {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
   gap: 0.4rem;
 }
 .biome-row {
@@ -61,7 +61,7 @@ function toggle(zone) {
   align-items: center;
   gap: 0.45rem;
   width: 100%;
-  padding: 0.2rem 0.5rem 0.2rem 0;
+  padding: 0.25rem 0.5rem 0.25rem 0.3rem;
   border: 1px solid var(--sb-border);
   border-radius: 6px;
   background: var(--sb-card);
@@ -77,8 +77,12 @@ function toggle(zone) {
   box-shadow: 0 0 0 1px var(--sb-hover);
 }
 .biome-swatch {
-  align-self: stretch;
-  width: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 0 0 2px rgba(255, 255, 255, 0.35);
   flex: none;
 }
 .biome-icon {

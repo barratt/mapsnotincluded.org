@@ -10,6 +10,7 @@ import { productsForCluster } from '@/siteConfig'
 import { SPACE_BACKGROUND, asteroidInfo, traitInfo } from '@/oniCatalog'
 import AsteroidMap from '@/components/world/AsteroidMap.vue'
 import BiomeLegend from '@/components/world/BiomeLegend.vue'
+import CritterSummary from '@/components/world/CritterSummary.vue'
 import ElementLegend from '@/components/world/ElementLegend.vue'
 import ClusterLayout from '@/components/world/ClusterLayout.vue'
 import ClusterOverview from '@/components/world/ClusterOverview.vue'
@@ -30,6 +31,7 @@ const selectedIndex = ref(0)
 const selectedMarker = ref(null)
 const highlightZone = ref(null)
 const highlightElement = ref(null)
+const highlightSpawn = ref(null)
 const copied = ref(false)
 // Tile state: variant shown ('presettle' | 'settled' | null), what the
 // settled variant is doing, whether tiles are still being generated, and why
@@ -111,6 +113,7 @@ watch(selectedIndex, () => {
   selectedMarker.value = null
   highlightZone.value = null
   highlightElement.value = null
+  highlightSpawn.value = null
 })
 
 const asteroids = computed(() => detail.value?.asteroids ?? [])
@@ -274,6 +277,7 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
                   :tiles="detail.tiles"
                   :highlight-zone="highlightZone"
                   :highlight-element="highlightElement"
+                  :highlight-spawn="highlightSpawn"
                 />
                 <div v-else class="alert sb-alert mb-0">{{ $t('world.map_coming') }}</div>
               </div>
@@ -314,6 +318,11 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
               <div class="sb-panel">
                 <h3 class="sb-subheading">{{ $t('world.biomes') }}</h3>
                 <BiomeLegend v-model="highlightZone" :asteroid="asteroid" />
+              </div>
+
+              <div v-if="hasTiles" class="sb-panel">
+                <h3 class="sb-subheading">{{ $t('world.critters.heading') }}</h3>
+                <CritterSummary v-model="highlightSpawn" :asteroid="asteroid" :settled="tileVariant === 'settled'" />
               </div>
 
               <div v-if="hasTiles" class="sb-panel">

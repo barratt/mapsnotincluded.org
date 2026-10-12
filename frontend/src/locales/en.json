@@ -384,6 +384,24 @@
             "open_rewritten": "Open {coordinate}",
             "worldgen_failure": "The game fails to generate this world (it would roll a new seed), so there is no map for it.",
             "ambient": "Critters and plants ({n})"
+        },
+        "critters": {
+            "heading": "Critters and plants",
+            "kinds": {
+                "critter": "Critters",
+                "plant": "Plants",
+                "seed": "Seeds and eggs",
+                "other": "Other"
+            },
+            "kind_one": {
+                "critter": "Critter",
+                "plant": "Plant",
+                "seed": "Seed or egg",
+                "other": "Other"
+            },
+            "show_on_map": "Show every {name} on the map",
+            "none": "Nothing is spawned on this asteroid at the start.",
+            "after_settle": "Critters and plants are listed once the game-start map is ready."
         }
     },
     "privacy": {
