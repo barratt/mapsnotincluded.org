@@ -270,7 +270,8 @@ const hasConditions = computed(() => pills.value.length > 0)
 
 <template>
   <div ref="root" class="filter-builder">
-    <div class="d-flex flex-wrap align-items-center gap-2">
+    <div v-if="picker.open || editing" class="filter-backdrop" @click="picker.open = false; editing = null"></div>
+    <div v-if="pills.length" class="d-flex flex-wrap align-items-center justify-content-center gap-2">
       <div v-for="p in pills" :key="p.key" class="pill-wrap">
         <button
           type="button"
@@ -382,6 +383,9 @@ const hasConditions = computed(() => pills.value.length > 0)
         </div>
       </div>
 
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center justify-content-center gap-2 mt-2">
       <!-- Add filter -->
       <div class="pill-wrap">
         <button type="button" class="btn btn-sm btn-outline-warning" :aria-expanded="picker.open" @click.stop="picker.open = !picker.open">
@@ -513,11 +517,21 @@ const hasConditions = computed(() => pills.value.length > 0)
 .pill-x:hover {
   color: var(--bs-danger);
 }
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+  background: rgba(0, 0, 0, 0.45);
+}
+/* Dialogs open in the middle of the screen, whatever opened them. */
 .filter-pop {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 30;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  z-index: 1050;
   background: var(--bs-body-bg, #212529);
   border: 1px solid var(--bs-border-color);
   border-radius: 0.6rem;
@@ -525,10 +539,10 @@ const hasConditions = computed(() => pills.value.length > 0)
   padding: 0.75rem;
 }
 .filter-pop.editor {
-  width: 260px;
+  width: min(300px, calc(100vw - 32px));
 }
 .filter-pop.picker {
-  width: min(420px, calc(100vw - 32px));
+  width: min(460px, calc(100vw - 32px));
 }
 .pop-row {
   display: flex;
@@ -642,21 +656,9 @@ const hasConditions = computed(() => pills.value.length > 0)
   color: var(--bs-success);
   border-color: transparent;
 }
-/* Phones: popups as a sheet across the screen, inside the page margins. */
 @media (max-width: 575.98px) {
-  .filter-pop,
-  .filter-pop.editor,
-  .filter-pop.picker {
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    top: 72px;
-    width: auto;
-    max-height: calc(100vh - 96px);
-    overflow-y: auto;
-  }
   .picker-list {
-    max-height: none;
+    max-height: 55vh;
   }
 }
 .picker-foot {

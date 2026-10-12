@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import SearchHistory from '@/components/SearchHistory.vue'
@@ -174,6 +174,10 @@ function submitText() {
   if (value && !loading.value) search({ text: value })
 }
 
+// Notes the server adds to the description (e.g. a share lowered to the best
+// seen); the conditions themselves are shown as pills.
+const resultNotes = computed(() => (result.value?.description ?? []).filter((line) => /^No world we have generated/.test(line)))
+
 // Search with the pills: no AI, free like presets.
 function submitFilter(filter) {
   if (loading.value || !filter) return
@@ -245,11 +249,15 @@ function formatTime(iso) {
       <section v-else-if="result" class="mt-4">
         <template v-if="result.status === 'ok' || result.status === 'searching'">
           <div class="mb-3">
-            <div class="small text-body-secondary mb-1">{{ $t('home.search.read_as') }}</div>
-            <div class="d-flex flex-wrap gap-1">
-              <span v-for="line in result.description" :key="line" class="read-as-chip">{{ line }}</span>
-              <span v-if="!result.description.length" class="read-as-chip">{{ $t('home.search.any_world') }}</span>
-            </div>
+            <!-- With a filter the conditions are the pills above; only notes stay here. -->
+            <template v-if="!result.filter">
+              <div class="small text-body-secondary mb-1">{{ $t('home.search.read_as') }}</div>
+              <div class="d-flex flex-wrap gap-1">
+                <span v-for="line in result.description" :key="line" class="read-as-chip">{{ line }}</span>
+                <span v-if="!result.description.length" class="read-as-chip">{{ $t('home.search.any_world') }}</span>
+              </div>
+            </template>
+            <div v-else v-for="line in resultNotes" :key="line" class="small text-warning-emphasis mb-1">{{ line }}</div>
             <small class="text-body-secondary d-block mt-1">{{ $t('home.search.searched', { count: result.indexedWorlds.toLocaleString() }) }}</small>
           </div>
 
