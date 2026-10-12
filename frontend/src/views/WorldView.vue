@@ -42,6 +42,8 @@ const settleState = ref(null)
 const tilesPending = ref(false)
 const refused = ref(null)
 const failure = ref(null)
+// DLC packs this world needs that the generator has no data for yet.
+const dlcUnavailable = ref(null)
 
 let pollTimer = null
 let loadId = 0
@@ -92,6 +94,7 @@ async function load() {
   detail.value = null
   refused.value = null
   failure.value = null
+  dlcUnavailable.value = null
   const result = await loadWorldDetail(coordinate.value)
   if (id !== loadId) return
   detail.value = result.detail
@@ -99,6 +102,7 @@ async function load() {
   loadError.value = result.error ?? null
   refused.value = result.refused ?? null
   failure.value = result.failure ?? null
+  dlcUnavailable.value = result.dlcUnavailable ?? null
   tileVariant.value = result.tiles?.variant ?? (result.detail?.asteroids?.some((a) => a.tileData) ? 'presettle' : null)
   settleState.value = result.tiles?.settle ?? null
   tilesPending.value = Boolean(result.pending)
@@ -217,6 +221,9 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
       <div v-if="loading" class="text-center text-body-secondary my-5">
         <span class="spinner-border spinner-border-sm me-2" role="status"></span>{{ $t('world.loading') }}
         <div class="small mt-1">{{ $t('world.loading_hint') }}</div>
+      </div>
+      <div v-else-if="!detail && dlcUnavailable" class="alert sb-alert mt-3">
+        {{ dlcUnavailable.length ? $t('world.dlc_unavailable', { names: dlcUnavailable.join(', ') }) : $t('world.dlc_unavailable_unknown') }}
       </div>
       <div v-else-if="!detail && loadError?.status === 'worldgen_failure'" class="alert sb-alert mt-3">
         {{ $t('world.worldgen_failure') }}

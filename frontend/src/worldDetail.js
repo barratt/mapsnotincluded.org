@@ -34,6 +34,8 @@ export async function loadWorldDetail(coordinate) {
   const tiles = await loadWorldTiles(coordinate)
   if (tiles.status === 'ok') return { detail: tiles.detail, source: 'api', tiles: { variant: tiles.variant, settle: tiles.settle } }
   if (tiles.status === 'refused') return { detail: null, source: null, refused: tiles.coordinateCheck ?? {} }
+  // The world uses DLC content our generator has no data for (the game makes it fine).
+  if (tiles.status === 'dlc_unavailable') return { detail: null, source: null, dlcUnavailable: tiles.names }
   if (tiles.status === 'worldgen_failure') return { detail: null, source: null, failure: tiles.reason ?? '' }
   const pending = tiles.status === 'generating' || tiles.status === 'busy' ? { retryAfterMs: tiles.retryAfterMs } : null
   const result = await loadDetailJson(coordinate)
@@ -47,6 +49,7 @@ async function loadDetailJson(coordinate) {
     try {
       const res = await api(`${path}/detail`)
       if (res.ok && looksLikeDetail(res.data)) return { detail: res.data, source: 'api' }
+      if (res.data?.status === 'dlc_unavailable') return { detail: null, source: null, dlcUnavailable: res.data.names ?? [] }
       if (res.data?.status) error = { status: res.data.status, reason: res.data.reason ?? null }
     } catch {
       // fall back to the summary

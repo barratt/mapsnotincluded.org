@@ -436,7 +436,9 @@
             "cancel": "Cancel",
             "send": "Send report",
             "close": "Close"
-        }
+        },
+        "dlc_unavailable": "This world uses DLC content ({names}) that MapsNotIncluded can't generate yet, so there is no map for it here. The game itself generates it fine.",
+        "dlc_unavailable_unknown": "This world uses DLC content that MapsNotIncluded can't generate yet, so there is no map for it here. The game itself generates it fine."
     },
     "privacy": {
         "link": "Privacy",

@@ -64,6 +64,7 @@ export async function fetchWorldTiles(baseUrl, headers, coordinate, { variant = 
   const body = await res.json().catch(() => ({}))
   if (res.status === 202) return { status: 'generating', retryAfterMs: body.retryAfterMs ?? 2000 }
   if (res.status === 409) return { status: 'refused', coordinateCheck: body.coordinateCheck }
+  if (body.status === 'dlc_unavailable') return { status: 'dlc_unavailable', names: body.names ?? [] }
   if (body.status === 'worldgen_failure') return { status: 'worldgen_failure', reason: body.reason }
   if (res.status === 503) return { status: 'busy', retryAfterMs: body.retryAfterMs ?? 5000 }
   return { status: 'unavailable' }
