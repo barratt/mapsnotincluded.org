@@ -10,6 +10,7 @@ import SupportLinks from '@/components/SupportLinks.vue'
 import { site } from '@/siteConfig'
 import SearchAccount from '@/components/SearchAccount.vue'
 import SearchScope from '@/components/SearchScope.vue'
+import FilterBuilder from '@/components/FilterBuilder.vue'
 import { SEARCH_API_URL, api, jobEvents, steamSignInUrl } from '@/searchApi'
 
 const MAX_LENGTH = 300
@@ -23,6 +24,15 @@ const result = ref(null)
 const job = ref(null)
 const usage = ref(null)
 const scope = ref(null)
+// The conditions shown as pills: the last search's (typed or built), or the
+// player's edits since.
+const builtFilter = ref(null)
+watch(
+  () => result.value?.filter,
+  (f) => {
+    if (f) builtFilter.value = JSON.parse(JSON.stringify(f))
+  },
+)
 let stopEvents = null
 
 const RUNNING = ['queued', 'running']
@@ -164,6 +174,12 @@ function submitText() {
   if (value && !loading.value) search({ text: value })
 }
 
+// Search with the pills: no AI, free like presets.
+function submitFilter(filter) {
+  if (loading.value || !filter) return
+  search({ filter })
+}
+
 function submitPreset(preset) {
   if (loading.value) return
   text.value = ''
@@ -201,6 +217,8 @@ function formatTime(iso) {
           </button>
         </div>
       </form>
+
+      <FilterBuilder v-model="builtFilter" :scope="scope" :busy="loading" @search="submitFilter" />
 
       <div class="d-flex flex-wrap justify-content-center align-items-center gap-2">
         <SearchAccount :usage="usage" @usage="usage = $event" />
