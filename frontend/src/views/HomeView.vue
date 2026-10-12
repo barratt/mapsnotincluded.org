@@ -19,6 +19,9 @@ const { t } = useI18n()
 
 const text = ref('')
 const presets = ref([])
+// A pasted world code opens that world (the search API recognises it).
+const COORDINATE_EXAMPLE = 'V-LUSH-C-654048478-0-0-0'
+const looksLikeCoordinate = computed(() => /^[A-Z0-9]+(?:-[A-Z0-9]+)*-\d{1,10}-[A-Z0-9]+-[A-Z0-9]+-[A-Z0-9]+$/i.test(text.value.trim()))
 const loading = ref(false)
 const result = ref(null)
 const job = ref(null)
@@ -222,8 +225,12 @@ function formatTime(iso) {
           />
           <button class="btn btn-warning" type="submit" :disabled="loading || !text.trim() || !SEARCH_API_URL">
             <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-            {{ $t('home.search.button') }}
+            {{ looksLikeCoordinate ? $t('home.search.open_world') : $t('home.search.button') }}
           </button>
+        </div>
+        <div class="search-hint mt-1">
+          {{ $t('home.search.coordinate_hint') }}
+          <button type="button" class="btn btn-link btn-sm p-0 align-baseline example-code" @click="text = COORDINATE_EXAMPLE">{{ COORDINATE_EXAMPLE }}</button>
         </div>
       </form>
 
@@ -234,7 +241,8 @@ function formatTime(iso) {
         <SearchHistory ref="history" :presets="presets" @open="(id) => router.push({ path: '/', query: { s: id } })" />
       </div>
 
-      <div v-if="presets.length" class="presets d-flex gap-2 mt-3 justify-content-md-center">
+      <div v-if="presets.length && !site.config.searchCosts?.presets" class="search-hint text-center mt-3">{{ $t('home.search.presets_free') }}</div>
+      <div v-if="presets.length" class="presets d-flex gap-2 justify-content-md-center" :class="site.config.searchCosts?.presets ? 'mt-3' : 'mt-1'">
         <button
           v-for="preset in presets"
           :key="preset.id"
@@ -384,6 +392,14 @@ function formatTime(iso) {
 <style scoped>
 .search-title {
   font-size: clamp(1.35rem, 4.5vw, 2rem);
+}
+.search-hint {
+  font-size: 0.9rem;
+  color: var(--bs-secondary-color);
+}
+.example-code {
+  font-family: var(--bs-font-monospace);
+  font-size: 0.85rem;
 }
 /* One scrollable row of presets on phones, wrapped on wider screens. */
 .presets {

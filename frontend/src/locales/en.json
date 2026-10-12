@@ -133,6 +133,9 @@
         "search": {
             "title": "What kind of world are you looking for?",
             "placeholder": "e.g. Spaced Out Terra with a cool steam vent and no volcanoes on the start",
+            "coordinate_hint": "Have a world code? Paste it to open that world, e.g.",
+            "open_world": "Open world",
+            "presets_free": "Quick picks don't use your daily searches:",
             "button": "Find worlds",
             "searching": "Searching every world we know about...",
             "read_as": "We read that as:",
@@ -193,6 +196,8 @@
             "clear": "Clear",
             "remove": "Remove",
             "loading": "Loading…",
+            "free_search": "Free: doesn't use your daily searches",
+            "uses_search": "Uses 1 of your daily searches",
             "applies_to": "Applies to",
             "sense": "Want or don't want",
             "want": "I want this",

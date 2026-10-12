@@ -7,6 +7,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { api } from '@/searchApi'
+import { site } from '@/siteConfig'
 import { asteroidInfo, geyserInfo, poiInfo, traitInfo, zoneInfo } from '@/oniCatalog'
 
 const props = defineProps({
@@ -843,6 +844,10 @@ const hasConditions = computed(() => pills.value.length > 0)
       <button v-if="hasConditions" type="button" class="btn btn-sm btn-warning" :disabled="busy" @click="emit('search', clone(filter))">
         <i class="bi bi-search me-1" aria-hidden="true"></i>{{ $t('home.filters.search') }}
       </button>
+      <span v-if="hasConditions" class="cost-note" :class="{ free: !site.config.searchCosts?.builder }">
+        <i class="bi" :class="site.config.searchCosts?.builder ? 'bi-ticket-perforated' : 'bi-gift'" aria-hidden="true"></i>
+        {{ site.config.searchCosts?.builder ? $t('home.filters.uses_search') : $t('home.filters.free_search') }}
+      </span>
       <button v-if="hasConditions" type="button" class="btn btn-sm btn-link text-body-secondary" @click="emit('update:modelValue', null)">
         {{ $t('home.filters.clear') }}
       </button>
@@ -931,6 +936,16 @@ const hasConditions = computed(() => pills.value.length > 0)
 .filter-pop .form-select-sm,
 .filter-pop .form-control-sm {
   font-size: 0.9rem;
+}
+.cost-note {
+  font-size: 0.85rem;
+  color: var(--bs-secondary-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.cost-note.free i {
+  color: var(--bs-success);
 }
 .pop-title {
   display: flex;
