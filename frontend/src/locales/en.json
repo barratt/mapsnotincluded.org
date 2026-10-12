@@ -200,7 +200,7 @@
             "tabs": {
                 "geysers": "Geysers",
                 "traits": "Traits",
-                "critters": "Critters",
+                "critters": "Critters & plants",
                 "distance": "Distance",
                 "world": "World",
                 "quality": "Geyser quality"
@@ -253,7 +253,12 @@
             "critters_any": "Critters",
             "critters_lots": "Lots of critters",
             "critters_lots_hint": "at least 30 of any kind to start; change it on the filter",
-            "critters_note": "Critters are known for the {n} worlds that have been simulated so far. A critter search checks those, then simulates more matching worlds in the background (about 20 seconds each), so it can take a while."
+            "critters_note": "Critters and plants are known for the {n} worlds that have been simulated so far. A search checks those, then simulates more matching worlds in the background (about 20 seconds each), so it can take a while.",
+            "plants_any": "Plants",
+            "critters_group": "Critters",
+            "plants_group": "Plants",
+            "critters_near_pod_group": "Critters near the Printing Pod",
+            "plants_near_pod_group": "Plants near the Printing Pod"
         }
     },
     "not_found": {
@@ -407,6 +412,28 @@
             "show_on_map": "Show every {name} on the map",
             "none": "Nothing is spawned on this asteroid at the start.",
             "after_settle": "Critters and plants are listed once the game-start map is ready."
+        },
+        "actions": {
+            "favourite": "Favourite",
+            "favourited": "Favourited",
+            "favourite_sign_in": "Sign in with Steam to keep a list of favourite worlds",
+            "report": "Report issue",
+            "report_title": "Report a problem with this world",
+            "report_intro": "Something wrong with {coordinate}? Tell us what you saw, for example a different world in game, missing geysers or a broken map. We read every report.",
+            "report_kind": "What kind of problem?",
+            "report_describe": "What happened?",
+            "report_placeholder": "e.g. In game the start biome is different, or the map shows no oil but there is some.",
+            "report_thanks": "Thanks, your report is in. We review reports regularly.",
+            "categories": {
+                "bad_worldgen": "The world is different in game",
+                "wrong_geysers": "Geysers are wrong or missing",
+                "map_problem": "The map is broken or wrong",
+                "wrong_details": "Other details are wrong",
+                "other": "Something else"
+            },
+            "cancel": "Cancel",
+            "send": "Send report",
+            "close": "Close"
         }
     },
     "privacy": {
@@ -448,5 +475,14 @@
     },
     "ads": {
         "label": "Advertisement"
+    },
+    "favourites": {
+        "title": "My favourite worlds",
+        "link": "My favourites",
+        "loading": "Loading…",
+        "sign_in": "Sign in with Steam to keep a list of the worlds you like. Star a world from its page to add it here.",
+        "sign_in_button": "Sign in with Steam",
+        "empty": "No favourites yet. Open a world and press \"Favourite\" to keep it here.",
+        "error": "Could not load your favourites right now. Please try again in a moment."
     }
 }

@@ -11,6 +11,7 @@ import { SPACE_BACKGROUND, asteroidInfo, traitInfo } from '@/oniCatalog'
 import AsteroidMap from '@/components/world/AsteroidMap.vue'
 import BiomeLegend from '@/components/world/BiomeLegend.vue'
 import CritterSummary from '@/components/world/CritterSummary.vue'
+import WorldActions from '@/components/world/WorldActions.vue'
 import ElementLegend from '@/components/world/ElementLegend.vue'
 import ClusterLayout from '@/components/world/ClusterLayout.vue'
 import ClusterOverview from '@/components/world/ClusterOverview.vue'
@@ -183,6 +184,7 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
           <router-link to="/" class="btn btn-sm btn-outline-secondary">
             <i class="bi bi-search me-1" aria-hidden="true"></i>{{ $t('world.new_search') }}
           </router-link>
+          <WorldActions :coordinate="coordinate" />
         </div>
         <dl v-if="detail" class="world-facts mt-2 mb-0">
           <div>

@@ -42,6 +42,7 @@ onMounted(load)
     <span v-if="me" class="signed-in">
       <img v-if="me.avatarUrl" :src="me.avatarUrl" alt="" class="avatar" />
       {{ $t('home.search.signed_in_as', { name: me.displayName ?? 'Steam' }) }}
+      <router-link to="/favourites" class="ms-1"><i class="bi bi-star me-1" aria-hidden="true"></i>{{ $t('favourites.link') }}</router-link>
       <button type="button" class="btn btn-link btn-sm p-0 align-baseline" @click="doSignOut">{{ $t('home.search.sign_out') }}</button>
     </span>
     <a v-else :href="steamSignInUrl()" class="btn btn-sm btn-outline-light steam-button">

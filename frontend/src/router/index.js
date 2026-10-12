@@ -18,6 +18,7 @@ const router = createRouter({
     { path: '/seed-viewer', component: () => import('../views/SeedViewerView.vue') },
 
     { path: '/world/:coordinate', component: () => import('../views/WorldView.vue') },
+    { path: '/favourites', component: () => import('../views/FavouritesView.vue') },
     { path: '/privacy', component: () => import('../views/PrivacyView.vue') },
 
     { path: '/about', component: () => import('../views/AboutView.vue') },
