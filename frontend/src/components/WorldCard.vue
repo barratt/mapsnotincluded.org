@@ -3,6 +3,7 @@ import { api } from '@/searchApi'
 import StoreLinks from '@/components/StoreLinks.vue'
 import { productsForCluster } from '@/siteConfig'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { asteroidInfo, geyserInfo, geyserRating, traitInfo, ratingClass } from '@/oniCatalog'
 import GeyserBadge from '@/components/world/GeyserBadge.vue'
@@ -31,6 +32,19 @@ function opened() {
 }
 
 const { t } = useI18n()
+const router = useRouter()
+
+// Clicking anywhere on the card opens the world, except on its own buttons
+// and links, or when the click ends a text selection (copying a name).
+// Ctrl/Cmd-click and middle-click open it in a new tab, like a link.
+function cardClick(event) {
+  if (event.target.closest('a, button, input, label')) return
+  if (window.getSelection?.().toString()) return
+  const href = router.resolve(`/world/${props.world.coordinate}`).href
+  opened()
+  if (event.button === 1 || event.ctrlKey || event.metaKey) window.open(href, '_blank', 'noopener')
+  else router.push(href)
+}
 
 const CLUSTER_ROW_LIMIT = 10
 
@@ -138,7 +152,7 @@ async function copyCoordinate() {
 </script>
 
 <template>
-  <article class="world-card h-100" :class="{ 'is-close': world.match }">
+  <article class="world-card h-100" :class="{ 'is-close': world.match }" @click="cardClick" @auxclick.prevent="(e) => e.button === 1 && cardClick(e)">
     <header class="d-flex align-items-center gap-2">
       <img v-if="startInfo.icon" :src="startInfo.icon" alt="" class="world-card-asteroid" loading="lazy" />
       <div class="min-w-0 flex-grow-1">
@@ -287,6 +301,13 @@ async function copyCoordinate() {
   border: 1px solid var(--bs-border-color);
   border-radius: 10px;
   background: var(--bs-tertiary-bg);
+}
+.world-card {
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.world-card:hover {
+  border-color: var(--sb-hover, #ffeb3b);
 }
 .world-card.is-close {
   border-style: dashed;
