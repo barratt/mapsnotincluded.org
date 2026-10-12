@@ -45,7 +45,7 @@ function update(mutate) {
     for (const k of ['require', 'exclude']) if (next.traits[k] && !next.traits[k].length) delete next.traits[k]
     if (!next.traits.require && !next.traits.exclude) delete next.traits
   }
-  for (const k of ['clusters', 'dlcs', 'pois', 'worlds']) if (next[k] && !next[k].length) delete next[k]
+  for (const k of ['clusters', 'dlcs', 'pois', 'worlds', 'critters']) if (next[k] && !next[k].length) delete next[k]
   if (next.biomes) {
     for (const k of ['require', 'exclude']) if (next.biomes[k] && !next.biomes[k].length) delete next.biomes[k]
     if (!next.biomes.require && !next.biomes.exclude) delete next.biomes
@@ -86,6 +86,8 @@ const typesOf = (g) => g.types ?? (g.type ? [g.type] : [])
 const zoneName = (id) => catalog.value?.zones?.find((z) => z.id === id)?.name ?? zoneInfo(id).label
 const poiName = (id) => catalog.value?.pois?.find((p) => p.id === id)?.name ?? poiInfo(id).label
 const asteroidName = (id) => asteroidInfo(id).label.replace(/([a-z])([A-Z])/g, '$1 $2')
+const critterName = (id) => catalog.value?.critters?.find((c) => c.id === id)?.name ?? id.replace(/([a-z])([A-Z])/g, '$1 $2')
+const critterTypesOf = (c) => c.types ?? (c.type ? [c.type] : [])
 const whereLabel = (s) => (s === 'start' ? t('home.filters.on_start') : t('home.filters.in_cluster'))
 
 function countLabel(g) {
@@ -131,6 +133,18 @@ const pills = computed(() => {
   for (const id of f.biomes?.require ?? []) out.push({ key: `b+${id}`, kind: 'biome', id, icon: zoneInfo(id).icon, label: t('home.filters.biome_pill', { name: zoneName(id) }), sub: whereLabel(f.biomes.scope ?? 'start') })
   for (const id of f.biomes?.exclude ?? []) out.push({ key: `b-${id}`, kind: 'biome', id, excluded: true, icon: zoneInfo(id).icon, label: `${t('home.filters.no')} ${t('home.filters.biome_pill', { name: zoneName(id) })}`, sub: whereLabel(f.biomes.scope ?? 'start') })
   ;(f.pois ?? []).forEach((p, i) => out.push({ key: `p:${i}`, kind: 'poi', index: i, icon: poiInfo(p.type).icon, label: `${poiName(p.type)} ${countLabel(p)}`, sub: whereLabel(p.scope ?? 'cluster') }))
+  ;(f.critters ?? []).forEach((c, i) => {
+    const types = critterTypesOf(c)
+    const names = !types.length ? t('home.filters.critters_any') : types.length > 3 ? t('home.filters.any_of_n', { first: critterName(types[0]), n: types.length - 1 }) : types.map(critterName).join(' or ')
+    out.push({
+      key: `c:${i}`,
+      kind: 'critter',
+      index: i,
+      label: `${names} ${countLabel(c)}`,
+      sub: c.maxDistance ? t('home.filters.near_pod', { n: c.maxDistance }) : whereLabel(c.scope ?? 'start'),
+      title: types.map(critterName).join(', '),
+    })
+  })
   ;(f.worlds ?? []).forEach((w, i) => out.push({ key: `w:${i}`, kind: 'world', index: i, icon: asteroidInfo(w.world).icon, label: asteroidName(w.world), sub: t('home.filters.near_home', { n: w.maxDistance ?? '?' }) }))
   return out
 })
@@ -141,6 +155,7 @@ function removePill(p) {
     if (p.kind === 'geyser') f.geysers.splice(p.index, 1)
     else if (p.kind === 'poi') f.pois.splice(p.index, 1)
     else if (p.kind === 'world') f.worlds.splice(p.index, 1)
+    else if (p.kind === 'critter') f.critters.splice(p.index, 1)
     else if (p.kind === 'traitCount') delete f.traitCount
     else if (p.kind === 'biome') f.biomes[p.excluded ? 'exclude' : 'require'] = f.biomes[p.excluded ? 'exclude' : 'require'].filter((x) => x !== p.id)
     else if (p.kind === 'trait') f.traits[p.excluded ? 'exclude' : 'require'] = f.traits[p.excluded ? 'exclude' : 'require'].filter((x) => x !== p.id)
@@ -208,6 +223,25 @@ function setPoiCount(mode, value) {
   })
 }
 const setPoiScope = (scope) => update((f) => (f.pois[editPill.value.index].scope = scope))
+// Critters: same count modes, plus "within N tiles of the Printing Pod".
+const editCritter = computed(() => (editPill.value?.kind === 'critter' ? filter.value.critters[editPill.value.index] : null))
+function setCritter(changes) {
+  const i = editPill.value.index
+  update((f) => {
+    const c = { ...f.critters[i], ...changes }
+    for (const k of Object.keys(c)) if (c[k] === null || c[k] === undefined || c[k] === '') delete c[k]
+    f.critters[i] = c
+  })
+}
+function setCritterCount(mode, value) {
+  const n = Math.max(0, Math.min(255, Math.round(Number(value) || 0)))
+  if (mode === 'none') setCritter({ minCount: null, maxCount: 0 })
+  else if (mode === 'at_most') setCritter({ minCount: null, maxCount: Math.max(1, n) })
+  else if (mode === 'exactly') setCritter({ minCount: Math.max(1, n), maxCount: Math.max(1, n) })
+  else setCritter({ minCount: Math.max(1, n), maxCount: null })
+}
+const setCritterNear = (value) =>
+  setCritter(value === '' || value === null ? { maxDistance: null } : { maxDistance: Math.max(1, Math.min(1000, Math.round(Number(value) || 1))), scope: 'start' })
 const setWorldDistance = (value) =>
   update((f) => (f.worlds[editPill.value.index].maxDistance = Math.max(0, Math.min(20, Math.round(Number(value) || 0)))))
 const setTraitCount = (changes) =>
@@ -233,7 +267,7 @@ const setNearPod = (value) => setGeyser(value === '' || value === null ? { maxDi
 // ---- Picker ----------------------------------------------------------------
 
 const picker = reactive({ open: false, tab: 'geysers', query: '', where: 'start' })
-const TABS = ['geysers', 'traits', 'distance', 'world', 'quality']
+const TABS = ['geysers', 'traits', 'critters', 'distance', 'world', 'quality']
 
 const query = computed(() => picker.query.trim().toLowerCase())
 const matches = (text) => !query.value || text.toLowerCase().includes(query.value)
@@ -294,6 +328,17 @@ const poiItems = computed(() =>
     .filter((p) => p.id !== 'HeadquartersComplete' && matches(`${p.name} ${p.id}`))
     .map((p) => ({ ...p, icon: poiInfo(p.id).icon, added: (filter.value.pois ?? []).some((x) => x.type === p.id) })),
 )
+const critterItems = computed(() =>
+  (catalog.value?.critters ?? [])
+    .filter((c) => matches(`${c.name} ${c.id}`))
+    .map((c) => ({ ...c, added: (filter.value.critters ?? []).some((x) => critterTypesOf(x).includes(c.id)) }))
+    .sort((a, b) => a.name.localeCompare(b.name)),
+)
+function addCritter(c) {
+  update((f) => {
+    f.critters = [...(f.critters ?? []), c ? { type: c.id, scope: picker.where } : { scope: picker.where, minCount: 30 }]
+  })
+}
 const traitCountItems = computed(() =>
   [
     { id: 'none', value: { max: 0 } },
@@ -488,6 +533,37 @@ const hasConditions = computed(() => pills.value.length > 0)
             </div>
           </template>
 
+          <template v-else-if="p.kind === 'critter' && editCritter">
+            <div class="pop-row">
+              <select class="form-select form-select-sm" :value="countMode(editCritter)" @change="setCritterCount($event.target.value, countValue(editCritter))">
+                <option value="at_least">{{ $t('home.filters.at_least') }}</option>
+                <option value="at_most">{{ $t('home.filters.at_most') }}</option>
+                <option value="exactly">{{ $t('home.filters.exactly') }}</option>
+                <option value="none">{{ $t('home.filters.none') }}</option>
+              </select>
+              <input
+                v-if="countMode(editCritter) !== 'none'"
+                type="number"
+                min="1"
+                max="255"
+                class="form-control form-control-sm num"
+                :value="countValue(editCritter)"
+                @change="setCritterCount(countMode(editCritter), $event.target.value)"
+              />
+            </div>
+            <div class="pop-row">
+              <label class="pop-label mb-0">{{ $t('home.filters.within') }}</label>
+              <input type="number" min="1" max="1000" class="form-control form-control-sm num" :placeholder="$t('home.filters.any')" :value="editCritter.maxDistance ?? ''" @change="setCritterNear($event.target.value)" />
+              <span class="small text-body-secondary">{{ $t('home.filters.tiles_of_pod') }}</span>
+            </div>
+            <div v-if="!editCritter.maxDistance" class="pop-row">
+              <select class="form-select form-select-sm" :value="editCritter.scope ?? 'start'" @change="setCritter({ scope: $event.target.value })">
+                <option value="start">{{ $t('home.filters.on_start') }}</option>
+                <option value="cluster">{{ $t('home.filters.in_cluster') }}</option>
+              </select>
+            </div>
+          </template>
+
           <template v-else-if="p.kind === 'world' && editWorld">
             <div class="pop-row">
               <label class="pop-label mb-0">{{ $t('home.filters.within') }}</label>
@@ -631,6 +707,18 @@ const hasConditions = computed(() => pills.value.length > 0)
                   <span v-if="x.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
                   <span v-else-if="x.impossible" class="item-tag">{{ $t('home.filters.impossible') }}</span>
                 </button>
+              </template>
+              <template v-else-if="tab === 'critters'">
+                <button v-if="matches($t('home.filters.critters_lots'))" type="button" class="picker-item" @click="addCritter(null)">
+                  <i class="bi bi-bug item-icon-i" aria-hidden="true"></i>
+                  <span class="item-name">{{ $t('home.filters.critters_lots') }}<small>{{ $t('home.filters.critters_lots_hint') }}</small></span>
+                </button>
+                <button v-for="c in critterItems" :key="`crit-${c.id}`" type="button" class="picker-item" :class="{ added: c.added }" @click="addCritter(c)">
+                  <i class="bi bi-bug-fill item-icon-i" aria-hidden="true"></i>
+                  <span class="item-name">{{ c.name }}<small>{{ c.id }}</small></span>
+                  <span v-if="c.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                </button>
+                <div class="small text-body-secondary px-2 mt-2">{{ $t('home.filters.critters_note', { n: (catalog?.critterWorlds ?? 0).toLocaleString() }) }}</div>
               </template>
               <template v-else-if="tab === 'distance'">
                 <div class="picker-group">{{ $t('home.filters.near_pod_group') }}</div>

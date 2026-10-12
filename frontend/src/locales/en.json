@@ -200,6 +200,7 @@
             "tabs": {
                 "geysers": "Geysers",
                 "traits": "Traits",
+                "critters": "Critters",
                 "distance": "Distance",
                 "world": "World",
                 "quality": "Geyser quality"
@@ -248,7 +249,11 @@
             "trait_count_none": "No world traits",
             "trait_count_two": "At least 2 world traits",
             "trait_count_three": "At least 3 world traits",
-            "new_worlds_only": "Distances, biomes and buildings are known for worlds indexed from 12 October on; older worlds never match them."
+            "new_worlds_only": "Distances, biomes and buildings are known for worlds indexed from 12 October on; older worlds never match them.",
+            "critters_any": "Critters",
+            "critters_lots": "Lots of critters",
+            "critters_lots_hint": "at least 30 of any kind to start; change it on the filter",
+            "critters_note": "Critters are known for the {n} worlds that have been simulated so far. A critter search checks those, then simulates more matching worlds in the background (about 20 seconds each), so it can take a while."
         }
     },
     "not_found": {
