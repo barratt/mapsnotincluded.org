@@ -344,8 +344,6 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
             </div>
           </div>
 
-          <InGameRender v-if="!detail.synthetic" class="mt-3" :coordinate="coordinate" :world-index="selectedIndex" />
-
           <div class="sb-panel mt-3">
             <h3 class="sb-subheading">{{ $t('world.geysers_heading', { n: asteroid.geysers?.length ?? 0 }) }}</h3>
             <GeyserTable v-model:selected="selectedMarker" :geysers="asteroid.geysers ?? []" />
@@ -361,6 +359,15 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
           <h2 id="starmap-heading" class="sb-heading">{{ $t('world.starmap.heading') }}</h2>
           <StarmapView :starmap="starmap" :asteroids="asteroids" :selected="selectedIndex" @select-asteroid="selectAsteroid" />
         </section>
+
+        <!-- Game view: rendered on the server only when asked -->
+        <InGameRender
+          v-if="asteroid && !detail.synthetic"
+          class="mt-3"
+          :coordinate="coordinate"
+          :world-index="selectedIndex"
+          :asteroid-name="asteroidName"
+        />
       </template>
 
       <footer class="world-credits">

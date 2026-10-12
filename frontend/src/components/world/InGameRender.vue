@@ -3,12 +3,14 @@ import { onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SEARCH_API_URL, headers } from '@/searchApi'
 
-// "In-game look": the asteroid drawn with the game's own textures, rendered on
-// the server on request (it costs a few seconds of CPU, so only on a click).
+// "Game view": the asteroid drawn with the game's own textures. Nothing is
+// rendered until the visitor clicks the button; the request then queues a job
+// for the server's render workers, and this polls until the image is ready.
 // Hidden unless the API says renders are on (/renders/info).
 const props = defineProps({
   coordinate: { type: String, required: true },
   worldIndex: { type: Number, required: true },
+  asteroidName: { type: String, default: '' },
 })
 const { t } = useI18n()
 
@@ -90,7 +92,9 @@ onBeforeUnmount(() => {
 <template>
   <div v-if="info?.available" class="sb-panel in-game-render">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-      <h3 class="sb-subheading mb-0 me-auto">{{ $t('world.render.heading') }}</h3>
+      <h2 class="sb-heading mb-0 me-auto">
+        {{ $t('world.render.heading') }}<span v-if="asteroidName" class="render-asteroid"> · {{ asteroidName }}</span>
+      </h2>
       <div class="btn-group btn-group-sm" role="group" :aria-label="$t('world.render.variant')">
         <button type="button" class="btn" :class="settled ? 'btn-primary' : 'btn-outline-secondary'" @click="settled = true">
           {{ $t('world.render.settled') }}
@@ -149,6 +153,10 @@ onBeforeUnmount(() => {
   margin: 0 auto;
   border-radius: 4px;
   image-rendering: pixelated;
+}
+.render-asteroid {
+  color: var(--bs-secondary-color);
+  font-size: 0.8em;
 }
 .render-credit {
   font-size: 0.75rem;
