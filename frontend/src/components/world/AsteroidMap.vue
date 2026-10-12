@@ -159,7 +159,9 @@ const markers = computed(() => [
     })
     .filter((m) => m.data.x != null && m.data.y != null),
   // Where the Printing Pod prints the first Duplicants.
-  ...(props.asteroid.spawn
+  // Only the starting asteroid has the Printing Pod (older cached maps carry
+  // a start position for every world with a start template).
+  ...(props.asteroid.spawn && props.asteroid.start
     ? [{ key: 'spawn', kind: 'spawn', x: props.asteroid.spawn.x, y: flipY(props.asteroid.spawn.y), label: t('world.tiles.spawn'), data: props.asteroid.spawn }]
     : []),
 ])
