@@ -229,7 +229,7 @@ function formatTime(iso) {
 
       <FilterBuilder v-model="builtFilter" :scope="scope" :busy="loading" @search="submitFilter" />
 
-      <div class="d-flex flex-wrap justify-content-center align-items-center gap-2">
+      <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-3">
         <SearchAccount :usage="usage" @usage="usage = $event" />
         <SearchHistory ref="history" :presets="presets" @open="(id) => router.push({ path: '/', query: { s: id } })" />
       </div>

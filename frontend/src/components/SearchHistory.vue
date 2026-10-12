@@ -73,7 +73,6 @@ defineExpose({ refresh })
 <style scoped>
 .search-history {
   position: relative;
-  margin-top: 0.75rem;
 }
 .history-menu {
   position: absolute;

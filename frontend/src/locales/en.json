@@ -183,7 +183,9 @@
             "seed_title": "Worlds with seed {seed}",
             "seed_clusters": "Open this seed on a cluster:",
             "seed_unsupported": "We can't generate this cluster yet",
-            "loading_more": "Loading more worlds"
+            "loading_more": "Loading more worlds",
+            "left_short": "{remaining} searches left today",
+            "usage_hint": "Up to {limit} searches a day; the count resets at midnight UTC."
         },
         "filters": {
             "add": "Add filter",
