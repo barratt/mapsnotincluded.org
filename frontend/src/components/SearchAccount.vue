@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
 <template>
   <div ref="root" class="search-account">
     <span v-if="props.usage" class="usage-pill" :class="{ empty: props.usage.remaining <= 0 }" :title="$t('home.search.usage_hint', { limit: props.usage.limit })">
-      <i class="bi bi-search" aria-hidden="true"></i>
+      <i class="bi bi-stars" aria-hidden="true"></i>
       {{ props.usage.remaining > 0 ? $t('home.search.left_short', { remaining: props.usage.remaining }) : $t('home.search.none_left') }}
     </span>
 

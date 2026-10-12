@@ -26,7 +26,7 @@ let catalogLoad = null
 const catalog = ref(null)
 const clusterMeta = ref({})
 async function loadCatalog() {
-  catalogLoad ??= Promise.all([api('/filter-catalog?v=3'), api('/clusters')]).then(([c, k]) => {
+  catalogLoad ??= Promise.all([api('/filter-catalog?v=4'), api('/clusters')]).then(([c, k]) => {
     if (c.ok) catalog.value = c.data
     const list = Array.isArray(k.data) ? k.data : k.data?.clusters ?? []
     clusterMeta.value = Object.fromEntries(list.map((x) => [x.prefix, x]))
@@ -47,6 +47,7 @@ function update(mutate) {
     if (!next.traits.require && !next.traits.exclude) delete next.traits
   }
   for (const k of ['clusters', 'dlcs', 'pois', 'worlds', 'critters', 'plants']) if (next[k] && !next[k].length) delete next[k]
+  if (next.mixing && !next.mixing.none && !next.mixing.settings?.length) delete next.mixing
   if (next.biomes) {
     for (const k of ['require', 'exclude']) if (next.biomes[k] && !next.biomes[k].length) delete next.biomes[k]
     if (!next.biomes.require && !next.biomes.exclude) delete next.biomes
@@ -157,6 +158,11 @@ const pills = computed(() => {
       })
     })
   }
+  if (f.mixing?.none) out.push({ key: 'mix-none', kind: 'mixing', label: t('home.filters.no_remix'), excluded: true, sub: t('home.filters.no_remix_sub') })
+  for (const id of f.mixing?.settings ?? []) {
+    const r = remixInfo(id)
+    out.push({ key: `mix-${id}`, kind: 'mixing', id, icon: r.zone ? zoneInfo(r.zone).icon : null, label: t('home.filters.remix_pill', { name: r.name }), sub: t('home.filters.remix_sub') })
+  }
   ;(f.worlds ?? []).forEach((w, i) => out.push({ key: `w:${i}`, kind: 'world', index: i, icon: asteroidInfo(w.world).icon, label: asteroidName(w.world), sub: t('home.filters.near_home', { n: w.maxDistance ?? '?' }) }))
   return out
 })
@@ -172,6 +178,10 @@ function removePill(p) {
     else if (p.kind === 'biome') f.biomes[p.excluded ? 'exclude' : 'require'] = f.biomes[p.excluded ? 'exclude' : 'require'].filter((x) => x !== p.id)
     else if (p.kind === 'trait') f.traits[p.excluded ? 'exclude' : 'require'] = f.traits[p.excluded ? 'exclude' : 'require'].filter((x) => x !== p.id)
     else if (p.kind === 'quality') delete f.quality
+    else if (p.kind === 'mixing') {
+      if (p.id) f.mixing.settings = f.mixing.settings.filter((x) => x !== p.id)
+      else delete f.mixing
+    }
   })
 }
 
@@ -351,6 +361,20 @@ const asteroidItems = computed(() => {
     .filter((a) => matches(`${a.name} ${a.id}`))
     .sort((a, b) => a.name.localeCompare(b.name))
 })
+// DLC remixes (the last part of a world code): none at all, or chosen ones.
+const remixInfo = (id) => catalog.value?.remixes?.find((r) => r.id === id) ?? { id, name: id }
+const remixItems = computed(() =>
+  (catalog.value?.remixes ?? [])
+    .filter((r) => matches(`${r.name} ${r.id} remix`))
+    .map((r) => ({ ...r, icon: r.zone ? zoneInfo(r.zone).icon : null, added: (filter.value.mixing?.settings ?? []).includes(r.id) })),
+)
+const noRemixShown = computed(() => Boolean(catalog.value?.remixes?.length) && matches(`${t('home.filters.no_remix')} remix`))
+function addNoRemix() {
+  update((f) => (f.mixing = { none: true }))
+}
+function addRemix(r) {
+  update((f) => (f.mixing = { settings: [...(f.mixing?.settings ?? []), r.id] }))
+}
 const zoneItems = computed(() =>
   (catalog.value?.zones ?? [])
     .filter((z) => z.id !== 'Space' && matches(`${z.name} ${z.id}`))
@@ -809,6 +833,20 @@ const hasConditions = computed(() => pills.value.length > 0)
                 </button>
               </template>
               <template v-else-if="tab === 'world'">
+                <template v-if="remixItems.length || noRemixShown">
+                  <div class="picker-group">{{ $t('home.filters.remix_group') }}</div>
+                  <button v-if="noRemixShown" type="button" class="picker-item" :class="{ added: filter.mixing?.none }" :disabled="filter.mixing?.none" @click="addNoRemix">
+                    <i class="bi bi-slash-circle item-icon-i" aria-hidden="true"></i>
+                    <span class="item-name">{{ $t('home.filters.no_remix') }}<small>{{ $t('home.filters.no_remix_hint') }}</small></span>
+                    <span v-if="filter.mixing?.none" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                  </button>
+                  <button v-for="r in remixItems" :key="`mix-${r.id}`" type="button" class="picker-item" :class="{ added: r.added }" :disabled="r.added" @click="addRemix(r)">
+                    <img v-if="r.icon" :src="r.icon" alt="" class="item-icon" />
+                    <i v-else class="bi bi-globe2 item-icon-i" aria-hidden="true"></i>
+                    <span class="item-name">{{ r.name }}<small>{{ r.spacedOutOnly ? $t('home.filters.remix_hint_so') : $t('home.filters.remix_hint') }}</small></span>
+                    <span v-if="r.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                  </button>
+                </template>
                 <div class="picker-group">{{ $t('home.filters.biomes_group') }}</div>
                 <button v-for="z in zoneItems" :key="`zone-${z.id}`" type="button" class="picker-item" :class="{ added: z.added }" :disabled="z.added" @click="addZone(z)">
                   <img v-if="z.icon" :src="z.icon" alt="" class="item-icon" />

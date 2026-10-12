@@ -240,6 +240,10 @@ function formatTime(iso) {
         <SearchAccount :usage="usage" @usage="usage = $event" />
         <SearchHistory ref="history" :presets="presets" @open="(id) => router.push({ path: '/', query: { s: id } })" />
       </div>
+      <p v-if="usage" class="search-hint text-center mt-2 mb-0">
+        <i class="bi bi-stars me-1" aria-hidden="true"></i>{{ $t('home.search.how_it_works') }}
+        {{ site.config.searchCosts?.builder ? $t('home.search.how_charged') : $t('home.search.how_free') }}
+      </p>
 
       <div v-if="presets.length && !site.config.searchCosts?.presets" class="search-hint text-center mt-3">{{ $t('home.search.presets_free') }}</div>
       <div v-if="presets.length" class="presets d-flex gap-2 justify-content-md-center" :class="site.config.searchCosts?.presets ? 'mt-3' : 'mt-1'">
