@@ -1,12 +1,13 @@
 <script setup>
 // Search conditions as pills: what the AI understood from a typed search, or
 // what the player picked here. "Add filter" opens a picker (geysers, traits,
-// geyser quality) and each pill opens a small editor. Searching with the
-// pills skips the AI.
+// distances, world features, geyser quality) and each pill opens a small
+// editor. Game mode, DLCs and clusters are the toggles above the search, not
+// pills. Searching with the pills skips the AI.
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { api } from '@/searchApi'
-import { geyserInfo, traitInfo } from '@/oniCatalog'
+import { asteroidInfo, geyserInfo, poiInfo, traitInfo, zoneInfo } from '@/oniCatalog'
 
 const props = defineProps({
   // The filter object (see the search API), or null for no conditions.
@@ -44,7 +45,11 @@ function update(mutate) {
     for (const k of ['require', 'exclude']) if (next.traits[k] && !next.traits[k].length) delete next.traits[k]
     if (!next.traits.require && !next.traits.exclude) delete next.traits
   }
-  for (const k of ['clusters', 'dlcs']) if (next[k] && !next[k].length) delete next[k]
+  for (const k of ['clusters', 'dlcs', 'pois', 'worlds']) if (next[k] && !next[k].length) delete next[k]
+  if (next.biomes) {
+    for (const k of ['require', 'exclude']) if (next.biomes[k] && !next.biomes[k].length) delete next.biomes[k]
+    if (!next.biomes.require && !next.biomes.exclude) delete next.biomes
+  }
   emit('update:modelValue', Object.keys(next).length ? next : null)
 }
 
@@ -78,6 +83,9 @@ function traitImpossible(trait) {
 const geyserName = (id) => catalog.value?.geysers.find((g) => g.id === id)?.name ?? geyserInfo(id).label
 const traitName = (id) => catalog.value?.traits.find((x) => x.id === id)?.name ?? traitInfo(id).label
 const typesOf = (g) => g.types ?? (g.type ? [g.type] : [])
+const zoneName = (id) => catalog.value?.zones?.find((z) => z.id === id)?.name ?? zoneInfo(id).label
+const poiName = (id) => catalog.value?.pois?.find((p) => p.id === id)?.name ?? poiInfo(id).label
+const asteroidName = (id) => asteroidInfo(id).label.replace(/([a-z])([A-Z])/g, '$1 $2')
 const whereLabel = (s) => (s === 'start' ? t('home.filters.on_start') : t('home.filters.in_cluster'))
 
 function countLabel(g) {
@@ -93,9 +101,6 @@ function countLabel(g) {
 const pills = computed(() => {
   const f = filter.value
   const out = []
-  if (f.gameMode) out.push({ key: 'mode', kind: 'meta', label: f.gameMode === 'spacedOut' ? 'Spaced Out!' : t('home.filters.base_game') })
-  for (const c of f.clusters ?? []) out.push({ key: `cluster:${c}`, kind: 'meta', label: clusterMeta.value[c]?.name ? `${clusterMeta.value[c].name}${clusterMeta.value[c].gameMode === 'spacedOut' ? ' (SO)' : ''}` : c, cluster: c })
-  for (const d of f.dlcs ?? []) out.push({ key: `dlc:${d}`, kind: 'meta', label: d.replace(/([a-z])([A-Z])/g, '$1 $2'), dlc: d })
   ;(f.geysers ?? []).forEach((g, i) => {
     const types = typesOf(g)
     const names = types.length > 3 ? t('home.filters.any_of_n', { first: geyserName(types[0]), n: types.length - 1 }) : types.map(geyserName).join(' or ')
@@ -105,7 +110,7 @@ const pills = computed(() => {
       index: i,
       icon: geyserInfo(types[0]).icon,
       label: `${names} ${countLabel(g)}`,
-      sub: [whereLabel(g.scope ?? 'cluster'), g.minAvgOutput ? t('home.filters.output_at_least', { n: g.minAvgOutput }) : null].filter(Boolean).join(' · '),
+      sub: [g.maxDistance ? t('home.filters.near_pod', { n: g.maxDistance }) : whereLabel(g.scope ?? 'cluster'), g.minAvgOutput ? t('home.filters.output_at_least', { n: g.minAvgOutput }) : null].filter(Boolean).join(' · '),
       title: types.map(geyserName).join(', '),
     })
   })
@@ -119,16 +124,25 @@ const pills = computed(() => {
       sub: whereLabel(f.quality.scope ?? 'cluster'),
     })
   }
+  if (f.traitCount) {
+    const { min = 0, max = null } = f.traitCount
+    out.push({ key: 'traitCount', kind: 'traitCount', label: max === 0 ? t('home.filters.no_traits') : t('home.filters.trait_count_pill', { n: countLabel({ minCount: min, maxCount: max }) }), sub: whereLabel(f.traitCount.scope ?? 'start') })
+  }
+  for (const id of f.biomes?.require ?? []) out.push({ key: `b+${id}`, kind: 'biome', id, icon: zoneInfo(id).icon, label: t('home.filters.biome_pill', { name: zoneName(id) }), sub: whereLabel(f.biomes.scope ?? 'start') })
+  for (const id of f.biomes?.exclude ?? []) out.push({ key: `b-${id}`, kind: 'biome', id, excluded: true, icon: zoneInfo(id).icon, label: `${t('home.filters.no')} ${t('home.filters.biome_pill', { name: zoneName(id) })}`, sub: whereLabel(f.biomes.scope ?? 'start') })
+  ;(f.pois ?? []).forEach((p, i) => out.push({ key: `p:${i}`, kind: 'poi', index: i, icon: poiInfo(p.type).icon, label: `${poiName(p.type)} ${countLabel(p)}`, sub: whereLabel(p.scope ?? 'cluster') }))
+  ;(f.worlds ?? []).forEach((w, i) => out.push({ key: `w:${i}`, kind: 'world', index: i, icon: asteroidInfo(w.world).icon, label: asteroidName(w.world), sub: t('home.filters.near_home', { n: w.maxDistance ?? '?' }) }))
   return out
 })
 
 function removePill(p) {
   editing.value = null
   update((f) => {
-    if (p.key === 'mode') delete f.gameMode
-    else if (p.cluster) f.clusters = f.clusters.filter((c) => c !== p.cluster)
-    else if (p.dlc) f.dlcs = f.dlcs.filter((d) => d !== p.dlc)
-    else if (p.kind === 'geyser') f.geysers.splice(p.index, 1)
+    if (p.kind === 'geyser') f.geysers.splice(p.index, 1)
+    else if (p.kind === 'poi') f.pois.splice(p.index, 1)
+    else if (p.kind === 'world') f.worlds.splice(p.index, 1)
+    else if (p.kind === 'traitCount') delete f.traitCount
+    else if (p.kind === 'biome') f.biomes[p.excluded ? 'exclude' : 'require'] = f.biomes[p.excluded ? 'exclude' : 'require'].filter((x) => x !== p.id)
     else if (p.kind === 'trait') f.traits[p.excluded ? 'exclude' : 'require'] = f.traits[p.excluded ? 'exclude' : 'require'].filter((x) => x !== p.id)
     else if (p.kind === 'quality') delete f.quality
   })
@@ -180,10 +194,46 @@ function toggleTraitSense(p) {
 const setTraitScope = (scope) => update((f) => (f.traits.scope = scope))
 const setQuality = (changes) => update((f) => (f.quality = { ...f.quality, ...changes }))
 
+// Count settings for buildings reuse the geyser count modes.
+function setPoiCount(mode, value) {
+  const i = editPill.value.index
+  const n = Math.max(0, Math.min(30, Math.round(Number(value) || 0)))
+  update((f) => {
+    const p = { type: f.pois[i].type, scope: f.pois[i].scope }
+    if (mode === 'none') p.maxCount = 0
+    else if (mode === 'at_most') p.maxCount = Math.max(1, n)
+    else if (mode === 'exactly') Object.assign(p, { minCount: Math.max(1, n), maxCount: Math.max(1, n) })
+    else p.minCount = Math.max(1, n)
+    f.pois[i] = p
+  })
+}
+const setPoiScope = (scope) => update((f) => (f.pois[editPill.value.index].scope = scope))
+const setWorldDistance = (value) =>
+  update((f) => (f.worlds[editPill.value.index].maxDistance = Math.max(0, Math.min(20, Math.round(Number(value) || 0)))))
+const setTraitCount = (changes) =>
+  update((f) => {
+    const next = { ...f.traitCount, ...changes }
+    for (const k of Object.keys(next)) if (next[k] === null || next[k] === '' || Number.isNaN(next[k])) delete next[k]
+    f.traitCount = next
+  })
+function toggleBiomeSense(p) {
+  update((f) => {
+    const from = p.excluded ? 'exclude' : 'require'
+    const to = p.excluded ? 'require' : 'exclude'
+    f.biomes[from] = f.biomes[from].filter((x) => x !== p.id)
+    f.biomes[to] = [...(f.biomes[to] ?? []), p.id]
+  })
+  editing.value = `${p.excluded ? 'b+' : 'b-'}${p.id}`
+}
+const setBiomeScope = (scope) => update((f) => (f.biomes.scope = scope))
+const editPoi = computed(() => (editPill.value?.kind === 'poi' ? filter.value.pois[editPill.value.index] : null))
+const editWorld = computed(() => (editPill.value?.kind === 'world' ? filter.value.worlds[editPill.value.index] : null))
+const setNearPod = (value) => setGeyser(value === '' || value === null ? { maxDistance: null } : { maxDistance: Math.max(1, Math.min(1000, Math.round(Number(value) || 1))), scope: 'start' })
+
 // ---- Picker ----------------------------------------------------------------
 
 const picker = reactive({ open: false, tab: 'geysers', query: '', where: 'start' })
-const TABS = ['geysers', 'traits', 'quality']
+const TABS = ['geysers', 'traits', 'distance', 'world', 'quality']
 
 const query = computed(() => picker.query.trim().toLowerCase())
 const matches = (text) => !query.value || text.toLowerCase().includes(query.value)
@@ -214,6 +264,70 @@ const qualityItems = computed(() =>
     { id: 'well_above', rating: 0.75, share: 0.4 },
   ].filter((q) => matches(t(`home.filters.quality_${q.id}`))),
 )
+// Distance: geysers near the Printing Pod, and asteroids near home on the
+// starmap (Spaced Out clusters in range).
+const nearPodItems = computed(() =>
+  geyserItems.value.map((g) => ({
+    ...g,
+    impossible: geyserImpossible(g.id, 'start'),
+    added: (filter.value.geysers ?? []).some((x) => typesOf(x).length === 1 && typesOf(x)[0] === g.id && x.maxDistance),
+  })),
+)
+const asteroidItems = computed(() => {
+  const ids = new Set()
+  for (const p of eligible.value) {
+    if (clusterMeta.value[p]?.gameMode !== 'spacedOut') continue
+    for (const id of catalog.value?.asteroids?.[p] ?? []) ids.add(id)
+  }
+  return [...ids]
+    .map((id) => ({ id, name: asteroidName(id), icon: asteroidInfo(id).icon, added: (filter.value.worlds ?? []).some((w) => w.world === id) }))
+    .filter((a) => matches(`${a.name} ${a.id}`))
+    .sort((a, b) => a.name.localeCompare(b.name))
+})
+const zoneItems = computed(() =>
+  (catalog.value?.zones ?? [])
+    .filter((z) => z.id !== 'Space' && matches(`${z.name} ${z.id}`))
+    .map((z) => ({ ...z, icon: zoneInfo(z.id).icon, added: [...(filter.value.biomes?.require ?? []), ...(filter.value.biomes?.exclude ?? [])].includes(z.id) })),
+)
+const poiItems = computed(() =>
+  (catalog.value?.pois ?? [])
+    .filter((p) => p.id !== 'HeadquartersComplete' && matches(`${p.name} ${p.id}`))
+    .map((p) => ({ ...p, icon: poiInfo(p.id).icon, added: (filter.value.pois ?? []).some((x) => x.type === p.id) })),
+)
+const traitCountItems = computed(() =>
+  [
+    { id: 'none', value: { max: 0 } },
+    { id: 'two', value: { min: 2 } },
+    { id: 'three', value: { min: 3 } },
+  ].filter((x) => matches(t(`home.filters.trait_count_${x.id}`))),
+)
+
+function addNearPod(g) {
+  update((f) => {
+    f.geysers = [...(f.geysers ?? []), { type: g.id, scope: 'start', maxDistance: 40 }]
+  })
+}
+function addWorld(a) {
+  update((f) => {
+    f.worlds = [...(f.worlds ?? []), { world: a.id, maxDistance: 4 }]
+  })
+}
+function addZone(z) {
+  update((f) => {
+    f.biomes = { scope: f.biomes?.scope ?? picker.where, require: [...(f.biomes?.require ?? []), z.id], exclude: f.biomes?.exclude ?? [] }
+  })
+}
+function addPoi(p) {
+  update((f) => {
+    f.pois = [...(f.pois ?? []), { type: p.id, scope: picker.where }]
+  })
+}
+function addTraitCount(x) {
+  update((f) => {
+    f.traitCount = { scope: picker.where, ...x.value }
+  })
+}
+
 // Searching looks across every category.
 const shownTabs = computed(() => (query.value ? TABS : [picker.tab]))
 
@@ -327,8 +441,85 @@ const hasConditions = computed(() => pills.value.length > 0)
               />
               <span class="small text-body-secondary">g/s</span>
             </div>
-            <div class="pop-row">
+            <div v-if="countMode(editGeyser) !== 'none'" class="pop-row">
+              <label class="pop-label mb-0">{{ $t('home.filters.within') }}</label>
+              <input
+                type="number"
+                min="1"
+                max="1000"
+                class="form-control form-control-sm num"
+                :placeholder="$t('home.filters.any')"
+                :value="editGeyser.maxDistance ?? ''"
+                @change="setNearPod($event.target.value)"
+              />
+              <span class="small text-body-secondary">{{ $t('home.filters.tiles_of_pod') }}</span>
+            </div>
+            <div v-if="!editGeyser.maxDistance" class="pop-row">
               <select class="form-select form-select-sm" :value="editGeyser.scope ?? 'cluster'" @change="setGeyser({ scope: $event.target.value })">
+                <option value="start">{{ $t('home.filters.on_start') }}</option>
+                <option value="cluster">{{ $t('home.filters.in_cluster') }}</option>
+              </select>
+            </div>
+          </template>
+
+          <template v-else-if="p.kind === 'poi' && editPoi">
+            <div class="pop-row">
+              <select class="form-select form-select-sm" :value="countMode(editPoi)" @change="setPoiCount($event.target.value, countValue(editPoi))">
+                <option value="at_least">{{ $t('home.filters.at_least') }}</option>
+                <option value="at_most">{{ $t('home.filters.at_most') }}</option>
+                <option value="exactly">{{ $t('home.filters.exactly') }}</option>
+                <option value="none">{{ $t('home.filters.none') }}</option>
+              </select>
+              <input
+                v-if="countMode(editPoi) !== 'none'"
+                type="number"
+                min="1"
+                max="30"
+                class="form-control form-control-sm num"
+                :value="countValue(editPoi)"
+                @change="setPoiCount(countMode(editPoi), $event.target.value)"
+              />
+            </div>
+            <div class="pop-row">
+              <select class="form-select form-select-sm" :value="editPoi.scope ?? 'cluster'" @change="setPoiScope($event.target.value)">
+                <option value="start">{{ $t('home.filters.on_start') }}</option>
+                <option value="cluster">{{ $t('home.filters.in_cluster') }}</option>
+              </select>
+            </div>
+          </template>
+
+          <template v-else-if="p.kind === 'world' && editWorld">
+            <div class="pop-row">
+              <label class="pop-label mb-0">{{ $t('home.filters.within') }}</label>
+              <input type="number" min="0" max="20" class="form-control form-control-sm num" :value="editWorld.maxDistance ?? ''" @change="setWorldDistance($event.target.value)" />
+              <span class="small text-body-secondary">{{ $t('home.filters.hexes_of_home') }}</span>
+            </div>
+          </template>
+
+          <template v-else-if="p.kind === 'biome'">
+            <div class="pop-row">
+              <select class="form-select form-select-sm" :value="p.excluded ? 'no' : 'has'" @change="toggleBiomeSense(p)">
+                <option value="has">{{ $t('home.filters.has_biome') }}</option>
+                <option value="no">{{ $t('home.filters.no_biome') }}</option>
+              </select>
+            </div>
+            <div class="pop-row">
+              <select class="form-select form-select-sm" :value="filter.biomes?.scope ?? 'start'" @change="setBiomeScope($event.target.value)">
+                <option value="start">{{ $t('home.filters.on_start') }}</option>
+                <option value="cluster">{{ $t('home.filters.in_cluster') }}</option>
+              </select>
+            </div>
+          </template>
+
+          <template v-else-if="p.kind === 'traitCount' && filter.traitCount">
+            <div class="pop-row">
+              <label class="pop-label mb-0">{{ $t('home.filters.at_least') }}</label>
+              <input type="number" min="0" max="12" class="form-control form-control-sm num" :value="filter.traitCount.min ?? ''" @change="setTraitCount({ min: $event.target.value === '' ? null : Number($event.target.value) })" />
+              <label class="pop-label mb-0">{{ $t('home.filters.at_most') }}</label>
+              <input type="number" min="0" max="12" class="form-control form-control-sm num" :value="filter.traitCount.max ?? ''" @change="setTraitCount({ max: $event.target.value === '' ? null : Number($event.target.value) })" />
+            </div>
+            <div class="pop-row">
+              <select class="form-select form-select-sm" :value="filter.traitCount.scope ?? 'start'" @change="setTraitCount({ scope: $event.target.value })">
                 <option value="start">{{ $t('home.filters.on_start') }}</option>
                 <option value="cluster">{{ $t('home.filters.in_cluster') }}</option>
               </select>
@@ -440,6 +631,44 @@ const hasConditions = computed(() => pills.value.length > 0)
                   <span v-if="x.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
                   <span v-else-if="x.impossible" class="item-tag">{{ $t('home.filters.impossible') }}</span>
                 </button>
+              </template>
+              <template v-else-if="tab === 'distance'">
+                <div class="picker-group">{{ $t('home.filters.near_pod_group') }}</div>
+                <button v-for="g in nearPodItems" :key="`pod-${g.id}`" type="button" class="picker-item" :class="{ impossible: g.impossible, added: g.added }" @click="addNearPod(g)">
+                  <img v-if="g.icon" :src="g.icon" alt="" class="item-icon" />
+                  <span class="item-name">{{ g.name }}<small>{{ $t('home.filters.near_pod_hint') }}</small></span>
+                  <span v-if="g.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                  <span v-else-if="g.impossible" class="item-tag">{{ $t('home.filters.impossible') }}</span>
+                </button>
+                <div class="picker-group">{{ $t('home.filters.near_home_group') }}</div>
+                <div v-if="!asteroidItems.length" class="small text-body-secondary px-2">{{ $t('home.filters.spaced_out_only') }}</div>
+                <button v-for="a in asteroidItems" :key="`ast-${a.id}`" type="button" class="picker-item" :class="{ added: a.added }" :disabled="a.added" @click="addWorld(a)">
+                  <img v-if="a.icon" :src="a.icon" alt="" class="item-icon" />
+                  <i v-else class="bi bi-circle item-icon-i" aria-hidden="true"></i>
+                  <span class="item-name">{{ a.name }}<small>{{ $t('home.filters.near_home_hint') }}</small></span>
+                  <span v-if="a.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                </button>
+              </template>
+              <template v-else-if="tab === 'world'">
+                <div class="picker-group">{{ $t('home.filters.biomes_group') }}</div>
+                <button v-for="z in zoneItems" :key="`zone-${z.id}`" type="button" class="picker-item" :class="{ added: z.added }" :disabled="z.added" @click="addZone(z)">
+                  <img v-if="z.icon" :src="z.icon" alt="" class="item-icon" />
+                  <span class="item-name">{{ z.name }}<small>{{ $t('home.filters.biome_hint') }}</small></span>
+                  <span v-if="z.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                </button>
+                <div class="picker-group">{{ $t('home.filters.buildings_group') }}</div>
+                <button v-for="b in poiItems" :key="`poi-${b.id}`" type="button" class="picker-item" :class="{ added: b.added }" @click="addPoi(b)">
+                  <img v-if="b.icon" :src="b.icon" alt="" class="item-icon" />
+                  <i v-else class="bi bi-building item-icon-i" aria-hidden="true"></i>
+                  <span class="item-name">{{ b.name }}<small>{{ b.id }}</small></span>
+                  <span v-if="b.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                </button>
+                <div class="picker-group">{{ $t('home.filters.trait_count_group') }}</div>
+                <button v-for="x in traitCountItems" :key="`tc-${x.id}`" type="button" class="picker-item" @click="addTraitCount(x)">
+                  <i class="bi bi-hash item-icon-i" aria-hidden="true"></i>
+                  <span class="item-name">{{ $t(`home.filters.trait_count_${x.id}`) }}</span>
+                </button>
+                <div class="small text-body-secondary px-2 mt-2">{{ $t('home.filters.new_worlds_only') }}</div>
               </template>
               <template v-else>
                 <button v-for="q in qualityItems" :key="q.id" type="button" class="picker-item" @click="addQuality(q)">

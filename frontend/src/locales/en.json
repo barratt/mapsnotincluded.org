@@ -200,6 +200,8 @@
             "tabs": {
                 "geysers": "Geysers",
                 "traits": "Traits",
+                "distance": "Distance",
+                "world": "World",
                 "quality": "Geyser quality"
             },
             "impossible": "impossible",
@@ -222,7 +224,31 @@
             "quality_hint": "share of geysers with better than typical output",
             "quality_pill": "{share}% of geysers {level}",
             "any_of_n": "{first} or {n} more",
-            "output_at_least": "output at least {n} g/s"
+            "output_at_least": "output at least {n} g/s",
+            "near_pod": "within {n} tiles of the Printing Pod",
+            "near_home": "within {n} hexes of home",
+            "within": "Within",
+            "any": "any",
+            "tiles_of_pod": "tiles of the Printing Pod",
+            "hexes_of_home": "hexes of home on the starmap",
+            "has_biome": "Has this biome",
+            "no_biome": "Doesn't have this biome",
+            "biome_pill": "{name} biome",
+            "no_traits": "No world traits",
+            "trait_count_pill": "World traits {n}",
+            "near_pod_group": "Geysers near the Printing Pod",
+            "near_pod_hint": "within 40 tiles to start; change it on the filter",
+            "near_home_group": "Asteroids near home on the starmap",
+            "near_home_hint": "within 4 hexes to start; change it on the filter",
+            "spaced_out_only": "Starmap distances are for Spaced Out clusters: pick Spaced Out or a Spaced Out cluster above.",
+            "biomes_group": "Biomes",
+            "biome_hint": "biome present",
+            "buildings_group": "Buildings",
+            "trait_count_group": "Number of world traits",
+            "trait_count_none": "No world traits",
+            "trait_count_two": "At least 2 world traits",
+            "trait_count_three": "At least 3 world traits",
+            "new_worlds_only": "Distances, biomes and buildings are known for worlds indexed from 12 October on; older worlds never match them."
         }
     },
     "not_found": {

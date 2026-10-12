@@ -66,6 +66,16 @@ function options() {
   return { gameMode: state.gameMode, dlcs: [...state.dlcs], clusters: [...pickedVisible.value] }
 }
 
+// What a typed search asked for (game mode, owned DLCs, clusters) shows on
+// the toggles instead of as filter pills.
+function apply({ gameMode, dlcs, clusters }) {
+  const mode = gameMode ?? (clusters?.length ? allClusters.value.find((c) => c.prefix === clusters[0])?.gameMode : undefined)
+  if (mode !== undefined) state.gameMode = mode
+  if (Array.isArray(dlcs)) state.dlcs = DLCS.map((d) => d.id).filter((id) => dlcs.includes(id) || state.dlcs.includes(id))
+  if (Array.isArray(clusters) && clusters.length) state.clusters = [...clusters]
+}
+defineExpose({ apply })
+
 function toggleDlc(id) {
   state.dlcs = state.dlcs.includes(id) ? state.dlcs.filter((d) => d !== id) : [...state.dlcs, id]
 }

@@ -27,10 +27,15 @@ const scope = ref(null)
 // The conditions shown as pills: the last search's (typed or built), or the
 // player's edits since.
 const builtFilter = ref(null)
+const scopeRef = ref(null)
 watch(
   () => result.value?.filter,
   (f) => {
-    if (f) builtFilter.value = JSON.parse(JSON.stringify(f))
+    if (!f) return
+    // Game mode, DLCs and clusters go to the toggles; the rest are pills.
+    const { gameMode, dlcs, clusters, ...conditions } = JSON.parse(JSON.stringify(f))
+    if (gameMode || dlcs || clusters) scopeRef.value?.apply({ gameMode, dlcs, clusters })
+    builtFilter.value = Object.keys(conditions).length ? conditions : null
   },
 )
 let stopEvents = null
@@ -202,7 +207,7 @@ function formatTime(iso) {
     <section v-if="SEARCH_API_URL" class="mt-4">
       <h2 class="text-center mt-2 search-title">{{ $t('home.search.title') }}</h2>
 
-      <SearchScope class="mt-3" @change="scope = $event" />
+      <SearchScope ref="scopeRef" class="mt-3" @change="scope = $event" />
 
       <form class="mt-2" @submit.prevent="submitText">
         <div class="input-group input-group-lg">
