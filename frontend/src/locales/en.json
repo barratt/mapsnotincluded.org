@@ -194,6 +194,9 @@
             "remove": "Remove",
             "loading": "Loading…",
             "applies_to": "Applies to",
+            "sense": "Want or don't want",
+            "want": "I want this",
+            "avoid": "I don't want this",
             "start_short": "Starting asteroid",
             "cluster_short": "Whole cluster",
             "on_start": "on the starting asteroid",
@@ -208,7 +211,7 @@
                 "quality": "Geyser quality"
             },
             "impossible": "impossible",
-            "defaults_hint": "New filters use common defaults (at least 1 geyser, has the trait). Click a filter to change it. \"Impossible\" means no world we have generated in the selected clusters has it.",
+            "defaults_hint": "Pick “I want this” or “I don't want this”, then choose. New filters use common defaults (at least 1 geyser); click a filter to change it. \"Impossible\" means no world we have generated in the selected clusters has it.",
             "none": "none",
             "no": "No",
             "at_least": "At least",

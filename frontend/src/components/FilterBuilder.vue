@@ -117,7 +117,8 @@ const pills = computed(() => {
       kind: 'geyser',
       index: i,
       icon: geyserInfo(types[0]).icon,
-      label: `${names} ${countLabel(g)}`,
+      label: g.maxCount === 0 ? `${t('home.filters.no')} ${names}` : `${names} ${countLabel(g)}`,
+      excluded: g.maxCount === 0,
       sub: [g.maxDistance ? t('home.filters.near_pod', { n: g.maxDistance }) : whereLabel(g.scope ?? 'cluster'), g.minAvgOutput ? t('home.filters.output_at_least', { n: g.minAvgOutput }) : null].filter(Boolean).join(' · '),
       title: types.map(geyserName).join(', '),
     })
@@ -138,7 +139,7 @@ const pills = computed(() => {
   }
   for (const id of f.biomes?.require ?? []) out.push({ key: `b+${id}`, kind: 'biome', id, icon: zoneInfo(id).icon, label: t('home.filters.biome_pill', { name: zoneName(id) }), sub: whereLabel(f.biomes.scope ?? 'start') })
   for (const id of f.biomes?.exclude ?? []) out.push({ key: `b-${id}`, kind: 'biome', id, excluded: true, icon: zoneInfo(id).icon, label: `${t('home.filters.no')} ${t('home.filters.biome_pill', { name: zoneName(id) })}`, sub: whereLabel(f.biomes.scope ?? 'start') })
-  ;(f.pois ?? []).forEach((p, i) => out.push({ key: `p:${i}`, kind: 'poi', index: i, icon: poiInfo(p.type).icon, label: `${poiName(p.type)} ${countLabel(p)}`, sub: whereLabel(p.scope ?? 'cluster') }))
+  ;(f.pois ?? []).forEach((p, i) => out.push({ key: `p:${i}`, kind: 'poi', index: i, icon: poiInfo(p.type).icon, label: p.maxCount === 0 ? `${t('home.filters.no')} ${poiName(p.type)}` : `${poiName(p.type)} ${countLabel(p)}`, excluded: p.maxCount === 0, sub: whereLabel(p.scope ?? 'cluster') }))
   for (const sp of SPAWNS) {
     ;(f[sp.list] ?? []).forEach((c, i) => {
       const types = critterTypesOf(c)
@@ -148,7 +149,8 @@ const pills = computed(() => {
         kind: sp.kind,
         list: sp.list,
         index: i,
-        label: `${names} ${countLabel(c)}`,
+        label: c.maxCount === 0 ? `${t('home.filters.no')} ${names}` : `${names} ${countLabel(c)}`,
+        excluded: c.maxCount === 0,
         sub: c.maxDistance ? t('home.filters.near_pod', { n: c.maxDistance }) : whereLabel(c.scope ?? 'start'),
         title: types.map(sp.name).join(', '),
       })
@@ -269,13 +271,34 @@ function toggleBiomeSense(p) {
   editing.value = `${p.excluded ? 'b+' : 'b-'}${p.id}`
 }
 const setBiomeScope = (scope) => update((f) => (f.biomes.scope = scope))
+
+// "I want this" / "I don't want this" for the pill being edited.
+const SENSE_KINDS = ['geyser', 'poi', 'critter', 'plant', 'trait', 'biome']
+function wanted(p) {
+  if (p.kind === 'trait' || p.kind === 'biome') return !p.excluded
+  const c = p.kind === 'geyser' ? editGeyser.value : p.kind === 'poi' ? editPoi.value : editSpawn.value
+  return c ? countMode(c) !== 'none' : true
+}
+function setWanted(p, want) {
+  if (want === wanted(p)) return
+  if (p.kind === 'trait') return toggleTraitSense(p)
+  if (p.kind === 'biome') return toggleBiomeSense(p)
+  const mode = want ? 'at_least' : 'none'
+  if (p.kind === 'geyser') setCount(mode, 1)
+  else if (p.kind === 'poi') setPoiCount(mode, 1)
+  else setSpawnCount(mode, 1)
+}
 const editPoi = computed(() => (editPill.value?.kind === 'poi' ? filter.value.pois[editPill.value.index] : null))
 const editWorld = computed(() => (editPill.value?.kind === 'world' ? filter.value.worlds[editPill.value.index] : null))
 const setNearPod = (value) => setGeyser(value === '' || value === null ? { maxDistance: null } : { maxDistance: Math.max(1, Math.min(1000, Math.round(Number(value) || 1))), scope: 'start' })
 
 // ---- Picker ----------------------------------------------------------------
 
-const picker = reactive({ open: false, tab: 'geysers', query: '', where: 'start' })
+// want: false adds the pick as "I don't want this" (none of it, or excluded).
+const picker = reactive({ open: false, tab: 'geysers', query: '', where: 'start', want: true })
+// Tabs whose picks can be wanted or not; distances and quality are always "want".
+const SENSE_TABS = ['geysers', 'traits', 'critters', 'world']
+const showSense = computed(() => Boolean(query.value) || SENSE_TABS.includes(picker.tab))
 const TABS = ['geysers', 'traits', 'critters', 'distance', 'world', 'quality']
 
 const query = computed(() => picker.query.trim().toLowerCase())
@@ -349,11 +372,13 @@ const plantItems = computed(() =>
     .map((c) => ({ ...c, added: (filter.value.plants ?? []).some((x) => critterTypesOf(x).includes(c.id)) }))
     .sort((a, b) => a.name.localeCompare(b.name)),
 )
+// Distance picks ("near the pod") are always wanted.
+const avoid = (near) => !near && !picker.want
 function addCritter(c, near = null) {
-  addSpawn('critters', c ? { type: c.id } : { minCount: 30 }, near)
+  addSpawn('critters', !c ? { minCount: 30 } : avoid(near) ? { type: c.id, maxCount: 0 } : { type: c.id }, near)
 }
 function addPlant(c, near = null) {
-  addSpawn('plants', { type: c.id }, near)
+  addSpawn('plants', avoid(near) ? { type: c.id, maxCount: 0 } : { type: c.id }, near)
 }
 // near: tiles from the Printing Pod (implies the starting asteroid).
 function addSpawn(list, condition, near) {
@@ -381,12 +406,14 @@ function addWorld(a) {
 }
 function addZone(z) {
   update((f) => {
-    f.biomes = { scope: f.biomes?.scope ?? picker.where, require: [...(f.biomes?.require ?? []), z.id], exclude: f.biomes?.exclude ?? [] }
+    const sense = picker.want ? 'require' : 'exclude'
+    f.biomes = { scope: f.biomes?.scope ?? picker.where, require: f.biomes?.require ?? [], exclude: f.biomes?.exclude ?? [] }
+    f.biomes[sense] = [...f.biomes[sense], z.id]
   })
 }
 function addPoi(p) {
   update((f) => {
-    f.pois = [...(f.pois ?? []), { type: p.id, scope: picker.where }]
+    f.pois = [...(f.pois ?? []), { type: p.id, scope: picker.where, ...(picker.want ? {} : { maxCount: 0 }) }]
   })
 }
 function addTraitCount(x) {
@@ -400,12 +427,14 @@ const shownTabs = computed(() => (query.value ? TABS : [picker.tab]))
 
 function addGeyser(g) {
   update((f) => {
-    f.geysers = [...(f.geysers ?? []), { type: g.id, scope: picker.where }]
+    f.geysers = [...(f.geysers ?? []), { type: g.id, scope: picker.where, ...(picker.want ? {} : { maxCount: 0 }) }]
   })
 }
 function addTrait(x) {
   update((f) => {
-    f.traits = { scope: f.traits?.scope ?? picker.where, require: [...(f.traits?.require ?? []), x.id], exclude: f.traits?.exclude ?? [] }
+    const sense = picker.want ? 'require' : 'exclude'
+    f.traits = { scope: f.traits?.scope ?? picker.where, require: f.traits?.require ?? [], exclude: f.traits?.exclude ?? [] }
+    f.traits[sense] = [...f.traits[sense], x.id]
   })
 }
 function addQuality(q) {
@@ -471,6 +500,18 @@ const hasConditions = computed(() => pills.value.length > 0)
 
         <!-- Editor for this pill -->
         <div v-if="editing === p.key" class="filter-pop editor" @click.stop>
+          <div class="pop-title">
+            <img v-if="p.icon" :src="p.icon" alt="" class="item-icon" />
+            <span>{{ p.label }}</span>
+          </div>
+          <div v-if="SENSE_KINDS.includes(p.kind)" class="sense-toggle mb-2" role="group" :aria-label="$t('home.filters.sense')">
+            <button type="button" class="sense want" :class="{ on: wanted(p) }" :aria-pressed="wanted(p)" @click="setWanted(p, true)">
+              <i class="bi" :class="wanted(p) ? 'bi-check-circle-fill' : 'bi-circle'" aria-hidden="true"></i>{{ $t('home.filters.want') }}
+            </button>
+            <button type="button" class="sense avoid" :class="{ on: !wanted(p) }" :aria-pressed="!wanted(p)" @click="setWanted(p, false)">
+              <i class="bi" :class="!wanted(p) ? 'bi-x-circle-fill' : 'bi-circle'" aria-hidden="true"></i>{{ $t('home.filters.avoid') }}
+            </button>
+          </div>
           <template v-if="p.kind === 'geyser' && editGeyser">
             <div v-if="typesOf(editGeyser).length > 1" class="mb-2">
               <div class="pop-label">{{ $t('home.filters.any_of') }}</div>
@@ -479,15 +520,13 @@ const hasConditions = computed(() => pills.value.length > 0)
                 <button type="button" class="btn-link-x" :aria-label="$t('home.filters.remove')" @click="setTypes(typesOf(editGeyser).filter((x) => x !== type))"><i class="bi bi-x" aria-hidden="true"></i></button>
               </span>
             </div>
-            <div class="pop-row">
+            <div v-if="countMode(editGeyser) !== 'none'" class="pop-row">
               <select class="form-select form-select-sm" :value="countMode(editGeyser)" @change="setCount($event.target.value, countValue(editGeyser))">
                 <option value="at_least">{{ $t('home.filters.at_least') }}</option>
                 <option value="at_most">{{ $t('home.filters.at_most') }}</option>
                 <option value="exactly">{{ $t('home.filters.exactly') }}</option>
-                <option value="none">{{ $t('home.filters.none') }}</option>
               </select>
               <input
-                v-if="countMode(editGeyser) !== 'none'"
                 type="number"
                 min="1"
                 max="30"
@@ -530,15 +569,13 @@ const hasConditions = computed(() => pills.value.length > 0)
           </template>
 
           <template v-else-if="p.kind === 'poi' && editPoi">
-            <div class="pop-row">
+            <div v-if="countMode(editPoi) !== 'none'" class="pop-row">
               <select class="form-select form-select-sm" :value="countMode(editPoi)" @change="setPoiCount($event.target.value, countValue(editPoi))">
                 <option value="at_least">{{ $t('home.filters.at_least') }}</option>
                 <option value="at_most">{{ $t('home.filters.at_most') }}</option>
                 <option value="exactly">{{ $t('home.filters.exactly') }}</option>
-                <option value="none">{{ $t('home.filters.none') }}</option>
               </select>
               <input
-                v-if="countMode(editPoi) !== 'none'"
                 type="number"
                 min="1"
                 max="30"
@@ -556,15 +593,13 @@ const hasConditions = computed(() => pills.value.length > 0)
           </template>
 
           <template v-else-if="(p.kind === 'critter' || p.kind === 'plant') && editSpawn">
-            <div class="pop-row">
+            <div v-if="countMode(editSpawn) !== 'none'" class="pop-row">
               <select class="form-select form-select-sm" :value="countMode(editSpawn)" @change="setSpawnCount($event.target.value, countValue(editSpawn))">
                 <option value="at_least">{{ $t('home.filters.at_least') }}</option>
                 <option value="at_most">{{ $t('home.filters.at_most') }}</option>
                 <option value="exactly">{{ $t('home.filters.exactly') }}</option>
-                <option value="none">{{ $t('home.filters.none') }}</option>
               </select>
               <input
-                v-if="countMode(editSpawn) !== 'none'"
                 type="number"
                 min="1"
                 max="255"
@@ -596,12 +631,6 @@ const hasConditions = computed(() => pills.value.length > 0)
 
           <template v-else-if="p.kind === 'biome'">
             <div class="pop-row">
-              <select class="form-select form-select-sm" :value="p.excluded ? 'no' : 'has'" @change="toggleBiomeSense(p)">
-                <option value="has">{{ $t('home.filters.has_biome') }}</option>
-                <option value="no">{{ $t('home.filters.no_biome') }}</option>
-              </select>
-            </div>
-            <div class="pop-row">
               <select class="form-select form-select-sm" :value="filter.biomes?.scope ?? 'start'" @change="setBiomeScope($event.target.value)">
                 <option value="start">{{ $t('home.filters.on_start') }}</option>
                 <option value="cluster">{{ $t('home.filters.in_cluster') }}</option>
@@ -625,12 +654,6 @@ const hasConditions = computed(() => pills.value.length > 0)
           </template>
 
           <template v-else-if="p.kind === 'trait'">
-            <div class="pop-row">
-              <select class="form-select form-select-sm" :value="p.excluded ? 'no' : 'has'" @change="toggleTraitSense(p)">
-                <option value="has">{{ $t('home.filters.has_trait') }}</option>
-                <option value="no">{{ $t('home.filters.no_trait') }}</option>
-              </select>
-            </div>
             <div class="pop-row">
               <select class="form-select form-select-sm" :value="filter.traits?.scope ?? 'start'" @change="setTraitScope($event.target.value)">
                 <option value="start">{{ $t('home.filters.on_start') }}</option>
@@ -687,6 +710,14 @@ const hasConditions = computed(() => pills.value.length > 0)
               <button type="button" class="btn" :class="picker.where === 'start' ? 'btn-warning' : 'btn-outline-secondary'" @click="picker.where = 'start'">{{ $t('home.filters.start_short') }}</button>
               <button type="button" class="btn" :class="picker.where === 'cluster' ? 'btn-warning' : 'btn-outline-secondary'" @click="picker.where = 'cluster'">{{ $t('home.filters.cluster_short') }}</button>
             </div>
+          </div>
+<div v-if="showSense" class="sense-toggle mb-2" role="group" :aria-label="$t('home.filters.sense')">
+            <button type="button" class="sense want" :class="{ on: picker.want }" :aria-pressed="picker.want" @click="picker.want = true">
+              <i class="bi" :class="picker.want ? 'bi-check-circle-fill' : 'bi-circle'" aria-hidden="true"></i>{{ $t('home.filters.want') }}
+            </button>
+            <button type="button" class="sense avoid" :class="{ on: !picker.want }" :aria-pressed="!picker.want" @click="picker.want = false">
+              <i class="bi" :class="!picker.want ? 'bi-x-circle-fill' : 'bi-circle'" aria-hidden="true"></i>{{ $t('home.filters.avoid') }}
+            </button>
           </div>
           <div class="picker-tabs mb-2">
             <button v-for="tab in TABS" :key="tab" type="button" class="picker-tab" :class="{ active: picker.tab === tab && !query }" @click="picker.tab = tab; picker.query = ''">
@@ -895,7 +926,53 @@ const hasConditions = computed(() => pills.value.length > 0)
   padding: 0.75rem;
 }
 .filter-pop.editor {
-  width: min(300px, calc(100vw - 32px));
+  width: min(320px, calc(100vw - 32px));
+}
+.filter-pop .form-select-sm,
+.filter-pop .form-control-sm {
+  font-size: 0.9rem;
+}
+.pop-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+/* "I want this" / "I don't want this": two big buttons, the chosen one ticked. */
+.sense-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+.sense {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.5rem;
+  font-size: 0.95rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--bs-border-color);
+  background: none;
+  color: var(--bs-secondary-color);
+}
+.sense.want.on {
+  border-color: var(--bs-success);
+  background: rgba(var(--bs-success-rgb), 0.15);
+  color: var(--bs-body-color);
+}
+.sense.want.on i {
+  color: var(--bs-success);
+}
+.sense.avoid.on {
+  border-color: var(--bs-danger);
+  background: rgba(var(--bs-danger-rgb), 0.15);
+  color: var(--bs-body-color);
+}
+.sense.avoid.on i {
+  color: var(--bs-danger);
 }
 .filter-pop.picker {
   width: min(460px, calc(100vw - 32px));
@@ -907,7 +984,7 @@ const hasConditions = computed(() => pills.value.length > 0)
   margin-bottom: 0.5rem;
 }
 .pop-label {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--bs-secondary-color);
   margin-bottom: 0.25rem;
 }
@@ -998,7 +1075,7 @@ const hasConditions = computed(() => pills.value.length > 0)
   min-width: 0;
 }
 .item-name small {
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: var(--bs-secondary-color);
 }
 .item-tag {
