@@ -484,5 +484,41 @@
         "sign_in_button": "Sign in with Steam",
         "empty": "No favourites yet. Open a world and press \"Favourite\" to keep it here.",
         "error": "Could not load your favourites right now. Please try again in a moment."
+    },
+    "browser_worker": {
+        "title": "Generate worlds from your browser",
+        "intro": "Lend this tab's CPU to MapsNotIncluded: it generates Oxygen Not Included worlds with the same generator as our servers and adds them to the search index. By default it helps people's searches that are waiting for matches first. Keep the tab open; closing it stops.",
+        "loading": "Loading…",
+        "sign_in": "Sign in with Steam to contribute. Your worlds count towards your account.",
+        "sign_in_button": "Sign in with Steam",
+        "threads": "Threads: {n} of {cores}",
+        "work": "Work on",
+        "work_auto": "Searches waiting for matches first, then grow the index (recommended)",
+        "work_jobs": "Only searches waiting for matches",
+        "work_index": "Only grow the index",
+        "start": "Start",
+        "stop": "Stop",
+        "loading_generator": "Loading the generator…",
+        "note": "Uses your CPU while running: laptops get warm and batteries drain faster. Fewer threads keep the computer responsive.",
+        "status": "Status",
+        "states": {
+            "idle": "Stopped",
+            "loading": "Starting",
+            "running": "Running",
+            "stopping": "Stopping",
+            "error": "Stopped"
+        },
+        "doing": {
+            "job": "helping a search",
+            "index": "growing the index",
+            "waiting": "waiting for work"
+        },
+        "rate": "Speed",
+        "per_hour": "worlds per hour",
+        "generated": "Worlds generated",
+        "added": "{n} new to the index, {dup} already known",
+        "matches": "Search matches found",
+        "matches_sub": "worlds that answered someone's search",
+        "version": "Generator {version}"
     }
 }
