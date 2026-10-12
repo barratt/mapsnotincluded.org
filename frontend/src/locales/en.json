@@ -372,6 +372,20 @@
         "worldgen_failure": "The game can't generate this coordinate: it would fail and re-roll the seed. Try another one.",
         "busy": "Lots of worlds are being generated right now. Try again in a moment.",
         "retry": "Try again",
+        "render": {
+            "heading": "In-game look",
+            "variant": "Which map to draw",
+            "settled": "Game start",
+            "presettle": "Pre-settle",
+            "intro": "See this asteroid drawn with the game's own textures. It is rendered on our server when you ask, which takes a few seconds the first time.",
+            "show": "Show in-game look",
+            "queued": "Waiting for the renderer ({n} ahead)…",
+            "rendering": "Rendering…",
+            "failed": "This render could not be made.",
+            "retry": "Try again",
+            "alt": "The asteroid drawn with Oxygen Not Included's textures",
+            "open_full": "Click the image to open it full size."
+        },
         "tiles": {
             "presettle": "Pre-settle tiles",
             "presettle_notice": "Every tile as the world generator lays it out, before the game runs its settling step: liquids and gases have not flowed yet and critters have not spawned.",

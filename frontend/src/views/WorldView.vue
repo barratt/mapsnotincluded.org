@@ -11,6 +11,7 @@ import { SPACE_BACKGROUND, asteroidInfo, traitInfo } from '@/oniCatalog'
 import AsteroidMap from '@/components/world/AsteroidMap.vue'
 import BiomeLegend from '@/components/world/BiomeLegend.vue'
 import CritterSummary from '@/components/world/CritterSummary.vue'
+import InGameRender from '@/components/world/InGameRender.vue'
 import WorldActions from '@/components/world/WorldActions.vue'
 import ElementLegend from '@/components/world/ElementLegend.vue'
 import ClusterLayout from '@/components/world/ClusterLayout.vue'
@@ -342,6 +343,8 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
               </div>
             </div>
           </div>
+
+          <InGameRender v-if="!detail.synthetic" class="mt-3" :coordinate="coordinate" :world-index="selectedIndex" />
 
           <div class="sb-panel mt-3">
             <h3 class="sb-subheading">{{ $t('world.geysers_heading', { n: asteroid.geysers?.length ?? 0 }) }}</h3>
