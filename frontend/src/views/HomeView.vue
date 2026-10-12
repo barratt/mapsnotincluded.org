@@ -7,7 +7,7 @@ import WorldCard from '@/components/WorldCard.vue'
 import AdSlot from '@/components/AdSlot.vue'
 import StoreLinks from '@/components/StoreLinks.vue'
 import SupportLinks from '@/components/SupportLinks.vue'
-import { site } from '@/siteConfig'
+import { site, allowanceKey } from '@/siteConfig'
 import SearchAccount from '@/components/SearchAccount.vue'
 import SearchScope from '@/components/SearchScope.vue'
 import FilterBuilder from '@/components/FilterBuilder.vue'
@@ -351,11 +351,11 @@ function formatTime(iso) {
         </template>
 
         <div v-else-if="result.status === 'rate_limited' || result.status === 'ip_blocked'" class="alert alert-warning">
-          <div v-if="result.status === 'rate_limited'">{{ $t('home.search.rate_limited', { time: formatTime(result.resetAt) }) }}</div>
+          <div v-if="result.status === 'rate_limited'">{{ $t(allowanceKey('home.search.rate_limited'), { time: formatTime(result.resetAt) }) }}</div>
           <div v-else>{{ result.message }}</div>
           <a v-if="result.canSignIn" :href="steamSignInUrl()" class="btn btn-sm btn-outline-dark mt-2 d-inline-flex align-items-center gap-2">
             <i class="bi bi-steam" aria-hidden="true"></i>
-            {{ $t('home.search.sign_in_more', { n: result.usage?.signedInLimit ?? usage?.signedInLimit ?? 10 }) }}
+            {{ $t(allowanceKey('home.search.sign_in_more'), { n: result.usage?.signedInLimit ?? usage?.signedInLimit ?? 10 }) }}
           </a>
         </div>
 

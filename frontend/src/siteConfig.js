@@ -54,6 +54,14 @@ export function trackStoreClick(product) {
   api('/events', { method: 'POST', body: { type: 'affiliate_click', product } }).catch(() => {})
 }
 
+// The allowance is "AI searches" while filter and quick-pick searches are
+// free; once the admin setting charges for either, it is plain "searches".
+// key -> the string key to use (the "_all" variant when they cost one).
+export function allowanceKey(key) {
+  const costs = site.config.searchCosts
+  return costs?.builder || costs?.presets ? `${key}_all` : key
+}
+
 export function adsVisible() {
   const ads = site.config.ads
   return Boolean(ads) && !(ads.hideForSupporters && site.supporter)

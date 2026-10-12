@@ -1,6 +1,7 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { api, getSession, signOut, steamSignInUrl } from '@/searchApi'
+import { allowanceKey } from '@/siteConfig'
 
 // Under the search box, next to "Recent searches": today's remaining
 // searches, and either a Steam sign-in button (which raises the daily limit)
@@ -50,9 +51,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="root" class="search-account">
-    <span v-if="props.usage" class="usage-pill" :class="{ empty: props.usage.remaining <= 0 }" :title="$t('home.search.usage_hint', { limit: props.usage.limit })">
+    <span v-if="props.usage" class="usage-pill" :class="{ empty: props.usage.remaining <= 0 }" :title="$t(allowanceKey('home.search.usage_hint'), { limit: props.usage.limit })">
       <i class="bi bi-stars" aria-hidden="true"></i>
-      {{ props.usage.remaining > 0 ? $t('home.search.left_short', { remaining: props.usage.remaining }) : $t('home.search.none_left') }}
+      {{ props.usage.remaining > 0 ? $t(allowanceKey('home.search.left_short'), { remaining: props.usage.remaining }) : $t(allowanceKey('home.search.none_left')) }}
     </span>
 
     <div v-if="me" class="account">
@@ -74,7 +75,7 @@ onBeforeUnmount(() => {
     </div>
     <a v-else :href="steamSignInUrl()" class="btn btn-sm btn-outline-light steam-button">
       <i class="bi bi-steam" aria-hidden="true"></i>
-      {{ $t('home.search.sign_in_more', { n: props.usage?.signedInLimit ?? 10 }) }}
+      {{ $t(allowanceKey('home.search.sign_in_more'), { n: props.usage?.signedInLimit ?? 10 }) }}
     </a>
   </div>
 </template>
