@@ -153,24 +153,26 @@ watch(
   () => onPointerLeave(),
 )
 
+// Markers sit on the centre of their cell, like the spawn dots (a cell's
+// game (x, y) is its bottom-left corner).
 const markers = computed(() => [
   ...(props.asteroid.geysers ?? [])
     .map((g, i) => {
       const info = geyserInfo(g.type, g.name)
-      return { key: `g${i}`, kind: 'geyser', x: g.x, y: flipY(g.y), icon: info.icon, label: info.label, rating: geyserRating(g), data: g }
+      return { key: `g${i}`, kind: 'geyser', x: g.x + 0.5, y: flipY(g.y) - 0.5, icon: info.icon, label: info.label, rating: geyserRating(g), data: g }
     })
     .filter((m) => m.data.x != null && m.data.y != null),
   ...(props.asteroid.pois ?? [])
     .map((p, i) => {
       const info = poiInfo(p.type, p.name)
-      return { key: `p${i}`, kind: 'poi', x: p.x, y: flipY(p.y), icon: info.icon, label: info.label, data: p }
+      return { key: `p${i}`, kind: 'poi', x: p.x + 0.5, y: flipY(p.y) - 0.5, icon: info.icon, label: info.label, data: p }
     })
     .filter((m) => m.data.x != null && m.data.y != null),
   // Where the Printing Pod prints the first Duplicants.
   // Only the starting asteroid has the Printing Pod (older cached maps carry
   // a start position for every world with a start template).
   ...(props.asteroid.spawn && props.asteroid.start
-    ? [{ key: 'spawn', kind: 'spawn', x: props.asteroid.spawn.x, y: flipY(props.asteroid.spawn.y), label: t('world.tiles.spawn'), data: props.asteroid.spawn }]
+    ? [{ key: 'spawn', kind: 'spawn', x: props.asteroid.spawn.x + 0.5, y: flipY(props.asteroid.spawn.y) - 0.5, label: t('world.tiles.spawn'), data: props.asteroid.spawn }]
     : []),
 ])
 

@@ -83,3 +83,25 @@ export function summaryToDetail(summary) {
     })),
   }
 }
+
+// Oil reservoirs come from two places: the ones in templates are in the
+// world's geyser list; the rest are scattered by the game after its settling
+// step and only arrive with the settled map, among the ambient spawns. Moves
+// those into the geyser list (marked ambient) so every reservoir shows and
+// counts the same way.
+export function withAmbientReservoirs(asteroid) {
+  const ambient = asteroid?.ambient ?? []
+  if (!ambient.some((a) => a.id === 'OilWell')) return asteroid
+  const geysers = asteroid.geysers ?? []
+  const template = geysers.find((g) => g.type === 'OilWell')
+  const taken = new Set(geysers.filter((g) => g.type === 'OilWell').map((g) => `${g.x},${g.y}`))
+  const added = ambient
+    .filter((a) => a.id === 'OilWell' && !taken.has(`${a.x},${a.y}`))
+    .map((a) => ({
+      ...(template ?? { name: 'Oil Reservoir', type: 'OilWell', emitRate: 3333, avgOutput: 3333, minAvgOutput: 3333, maxAvgOutput: 3333, meanAvgOutput: 3333, stdDevAvgOutput: 0 }),
+      x: a.x,
+      y: a.y,
+      ambient: true,
+    }))
+  return { ...asteroid, geysers: [...geysers, ...added], ambient: ambient.filter((a) => a.id !== 'OilWell') }
+}

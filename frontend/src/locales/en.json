@@ -363,6 +363,8 @@
         "geyser": {
             "quality_label": "Average output is at {pct}% of the possible range",
             "no_range": "Fixed output",
+            "ambient_note": "Placed by the game when the world settles, so it only shows once the settled map has loaded.",
+            "ambient_short": "placed on settling",
             "on_average": "on average",
             "tons_per_cycle": "{t} t/cycle",
             "eruption": "Eruption",

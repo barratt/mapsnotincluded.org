@@ -78,7 +78,10 @@ const pct = (share) => (share == null ? '' : `${Math.round(share * 100)}%`)
             <td>
               <button type="button" class="geyser-name" :aria-pressed="selected === row.key" @click.stop="select(row)">
                 <GeyserBadge :icon="row.icon" :rating="row.rating" :size="36" />
-                <span>{{ row.label }}</span>
+                <span>
+                  {{ row.label }}
+                  <span v-if="row.g.ambient" class="d-block small text-body-secondary" :title="$t('world.geyser.ambient_note')">{{ $t('world.geyser.ambient_short') }}</span>
+                </span>
               </button>
             </td>
             <td class="text-nowrap">

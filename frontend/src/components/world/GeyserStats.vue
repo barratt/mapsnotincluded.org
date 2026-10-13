@@ -29,6 +29,7 @@ const storage = computed(() => dormancyStorage(props.geyser))
       </span>
     </div>
     <QualityBar :geyser="geyser" class="mt-1" />
+    <div v-if="geyser.ambient" class="small text-body-secondary mt-1">{{ $t('world.geyser.ambient_note') }}</div>
     <dl v-if="hasTiming(geyser)" class="stats-list mt-1 mb-0">
       <dt>{{ $t('world.geyser.eruption') }}</dt>
       <dd>{{ $t('world.geyser.eruption_value', { rate: int(geyser.emitRate), on: int(geyser.eruptionSec), period: int(geyser.eruptionSec + geyser.idleSec) }) }}</dd>

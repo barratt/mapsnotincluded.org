@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { loadWorldDetail, loadWorldTiles } from '@/worldDetail'
+import { loadWorldDetail, loadWorldTiles, withAmbientReservoirs } from '@/worldDetail'
 import AdSlot from '@/components/AdSlot.vue'
 import StoreLinks from '@/components/StoreLinks.vue'
 import SupportLinks from '@/components/SupportLinks.vue'
@@ -124,7 +124,7 @@ watch(selectedIndex, () => {
   highlightSpawn.value = null
 })
 
-const asteroids = computed(() => detail.value?.asteroids ?? [])
+const asteroids = computed(() => (detail.value?.asteroids ?? []).map(withAmbientReservoirs))
 const asteroid = computed(() => asteroids.value[selectedIndex.value] ?? null)
 const asteroidName = computed(() => (asteroid.value ? asteroidInfo(asteroid.value.id, asteroid.value.name).label : ''))
 const traits = computed(() => (asteroid.value?.traits ?? []).map(traitInfo))
