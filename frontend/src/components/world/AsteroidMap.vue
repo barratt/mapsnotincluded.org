@@ -52,8 +52,16 @@ const biomePaths = computed(() =>
 
 // Tile layer. view: 'elements' | 'temperature' | 'biomes' (polygons only).
 const hasTiles = computed(() => Boolean(props.asteroid.tileData))
-const view = ref('elements')
+// Biomes first: the clearest overview of a new world.
+const view = ref('biomes')
 const showBiomes = ref(true)
+// Picking an element in the legend highlights it on the element map.
+watch(
+  () => props.highlightElement,
+  (id) => {
+    if (id != null && view.value === 'biomes' && hasTiles.value) view.value = 'elements'
+  },
+)
 const table = computed(() => elementTable(props.tiles))
 const tileUrl = computed(() => {
   const data = props.asteroid.tileData
