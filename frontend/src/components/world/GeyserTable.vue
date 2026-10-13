@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { geyserInfo, geyserRating } from '@/oniCatalog'
 import GeyserBadge from './GeyserBadge.vue'
 import QualityBar from './QualityBar.vue'
-import { activeShare, dec1, dec2, eruptionShare, hasTiming, int, tonsPerCycle } from './format'
+import { activeShare, dec1, dec2, dormancyStorage, eruptionShare, hasTiming, int, tonsPerCycle } from './format'
 
 const props = defineProps({
   geysers: { type: Array, default: () => [] },
@@ -17,7 +17,8 @@ const COLUMNS = [
   { key: 'quality', label: 'world.geyser.col_quality', get: (r) => r.rating ?? -1, numeric: true },
   { key: 'eruption', label: 'world.geyser.col_eruption', get: (r) => eruptionShare(r.g) ?? -1, numeric: true },
   { key: 'activity', label: 'world.geyser.col_activity', get: (r) => activeShare(r.g) ?? -1, numeric: true },
-  { key: 'position', label: 'world.geyser.col_position', get: (r) => -(r.g.y ?? 0) * 10000 + (r.g.x ?? 0), numeric: true },
+  // Tonnes to store to keep drawing the average output through a dormant spell.
+  { key: 'storage', label: 'world.geyser.storage', get: (r) => dormancyStorage(r.g) ?? -1, numeric: true },
 ]
 
 const sortKey = ref('avg')
@@ -41,7 +42,7 @@ function sortBy(key) {
   if (sortKey.value === key) sortDir.value = -sortDir.value
   else {
     sortKey.value = key
-    sortDir.value = key === 'name' || key === 'position' ? 1 : -1
+    sortDir.value = key === 'name' ? 1 : -1
   }
 }
 
@@ -103,7 +104,13 @@ const pct = (share) => (share == null ? '' : `${Math.round(share * 100)}%`)
               </template>
               <span v-else class="text-body-secondary">–</span>
             </td>
-            <td class="text-nowrap font-monospace small">{{ row.g.x ?? '–' }}, {{ row.g.y ?? '–' }}</td>
+            <td class="text-nowrap" :title="$t('world.geyser.storage_hint')">
+              <template v-if="dormancyStorage(row.g) != null">
+                <div>{{ $t('world.geyser.storage_value', { t: dec1(dormancyStorage(row.g)) }) }}</div>
+                <div class="small text-body-secondary">{{ $t('world.geyser.storage_cycles', { n: dec1(row.g.dormantCycles) }) }}</div>
+              </template>
+              <span v-else class="text-body-secondary">–</span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -113,7 +120,7 @@ const pct = (share) => (share == null ? '' : `${Math.round(share * 100)}%`)
     <div class="d-md-none">
       <label class="d-flex align-items-center gap-2 mb-2">
         <span class="text-body-secondary">{{ $t('world.geyser.sort_by') }}</span>
-        <select v-model="sortKey" class="form-select form-select-sm w-auto" @change="sortDir = sortKey === 'name' || sortKey === 'position' ? 1 : -1">
+        <select v-model="sortKey" class="form-select form-select-sm w-auto" @change="sortDir = sortKey === 'name' ? 1 : -1">
           <option v-for="col in COLUMNS" :key="col.key" :value="col.key">{{ $t(col.label) }}</option>
         </select>
       </label>
@@ -129,7 +136,9 @@ const pct = (share) => (share == null ? '' : `${Math.round(share * 100)}%`)
                   · {{ $t('world.geyser.tons_per_cycle', { t: dec2(tonsPerCycle(row.g.avgOutput)) }) }}
                 </div>
               </div>
-              <span class="font-monospace small text-body-secondary">{{ row.g.x }}, {{ row.g.y }}</span>
+              <span v-if="dormancyStorage(row.g) != null" class="small text-body-secondary text-end lh-sm">
+                {{ $t('world.geyser.storage_value', { t: dec1(dormancyStorage(row.g)) }) }}<br />{{ $t('world.geyser.storage_short') }}
+              </span>
             </div>
             <QualityBar :geyser="row.g" class="mt-1" />
             <div v-if="hasTiming(row.g)" class="small mt-1">

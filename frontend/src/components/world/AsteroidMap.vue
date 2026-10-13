@@ -88,7 +88,9 @@ const biomeFill = (biome) => {
 // coloured by kind. Critters are drawn largest so they stand out; loose seeds
 // are only drawn when picked in the critter summary.
 const SPAWN_RADIUS = { critter: 1.2, plant: 0.6, seed: 0.45, other: 0.5 }
-const showAmbient = ref(true)
+// Off at first: the map starts uncluttered (picking one in the critter
+// summary still shows where it is).
+const showAmbient = ref(false)
 const ambient = computed(() =>
   (props.asteroid.ambient ?? []).map((a) => {
     const info = spawnableInfo(a.id)

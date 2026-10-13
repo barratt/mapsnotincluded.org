@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { loadWorldDetail, loadWorldTiles, withAmbientReservoirs } from '@/worldDetail'
@@ -14,6 +14,7 @@ import CritterSummary from '@/components/world/CritterSummary.vue'
 import InGameRender from '@/components/world/InGameRender.vue'
 import WorldActions from '@/components/world/WorldActions.vue'
 import ElementLegend from '@/components/world/ElementLegend.vue'
+import GeyserList from '@/components/world/GeyserList.vue'
 import ClusterLayout from '@/components/world/ClusterLayout.vue'
 import ClusterOverview from '@/components/world/ClusterOverview.vue'
 import GeyserTable from '@/components/world/GeyserTable.vue'
@@ -33,6 +34,8 @@ const selectedIndex = ref(0)
 const selectedMarker = ref(null)
 const highlightZone = ref(null)
 const highlightElement = ref(null)
+// The detailed boxes start collapsed: a lighter first look at a world.
+const openPanels = reactive({ critters: false, elements: false })
 const highlightSpawn = ref(null)
 const copied = ref(false)
 // Tile state: variant shown ('presettle' | 'settled' | null), what the
@@ -297,17 +300,8 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
 
             <div class="col-12 col-lg-5 col-xl-4 d-flex flex-column gap-3">
               <div class="sb-panel">
-                <h3 class="sb-subheading">{{ $t('world.details') }}</h3>
-                <dl class="detail-list mb-0">
-                  <dt>{{ $t('world.facts.size') }}</dt>
-                  <dd>{{ asteroid.sizeX ? $t('world.size_value', { x: asteroid.sizeX, y: asteroid.sizeY }) : '–' }}</dd>
-                  <dt>{{ $t('world.facts.geysers') }}</dt>
-                  <dd>{{ asteroid.geysers?.length ?? 0 }}</dd>
-                  <dt>{{ $t('world.facts.pois') }}</dt>
-                  <dd>{{ asteroid.pois?.length ?? 0 }}</dd>
-                  <dt>{{ $t('world.facts.biomes') }}</dt>
-                  <dd>{{ asteroid.biomes?.length ?? 0 }}</dd>
-                </dl>
+                <h3 class="sb-subheading">{{ $t('world.geysers_heading', { n: asteroid.geysers?.length ?? 0 }) }}</h3>
+                <GeyserList v-model:selected="selectedMarker" :geysers="asteroid.geysers ?? []" />
               </div>
 
               <div class="sb-panel">
@@ -333,19 +327,43 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
               </div>
 
               <div v-if="hasTiles" class="sb-panel">
-                <h3 class="sb-subheading">{{ $t('world.critters.heading') }}</h3>
-                <CritterSummary v-model="highlightSpawn" :asteroid="asteroid" :settled="tileVariant === 'settled'" />
+                <h3 class="sb-subheading mb-0">
+                  <button type="button" class="panel-toggle" :aria-expanded="openPanels.critters" @click="openPanels.critters = !openPanels.critters">
+                    {{ $t('world.critters.heading') }}
+                    <i class="bi" :class="openPanels.critters ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
+                  </button>
+                </h3>
+                <CritterSummary v-if="openPanels.critters" v-model="highlightSpawn" class="mt-2" :asteroid="asteroid" :settled="tileVariant === 'settled'" />
               </div>
 
               <div v-if="hasTiles" class="sb-panel">
-                <h3 class="sb-subheading">{{ $t('world.tiles.elements') }}</h3>
-                <ElementLegend v-model="highlightElement" :asteroid="asteroid" :tiles="detail.tiles" />
+                <h3 class="sb-subheading mb-0">
+                  <button type="button" class="panel-toggle" :aria-expanded="openPanels.elements" @click="openPanels.elements = !openPanels.elements">
+                    {{ $t('world.tiles.elements') }}
+                    <i class="bi" :class="openPanels.elements ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
+                  </button>
+                </h3>
+                <ElementLegend v-if="openPanels.elements" v-model="highlightElement" class="mt-2" :asteroid="asteroid" :tiles="detail.tiles" />
+              </div>
+
+              <div class="sb-panel">
+                <h3 class="sb-subheading">{{ $t('world.details') }}</h3>
+                <dl class="detail-list mb-0">
+                  <dt>{{ $t('world.facts.size') }}</dt>
+                  <dd>{{ asteroid.sizeX ? $t('world.size_value', { x: asteroid.sizeX, y: asteroid.sizeY }) : '–' }}</dd>
+                  <dt>{{ $t('world.facts.geysers') }}</dt>
+                  <dd>{{ asteroid.geysers?.length ?? 0 }}</dd>
+                  <dt>{{ $t('world.facts.pois') }}</dt>
+                  <dd>{{ asteroid.pois?.length ?? 0 }}</dd>
+                  <dt>{{ $t('world.facts.biomes') }}</dt>
+                  <dd>{{ asteroid.biomes?.length ?? 0 }}</dd>
+                </dl>
               </div>
             </div>
           </div>
 
           <div class="sb-panel mt-3">
-            <h3 class="sb-subheading">{{ $t('world.geysers_heading', { n: asteroid.geysers?.length ?? 0 }) }}</h3>
+            <h3 class="sb-subheading">{{ $t('world.geyser_details_heading') }}</h3>
             <GeyserTable v-model:selected="selectedMarker" :geysers="asteroid.geysers ?? []" />
           </div>
 
@@ -420,6 +438,22 @@ const pageStyle = { '--sb-space': `url(${SPACE_BACKGROUND})` }
 .world-page .sb-subheading {
   margin-bottom: 0.5rem;
   font-size: 1.4rem;
+}
+.world-page .panel-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.world-page .panel-toggle i {
+  font-size: 1rem;
+  color: var(--bs-secondary-color);
 }
 .world-page .sb-alert {
   border: 1px solid var(--sb-border);
