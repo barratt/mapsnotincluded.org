@@ -32,6 +32,11 @@
           <a href="https://github.com/barratt/mapsnotincluded.org" target="mni_disc">{{ $t('contribute.link.github') }}</a>
         </template>
       </i18n-t>
+      <i18n-t keypath="contribute.description.generator" tag="p">
+        <template v-slot:generatorLink>
+          <a href="https://github.com/barratt/oniworldgen-rs" target="mni_gen">oniworldgen-rs</a>
+        </template>
+      </i18n-t>
     </div>
 
     <div class="mb-5">
