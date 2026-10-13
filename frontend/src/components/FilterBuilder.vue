@@ -594,6 +594,7 @@ const hasConditions = computed(() => pills.value.length > 0)
                 <option value="cluster">{{ $t('home.filters.in_cluster') }}</option>
               </select>
             </div>
+            <p v-if="typesOf(editGeyser).includes('OilWell')" class="small text-body-secondary mb-0 mt-1">{{ $t('home.filters.oil_template_only') }}</p>
           </template>
 
           <template v-else-if="p.kind === 'poi' && editPoi">

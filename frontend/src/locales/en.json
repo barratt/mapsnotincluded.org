@@ -172,6 +172,7 @@
             "missing_trait": "Missing {name}",
             "quality": "{pct}% of geysers above average {where} (wanted {need}%)",
             "quality_well": "{pct}% of geysers well above average {where} (wanted {need}%)",
+            "oil_template_only": "Counts the oil reservoirs that are part of the map's fixed pieces. More are placed when the world settles; those show on the world page but aren't counted here yet.",
             "on_start": "on the start",
             "on_every": "on every asteroid",
             "scope_game": "Game",
