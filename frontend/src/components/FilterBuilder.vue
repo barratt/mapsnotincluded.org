@@ -26,7 +26,7 @@ let catalogLoad = null
 const catalog = ref(null)
 const clusterMeta = ref({})
 async function loadCatalog() {
-  catalogLoad ??= Promise.all([api('/filter-catalog?v=4'), api('/clusters')]).then(([c, k]) => {
+  catalogLoad ??= Promise.all([api('/filter-catalog?v=5'), api('/clusters')]).then(([c, k]) => {
     if (c.ok) catalog.value = c.data
     const list = Array.isArray(k.data) ? k.data : k.data?.clusters ?? []
     clusterMeta.value = Object.fromEntries(list.map((x) => [x.prefix, x]))
@@ -363,6 +363,9 @@ const asteroidItems = computed(() => {
 })
 // DLC remixes (the last part of a world code): none at all, or chosen ones.
 const remixInfo = (id) => catalog.value?.remixes?.find((r) => r.id === id) ?? { id, name: id }
+// Packs by catalog id (the remix and biome hints name them).
+const DLC_PACKS = { FrostyPlanet: 'Frosty Planet Pack', PrehistoricPlanet: 'Prehistoric Planet Pack', AquaticPlanet: 'Aquatic Planet Pack' }
+const packName = (dlc) => DLC_PACKS[dlc] ?? dlc
 const remixItems = computed(() =>
   (catalog.value?.remixes ?? [])
     .filter((r) => matches(`${r.name} ${r.id} remix`))
@@ -840,18 +843,20 @@ const hasConditions = computed(() => pills.value.length > 0)
                     <span class="item-name">{{ $t('home.filters.no_remix') }}<small>{{ $t('home.filters.no_remix_hint') }}</small></span>
                     <span v-if="filter.mixing?.none" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
                   </button>
-                  <button v-for="r in remixItems" :key="`mix-${r.id}`" type="button" class="picker-item" :class="{ added: r.added }" :disabled="r.added" @click="addRemix(r)">
+                  <button v-for="r in remixItems" :key="`mix-${r.id}`" type="button" class="picker-item" :class="{ added: r.added, soon: r.available === false }" :disabled="r.added || r.available === false" @click="addRemix(r)">
                     <img v-if="r.icon" :src="r.icon" alt="" class="item-icon" />
                     <i v-else class="bi bi-globe2 item-icon-i" aria-hidden="true"></i>
-                    <span class="item-name">{{ r.name }}<small>{{ r.spacedOutOnly ? $t('home.filters.remix_hint_so') : $t('home.filters.remix_hint') }}</small></span>
+                    <span class="item-name">{{ r.name }}<small>{{ $t(r.spacedOutOnly ? 'home.filters.remix_hint_so' : 'home.filters.remix_hint', { pack: packName(r.dlc) }) }}</small></span>
                     <span v-if="r.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                    <span v-else-if="r.available === false" class="item-tag">{{ $t('home.filters.coming_soon') }}</span>
                   </button>
                 </template>
                 <div class="picker-group">{{ $t('home.filters.biomes_group') }}</div>
-                <button v-for="z in zoneItems" :key="`zone-${z.id}`" type="button" class="picker-item" :class="{ added: z.added }" :disabled="z.added" @click="addZone(z)">
+                <button v-for="z in zoneItems" :key="`zone-${z.id}`" type="button" class="picker-item" :class="{ added: z.added, soon: z.available === false }" :disabled="z.added || z.available === false" @click="addZone(z)">
                   <img v-if="z.icon" :src="z.icon" alt="" class="item-icon" />
-                  <span class="item-name">{{ z.name }}<small>{{ $t('home.filters.biome_hint') }}</small></span>
+                  <span class="item-name">{{ z.name }}<small>{{ z.dlc ? $t('home.filters.biome_hint_dlc', { pack: packName(z.dlc) }) : $t('home.filters.biome_hint') }}</small></span>
                   <span v-if="z.added" class="item-tag ok"><i class="bi bi-check2" aria-hidden="true"></i></span>
+                  <span v-else-if="z.available === false" class="item-tag">{{ $t('home.filters.coming_soon') }}</span>
                 </button>
                 <div class="picker-group">{{ $t('home.filters.buildings_group') }}</div>
                 <button v-for="b in poiItems" :key="`poi-${b.id}`" type="button" class="picker-item" :class="{ added: b.added }" @click="addPoi(b)">
@@ -1106,7 +1111,8 @@ const hasConditions = computed(() => pills.value.length > 0)
 .picker-item:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.06);
 }
-.picker-item.impossible {
+.picker-item.impossible,
+.picker-item.soon {
   opacity: 0.5;
 }
 .item-icon {
