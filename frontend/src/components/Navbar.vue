@@ -38,6 +38,11 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
             }}</router-link>
           </li>
           <li class="nav-item">
+            <a href="https://barratt.github.io/dontstarve-worldgen/" target="mni_ds" class="nav-link">{{
+              $t("navbar.dont_starve_link")
+            }}</a>
+          </li>
+          <li class="nav-item">
             <a href="https://discord.gg/3vhCpp6PNq" target="mni_gh" class="nav-link">{{
               $t("navbar.discord_link")
             }}</a>
