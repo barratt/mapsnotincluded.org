@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:22.23.4-bookworm
 # Current LTS, Debian Bookworm
 # I'm not sure if/how we can merge dockerfiles, other than manually, so below is SteamCMD:debian-12 (bookworm); https://github.com/steamcmd/docker/blob/master/dockerfiles/debian-12/Dockerfile
 
