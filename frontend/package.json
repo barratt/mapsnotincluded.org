@@ -10,17 +10,20 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
-    "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3",
-    "pinia": "^2.1.7",
-    "sweetalert2": "^11.12.4",
-    "vue": "^3.4.29",
-    "vue-i18n": "^10.0.4",
-    "vue-router": "^4.3.3"
+    "bootstrap": "^5.3.9",
+    "bootstrap-icons": "^1.13.2",
+    "pinia": "^4.1.0",
+    "sweetalert2": "^11.26.25",
+    "vue": "^3.5.46",
+    "vue-i18n": "^11.4.23",
+    "vue-router": "^5.5.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.5",
-    "sass": "^1.32.13",
-    "vite": "^5.3.1"
+    "@vitejs/plugin-vue": "^6.0.11",
+    "sass": "^1.108.2",
+    "vite": "^8.3.8"
+  },
+  "engines": {
+    "node": ">=26.13.1 <27"
   }
 }
