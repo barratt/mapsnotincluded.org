@@ -12,6 +12,7 @@
         "bt_cancel": "Cancel"
     },
     "navbar": {
+        "leaderboard_link": "Leaderboard",
         "title": "MapsNotIncluded",
         "map_explorer_link": "Map Explorer",
         "world_trait_finder_link": "World Trait Finder",
@@ -23,6 +24,13 @@
         "github_link": "GitHub",
         "dont_starve_link": "Don't Starve"
     },
+    "leaderboard": {
+    "title": "Leaderboard",
+    "description": "The ten worlds starred by the most players.",
+    "favourites": "no favourites | 1 favourite | {n} favourites",
+    "empty": "No one has starred a world yet.",
+    "failed": "The leaderboard couldn't be loaded. Please try again later."
+},
     "help": {
         "title": "Help",
         "faq": {

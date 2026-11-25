@@ -15,6 +15,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
+          <li class="nav-item"><router-link to="/leaderboard" class="nav-link">{{ $t("navbar.leaderboard_link") }}</router-link></li>
           <li class="nav-item">
             <router-link to="/map-explorer" class="nav-link">{{
               $t("navbar.map_explorer_link")
